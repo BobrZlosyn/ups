@@ -2,6 +2,8 @@ package game;
 
 import client.TcpClient;
 import client.TcpMessage;
+import game.ships.BattleShip;
+import game.ships.CruiserShip;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -9,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 import java.net.URL;
@@ -21,6 +24,8 @@ public class Controller implements Initializable{
     Label connectionStatusLabel;
     @FXML
     Button connectButton;
+    @FXML
+    Pane gameAreaPane;
 
 
     public void setConnectionStatusLabel(String text) {
@@ -43,6 +48,13 @@ public class Controller implements Initializable{
                 setConnectionStatusLabel("Připojeno");
             }
             client.close();
+
+
+            BattleShip testShip = new BattleShip();
+            CruiserShip testShip2 = new CruiserShip();
+            testShip.displayShip(false, gameAreaPane);
+            testShip2.displayShip(true, gameAreaPane);
         });
+
     }
 }

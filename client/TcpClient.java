@@ -78,11 +78,12 @@ public class TcpClient implements NetworkInterface {
     }
 
     public TcpMessage getMessage(  ) {
-        String line = null;
+        String line = "";
         // read the response (a line) from the server
         try {
-             line = reader.readLine();
-
+            if(reader != null){
+                line = reader.readLine();
+            }
             // write the line to console
             return new TcpMessage(line);
         }

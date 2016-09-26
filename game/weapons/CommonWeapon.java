@@ -9,8 +9,11 @@ public class CommonWeapon {
     private int minStrength;
     private int maxStrength;
 
-    public CommonWeapon () {
-
+    public CommonWeapon (int life, int power, int minStrength, int maxStrength) {
+        setLife(life);
+        setPower(power);
+        setMinStrength(minStrength);
+        setMaxStrength(maxStrength);
     }
 
     public void setLife(int life) {
@@ -45,7 +48,7 @@ public class CommonWeapon {
         return maxStrength;
     }
 
-    public void displayWeapon() {
+    public void displayWeapon(double width, double x, double y, boolean isEnemy) {
 
     }
 }
