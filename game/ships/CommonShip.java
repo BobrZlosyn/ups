@@ -9,10 +9,16 @@ import javafx.scene.shape.Rectangle;
 public class CommonShip {
     private int life;
     private int power;
+    private String name;
 
-    public CommonShip (int life, int power) {
+    public CommonShip (String name, int life, int power) {
+        setName(name);
         setLife(life);
         setPower(power);
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setLife(int life) {
@@ -21,6 +27,10 @@ public class CommonShip {
 
     public void setPower(int power) {
         this.power = power;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public int getLife() {

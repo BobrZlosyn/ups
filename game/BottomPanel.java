@@ -1,0 +1,79 @@
+package game;
+
+import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
+
+/**
+ * Created by BobrZlosyn on 26.09.2016.
+ */
+public class BottomPanel {
+
+    private Button quit;
+    private GridPane panel;
+    private Label name;
+
+    public BottomPanel(Button sendOrders){
+        createButtonQuit();
+        createButtonSend(sendOrders);
+        createName();
+        createPanel(sendOrders);
+    }
+
+    private void createButtonSend(Button sendOrders){
+        sendOrders.setText("DÁT ROZKAZ K ÚTOKU");
+
+        sendOrders.setMaxWidth(Double.MAX_VALUE);
+        sendOrders.setMaxHeight(Double.MAX_VALUE);
+
+    }
+
+    private void createButtonQuit(){
+        quit = new Button("UTÉCT Z BOJE");
+        quit.setMaxWidth(Double.MAX_VALUE);
+        quit.setMaxHeight(Double.MAX_VALUE);
+    }
+
+    private void createName(){
+        name = new Label("Název kliknutého objektu");
+    }
+
+    private void createPanel(Button sendOrders){
+        panel = new GridPane();
+        panel.setMaxWidth(Double.MAX_VALUE);
+        panel.getStyleClass().add("bottomPanel");
+
+        RowConstraints rowConstraints1 = new RowConstraints(50);
+        RowConstraints rowConstraints2 = new RowConstraints(50);
+
+        ColumnConstraints columnConstraints = new ColumnConstraints();
+        columnConstraints.setPercentWidth(40);
+        ColumnConstraints columnConstraints1 = new ColumnConstraints();
+        columnConstraints1.setPercentWidth(40);
+        ColumnConstraints columnConstraints2 = new ColumnConstraints();
+        columnConstraints2.setPercentWidth(20);
+
+        panel.getColumnConstraints().addAll(columnConstraints, columnConstraints1, columnConstraints2);
+        panel.getRowConstraints().addAll(rowConstraints1, rowConstraints2);
+
+        panel.add(name, 1,0);
+        panel.add(sendOrders, 2, 0);
+        panel.add(quit, 2, 1);
+
+        panel.setMargin(sendOrders, new Insets(15,10,5,10));
+        panel.setMargin(quit, new Insets(10,10,10,10));
+
+
+    }
+
+    public void showPanel(GridPane window){
+        window.add(panel,0,1,GridPane.REMAINING,GridPane.REMAINING);
+    }
+
+    public void removePanle(GridPane window){
+        window.getChildren().remove(panel);
+    }
+}

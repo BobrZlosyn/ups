@@ -1,6 +1,6 @@
 package game.weapons;
 
-import javafx.scene.shape.Rectangle;
+import game.Placement;
 
 /**
  * Created by BobrZlosyn on 25.09.2016.
@@ -10,12 +10,18 @@ public class CommonWeapon {
     private int power;
     private int minStrength;
     private int maxStrength;
+    private String name;
 
-    public CommonWeapon (int life, int power, int minStrength, int maxStrength) {
+    public CommonWeapon (String name, int life, int power, int minStrength, int maxStrength) {
+        setName(name);
         setLife(life);
         setPower(power);
         setMinStrength(minStrength);
         setMaxStrength(maxStrength);
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setLife(int life) {
@@ -34,6 +40,10 @@ public class CommonWeapon {
         this.maxStrength = maxStrength;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public int getLife() {
         return life;
     }
@@ -50,7 +60,7 @@ public class CommonWeapon {
         return maxStrength;
     }
 
-    public void displayWeapon(Rectangle position, boolean isEnemy) {
+    public void displayWeapon(Placement position, boolean isEnemy) {
 
     }
 }

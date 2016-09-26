@@ -1,6 +1,6 @@
 package game.ships;
 
-import game.weapons.CommonWeapon;
+import game.Placement;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -11,9 +11,9 @@ import javafx.scene.shape.Rectangle;
 public class CruiserShip extends CommonShip {
 
     private Rectangle ship;
-    private Rectangle [][] shipMapping;
+    private Placement[][] shipMapping;
     public CruiserShip() {
-        super(150, 100);
+        super("Cruiser ship", 150, 100);
         createShip();
 
     }
@@ -42,7 +42,7 @@ public class CruiserShip extends CommonShip {
         int size = 50;
         int countOfPlaces = (int)(ship.getWidth()-50)/50;
         int countOfPlacesHeight = (int)(ship.getHeight()-30)/50;
-        shipMapping = new Rectangle[countOfPlaces][countOfPlacesHeight];
+        shipMapping = new Placement[countOfPlaces][countOfPlacesHeight];
 
         for( int i = 0; i < countOfPlaces; i++ ){
             for( int j = 0; j < countOfPlacesHeight -1; j++) {
@@ -53,12 +53,13 @@ public class CruiserShip extends CommonShip {
 
                 place.setY(ship.getY() + size*j + 10*j + 25);
                 place.setX(ship.getX() + size*i + 10*i + 15);
-                shipMapping[i][j] = place;
+                shipMapping[i][j] = new Placement(place.getX(), place.getY(), place.getWidth());
+                shipMapping[i][j].setField(place);
             }
         }
     }
 
-    public Rectangle getPosition(int row, int column){
+    public Placement getPosition(int row, int column){
         return shipMapping[row][column];
     }
 

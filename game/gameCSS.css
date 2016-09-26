@@ -1,0 +1,26 @@
+.lifeStatus .bar{
+    -fx-accent:  rgba(0,155,0,1) ;
+}
+
+.lifeStatus .track{
+    -fx-background-color: rgba(0,0,0,0.5);
+    -fx-border-width: 1 1 1 1;
+}
+
+.energyStatus .bar{
+    -fx-accent:  rgba(0,0,255,1) ;
+}
+
+.energyStatus .track{
+     -fx-background-color: rgba(0,0,0,0.5);
+     -fx-border-width: 1 1 1 1;
+}
+
+.statusLabel {
+    -fx-font-weight:bold;
+    -fx-text-fill: rgba(255,255,255,0.8);
+}
+
+.bottomPanel {
+    -fx-background-color: rgba(0,0,255,0.6) ;
+}
