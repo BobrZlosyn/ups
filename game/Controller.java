@@ -38,6 +38,7 @@ public class Controller implements Initializable{
             String msg = msgRecv.getMessage();
             System.out.println(msg);
 
+
             if(msg.trim().equals("success")){
                 setConnectionStatusLabel("Připojeno");
             }
