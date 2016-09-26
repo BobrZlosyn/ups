@@ -58,8 +58,8 @@ public class CruiserShip extends CommonShip {
         }
     }
 
-    public void setPosition(int row, int column, CommonWeapon weapon){
-
+    public Rectangle getPosition(int row, int column){
+        return shipMapping[row][column];
     }
 
 

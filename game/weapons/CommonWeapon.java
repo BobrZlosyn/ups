@@ -1,5 +1,7 @@
 package game.weapons;
 
+import javafx.scene.shape.Rectangle;
+
 /**
  * Created by BobrZlosyn on 25.09.2016.
  */
@@ -48,7 +50,7 @@ public class CommonWeapon {
         return maxStrength;
     }
 
-    public void displayWeapon(double width, double x, double y, boolean isEnemy) {
+    public void displayWeapon(Rectangle position, boolean isEnemy) {
 
     }
 }

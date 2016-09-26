@@ -34,7 +34,11 @@ public class CannonWeapon extends CommonWeapon{
     }
 
     @Override
-    public void displayWeapon(double width, double x, double y, boolean isEnemy) {
+    public void displayWeapon(Rectangle position, boolean isEnemy) {
+        double x = position.getX();
+        double y = position.getY();
+        double width = position.getWidth();
+
         room.setCenterX(x + width/2);
         room.setCenterY(y + width/2);
 
