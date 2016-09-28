@@ -3,6 +3,7 @@ package game;
 import client.TcpClient;
 import client.TcpMessage;
 import game.StartUpMenu.CreateMenu;
+import game.StartUpMenu.PickShipMenu;
 import game.background.GeneratRandomBackground;
 import game.ships.BattleShip;
 import game.ships.CruiserShip;
@@ -38,7 +39,7 @@ public class Controller implements Initializable{
     public void initialize(URL location, ResourceBundle resources) {
         CreateMenu createMenu = new CreateMenu();
         window.add(createMenu.getMenu(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
-        setupStartButton(createMenu);
+        setupPickShipMenu(createMenu);
         windowResize();
     }
 
@@ -50,15 +51,16 @@ public class Controller implements Initializable{
         });
 
         window.heightProperty().addListener((observable, oldValue, newValue) -> {
-            if(!GlobalVariables.isEmpty(grb)){
+            if (!GlobalVariables.isEmpty(grb)) {
                 grb.resizeImage(window, window.getWidth(), newValue.doubleValue());
             }
         });
     }
 
-    private void setupStartButton(CreateMenu createMenu){
-        createMenu.getStart().setOnAction(event -> {
-            createMenu.clean();
+    private void setupStartButton(PickShipMenu pickShipMenu){
+        pickShipMenu.getNextSetup().setOnAction(event -> {
+            pickShipMenu.clean();
+
             gameAreaPane = new Pane();
             window.add(gameAreaPane, 0, 0, GridPane.REMAINING, 1);
             BattleShip testShip = new BattleShip(false);
@@ -83,6 +85,15 @@ public class Controller implements Initializable{
             sendDataButton = new Button();
             BottomPanel bottomPanel = new BottomPanel(sendDataButton);
             bottomPanel.showPanel(window);
+        });
+    }
+
+    private void setupPickShipMenu(CreateMenu createMenu){
+        createMenu.getStart().setOnAction(event -> {
+            createMenu.clean();
+            PickShipMenu pickShipMenu = new PickShipMenu();
+            window.add(pickShipMenu.getPickship(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
+            setupStartButton(pickShipMenu);
         });
     }
 }
