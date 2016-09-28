@@ -1,5 +1,7 @@
 package game.ships;
 
+import game.GlobalVariables;
+import game.IMarkableObject;
 import game.Placement;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -8,27 +10,44 @@ import javafx.scene.shape.Rectangle;
 /**
  * Created by Kanto on 26.09.2016.
  */
-public class CruiserShip extends CommonShip {
+public class CruiserShip extends CommonShip implements IMarkableObject {
 
     private Rectangle ship;
     private Placement[][] shipMapping;
-    public CruiserShip() {
-        super("Cruiser ship", 150, 100);
-        createShip();
+    private boolean IsMarked;
 
+    public CruiserShip(boolean isEnemy) {
+        super("Cruiser ship", 150, 100, isEnemy);
+        createShip();
+        setIsMarked(false);
+    }
+
+    public void setIsMarked(boolean isMarked) {
+        IsMarked = isMarked;
+    }
+
+    public boolean isMarked() {
+        return IsMarked;
     }
 
     private void createShip(){
         ship = new Rectangle(200, 400);
         ship.setStyle("-fx-background-color: red;");
+        ship.setOnMouseClicked(event -> {
+            if(isMarked()){
+                unmarkObject();
+            }else {
+                markObject();
+            }
+        });
 
     }
 
-    public void displayShip(boolean isEnemy, Pane gameArea){
+    public void displayShip( Pane gameArea){
 
         gameArea.getChildren().add(ship);
 
-        if(isEnemy){
+        if(isEnemy()){
             ship.setX(500);
             ship.setY(80);
         }else{
@@ -64,4 +83,38 @@ public class CruiserShip extends CommonShip {
     }
 
 
+    @Override
+    public void markObject() {
+        ship.setStroke(Color.BLUE);
+        ship.setStrokeWidth(1.5);
+        GlobalVariables.setMarkedObject(this);
+        GlobalVariables.setName(getName());
+        setIsMarked(true);
+    }
+
+    @Override
+    public void unmarkObject() {
+        ship.setStroke(Color.TRANSPARENT);
+        GlobalVariables.setMarkedObject(null);
+        GlobalVariables.setName("");
+        setIsMarked(false);
+
+    }
+
+    @Override
+    public void target() {
+
+    }
+
+    @Override
+    public void cancelTarget() {
+
+    }
+
+    @Override
+    public Placement getPlacement() {
+        double middleX = ship.getX()+ ship.getHeight()/2;
+        double middleY = ship.getY()+ ship.getWidth()/2;
+        return new Placement(middleX, middleY, ship.getWidth());
+    }
 }

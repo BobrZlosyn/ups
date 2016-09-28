@@ -1,31 +1,27 @@
 package game.weapons;
 
 import game.Placement;
+import game.construction.CommonConstruction;
 
 /**
  * Created by BobrZlosyn on 25.09.2016.
  */
-public class CommonWeapon {
-    private int life;
+public class CommonWeapon extends CommonConstruction{
     private int power;
     private int minStrength;
     private int maxStrength;
-    private String name;
+    private boolean isEnemy;
 
     public CommonWeapon (String name, int life, int power, int minStrength, int maxStrength) {
-        setName(name);
-        setLife(life);
+        super(life, name);
         setPower(power);
         setMinStrength(minStrength);
         setMaxStrength(maxStrength);
+        setIsEnemy(false);
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setLife(int life) {
-        this.life = life;
+    public void setIsEnemy(boolean isEnemy) {
+        this.isEnemy = isEnemy;
     }
 
     public void setPower(int power) {
@@ -40,14 +36,6 @@ public class CommonWeapon {
         this.maxStrength = maxStrength;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public int getLife() {
-        return life;
-    }
-
     public int getPower() {
         return power;
     }
@@ -60,7 +48,16 @@ public class CommonWeapon {
         return maxStrength;
     }
 
+    public boolean isEnemy() {
+        return isEnemy;
+    }
+
     public void displayWeapon(Placement position, boolean isEnemy) {
 
     }
+
+    public void rotateWeapon(double x, double y){
+
+    }
+
 }

@@ -1,7 +1,13 @@
 package game;
 
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 
 
@@ -14,6 +20,7 @@ public class Controls {
     private double shipPower;
     private ProgressBar shipIntegrityProgress, shipPowerProgress;
     private Label life, power;
+    private Button settings;
     public Controls(){
         createProgress();
     }
@@ -23,6 +30,11 @@ public class Controls {
         shipPowerProgress = new ProgressBar(0.5);
         life = new Label("INTEGRITA TRUPU");
         power = new Label("ZBYLÁ ENERGIE");
+        createSettingsButton();
+    }
+
+    private void createSettingsButton(){
+        settings = new Button("Nastavení");
     }
 
     public void showStatusBars(Pane gameArea){
@@ -45,6 +57,12 @@ public class Controls {
         shipPowerProgress.setMinHeight(30);
         shipPowerProgress.setMinWidth(200);
         shipPowerProgress.getStyleClass().add("energyStatus");
+
+
+        ((GridPane)gameArea.getParent()).add(settings, 1, 0);
+        ((GridPane)gameArea.getParent()).getColumnConstraints().get(1).setHalignment(HPos.RIGHT);
+        ((GridPane)gameArea.getParent()).getRowConstraints().get(0).setValignment(VPos.TOP);
+        ((GridPane)gameArea.getParent()).setMargin(settings, new Insets(10,10,10,10));
     }
 
     public void setShipIntegrity(double shipIntegrity) {
