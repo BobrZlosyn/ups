@@ -1,6 +1,5 @@
 package game;
 
-import game.powers.CommonPower;
 import game.weapons.CommonWeapon;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;

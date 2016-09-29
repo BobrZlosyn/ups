@@ -12,6 +12,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
 
+import java.util.ArrayList;
+
 /**
  * Created by Kanto on 26.09.2016.
  */
@@ -168,5 +170,14 @@ public class CannonWeapon extends CommonWeapon implements IMarkableObject {
             cannon.getTransforms().add(new Rotate(-cosinus, room.getCenterX(), room.getCenterY()));
         }
 
+    }
+
+    public ArrayList<Shape> getConstructsToDrag(){
+        ArrayList<Shape> draggableObject = new ArrayList<>();
+        draggableObject.add(room);
+        draggableObject.add(cannon);
+        draggableObject.add(head);
+
+        return  draggableObject;
     }
 }
