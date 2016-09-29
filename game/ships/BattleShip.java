@@ -14,7 +14,6 @@ import javafx.scene.shape.Rectangle;
  */
 public class BattleShip extends CommonShip implements IMarkableObject {
     private Circle ship;
-    private Placement[][] shipMapping;
     private boolean isMarked;
 
     public BattleShip (boolean isEnemy){
@@ -65,7 +64,7 @@ public class BattleShip extends CommonShip implements IMarkableObject {
     public void createMapOfShip(){
         int size = 50;
         int countOfPlaces = (int)(ship.getRadius()*2 - 50 )/50;
-        shipMapping = new Placement[countOfPlaces][4];
+        Placement[][] shipMapping = new Placement[countOfPlaces][4];
 
         double radius = ship.getRadius();
         for ( int i = 0; i < countOfPlaces - 1; i++ ){
@@ -78,6 +77,7 @@ public class BattleShip extends CommonShip implements IMarkableObject {
                 if((j == 3 && i == 0) || (j == 3 && i == countOfPlaces - 2)){
                     continue;
                 }
+
                 Rectangle place = new Rectangle(size, size);
                 place.setFill(Color.WHITE);
                 Pane parent = ((Pane)ship.getParent());
@@ -90,11 +90,13 @@ public class BattleShip extends CommonShip implements IMarkableObject {
             }
 
         }
+        setPlacements(shipMapping);
     }
 
     public Placement getPosition(int row, int column){
-        return shipMapping[row][column];
+        return getPlacementPositions()[row][column];
     }
+
     @Override
     public void markObject() {
         ship.setStroke(Color.BLUE);

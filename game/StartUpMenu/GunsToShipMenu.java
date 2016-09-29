@@ -1,6 +1,7 @@
 package game.StartUpMenu;
 
 import game.GlobalVariables;
+import game.Placement;
 import game.ships.CommonShip;
 import javafx.geometry.HPos;
 import javafx.scene.control.Button;
@@ -73,6 +74,18 @@ public class GunsToShipMenu {
 
     public Button getNextButton() {
         return next;
+    }
+
+    private void setupClickablePlacementPosition(){
+        Placement[][] placements = ship.getPlacementPositions();
+        for(int i = 0; i < placements.length; i++){
+            for (int j = 0; j < placements[i].length; j++){
+                if(placements[i][j] == null){
+                    continue;
+                }
+
+            }
+        }
     }
 
     public void clean(){

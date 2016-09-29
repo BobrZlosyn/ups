@@ -1,5 +1,6 @@
 package game.ships;
 
+import game.Placement;
 import game.construction.CommonConstruction;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
@@ -15,6 +16,7 @@ public class CommonShip extends CommonConstruction {
     private int power;
     private boolean isEnemy;
     private final int type;
+    private Placement [][] placements;
 
     public CommonShip (String name, int life, int power, boolean isEnemy, int type) {
         super(life, name);
@@ -29,6 +31,10 @@ public class CommonShip extends CommonConstruction {
 
     public void setPower(int power) {
         this.power = power;
+    }
+
+    public void setPlacements(Placement[][] placements) {
+        this.placements = placements;
     }
 
     public int getPower() {
@@ -61,5 +67,9 @@ public class CommonShip extends CommonConstruction {
 
     public int getType(){
         return type;
+    }
+
+    public Placement [][] getPlacementPositions(){
+        return placements;
     }
 }

@@ -13,7 +13,6 @@ import javafx.scene.shape.Rectangle;
 public class CruiserShip extends CommonShip implements IMarkableObject {
 
     private Rectangle ship;
-    private Placement[][] shipMapping;
     private boolean IsMarked;
 
     public CruiserShip(boolean isEnemy) {
@@ -63,7 +62,7 @@ public class CruiserShip extends CommonShip implements IMarkableObject {
         int size = 50;
         int countOfPlaces = (int)(ship.getWidth()-50)/50;
         int countOfPlacesHeight = (int)(ship.getHeight()-30)/50;
-        shipMapping = new Placement[countOfPlaces][countOfPlacesHeight];
+        Placement[][] shipMapping = new Placement[countOfPlaces][countOfPlacesHeight];
 
         for( int i = 0; i < countOfPlaces; i++ ){
             for( int j = 0; j < countOfPlacesHeight -1; j++) {
@@ -78,10 +77,11 @@ public class CruiserShip extends CommonShip implements IMarkableObject {
                 shipMapping[i][j].setField(place);
             }
         }
+        setPlacements(shipMapping);
     }
 
     public Placement getPosition(int row, int column){
-        return shipMapping[row][column];
+        return getPlacementPositions()[row][column];
     }
 
 
