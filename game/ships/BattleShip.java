@@ -18,7 +18,7 @@ public class BattleShip extends CommonShip implements IMarkableObject {
     private boolean isMarked;
 
     public BattleShip (boolean isEnemy){
-        super("Battle ship", 100, 100, isEnemy);
+        super("Battle ship", 100, 100, isEnemy, BATTLE_SHIP);
         createShip();
         setIsMarked(false);
     }
@@ -47,14 +47,18 @@ public class BattleShip extends CommonShip implements IMarkableObject {
     }
 
     public void displayShip(Pane gameArea){
-        gameArea.getChildren().add(ship);
         if(isEnemy()){
-            ship.setCenterX(450);
-            ship.setCenterY(280);
+            positionOfShip(450, 280, gameArea);
         }else {
-            ship.setCenterX(200);
-            ship.setCenterY(280);
+            positionOfShip(200, 280, gameArea);
         }
+
+    }
+
+    public void positionOfShip(double x, double y, Pane gameArea){
+        gameArea.getChildren().add(ship);
+        ship.setCenterX(x);
+        ship.setCenterY(y);
         createMapOfShip();
     }
 
@@ -117,6 +121,21 @@ public class BattleShip extends CommonShip implements IMarkableObject {
     @Override
     public void cancelTarget() {
 
+    }
+
+    @Override
+    public double getX() {
+        return ship.getCenterX();
+    }
+
+    @Override
+    public double getY() {
+        return ship.getCenterY();
+    }
+
+    @Override
+    public double getWidth() {
+        return ship.getRadius()*2;
     }
 
     @Override

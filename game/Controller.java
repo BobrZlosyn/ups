@@ -1,11 +1,11 @@
 package game;
 
-import client.TcpClient;
-import client.TcpMessage;
 import game.StartUpMenu.CreateMenu;
+import game.StartUpMenu.GunsToShipMenu;
 import game.StartUpMenu.PickShipMenu;
 import game.background.GeneratRandomBackground;
 import game.ships.BattleShip;
+import game.ships.CommonShip;
 import game.ships.CruiserShip;
 import game.weapons.CannonWeapon;
 import javafx.fxml.FXML;
@@ -14,7 +14,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Line;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -57,10 +56,20 @@ public class Controller implements Initializable{
         });
     }
 
-    private void setupStartButton(PickShipMenu pickShipMenu){
+    private void setupGunsToShipMenu(PickShipMenu pickShipMenu){
         pickShipMenu.getNextSetup().setOnAction(event -> {
+            CommonShip ship = pickShipMenu.getChoosenShip();
             pickShipMenu.clean();
 
+            GunsToShipMenu gunsToShipMenu = new GunsToShipMenu(ship);
+            window.add(gunsToShipMenu.getGunsToShipPane(),0,0, GridPane.REMAINING, GridPane.REMAINING);
+            setupStartButton(gunsToShipMenu);
+        });
+    }
+
+    private void setupStartButton(GunsToShipMenu gunsToShipMenu){
+        gunsToShipMenu.getNextButton().setOnAction(event -> {
+            gunsToShipMenu.clean();
             gameAreaPane = new Pane();
             window.add(gameAreaPane, 0, 0, GridPane.REMAINING, 1);
             BattleShip testShip = new BattleShip(false);
@@ -93,7 +102,7 @@ public class Controller implements Initializable{
             createMenu.clean();
             PickShipMenu pickShipMenu = new PickShipMenu();
             window.add(pickShipMenu.getPickship(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
-            setupStartButton(pickShipMenu);
+            setupGunsToShipMenu(pickShipMenu);
         });
     }
 }

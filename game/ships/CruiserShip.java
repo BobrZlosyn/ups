@@ -17,7 +17,7 @@ public class CruiserShip extends CommonShip implements IMarkableObject {
     private boolean IsMarked;
 
     public CruiserShip(boolean isEnemy) {
-        super("Cruiser ship", 150, 100, isEnemy);
+        super("Cruiser ship", 150, 100, isEnemy, CRUISER_SHIP);
         createShip();
         setIsMarked(false);
     }
@@ -45,15 +45,17 @@ public class CruiserShip extends CommonShip implements IMarkableObject {
 
     public void displayShip( Pane gameArea){
 
-        gameArea.getChildren().add(ship);
-
         if(isEnemy()){
-            ship.setX(500);
-            ship.setY(80);
+            positionOfShip(500,80, gameArea);
         }else{
-            ship.setX(100);
-            ship.setY(80);
+            positionOfShip(100, 80, gameArea);
         }
+    }
+
+    public void positionOfShip(double x, double y, Pane gameArea){
+        gameArea.getChildren().add(ship);
+        ship.setX(x);
+        ship.setY(y);
         createMapOfShip();
     }
 
@@ -116,5 +118,10 @@ public class CruiserShip extends CommonShip implements IMarkableObject {
         double middleX = ship.getX()+ ship.getHeight()/2;
         double middleY = ship.getY()+ ship.getWidth()/2;
         return new Placement(middleX, middleY, ship.getWidth());
+    }
+
+    @Override
+    public double getWidth() {
+        return ship.getWidth();
     }
 }
