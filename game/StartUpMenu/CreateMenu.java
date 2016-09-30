@@ -4,6 +4,7 @@ import game.background.GeneratRandomBackground;
 import game.ships.BattleShip;
 import game.ships.CruiserShip;
 import game.weapons.CannonWeapon;
+import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -95,6 +96,9 @@ public class CreateMenu {
         exit = new Button("ODEJÍT");
         exit.setMaxWidth(Double.MAX_VALUE);
         exit.setMaxHeight(Double.MAX_VALUE);
+        exit.setOnAction(event -> {
+            Platform.exit();
+        });
     }
 
 

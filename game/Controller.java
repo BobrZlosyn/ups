@@ -8,6 +8,7 @@ import game.ships.BattleShip;
 import game.ships.CommonShip;
 import game.ships.CruiserShip;
 import game.weapons.CannonWeapon;
+import game.weapons.CommonWeapon;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -69,17 +70,22 @@ public class Controller implements Initializable{
 
     private void setupStartButton(GunsToShipMenu gunsToShipMenu){
         gunsToShipMenu.getNextButton().setOnAction(event -> {
+            CommonShip commonShip = gunsToShipMenu.getShip();
+
             gunsToShipMenu.clean();
+
+
             gameAreaPane = new Pane();
             window.add(gameAreaPane, 0, 0, GridPane.REMAINING, 1);
-            BattleShip testShip = new BattleShip(false);
+            Placement[][] placements = commonShip.getPlacementPositions();
+            commonShip.displayShip(gameAreaPane);
+            System.out.println(placements);
+            commonShip.fillShipWithEquipment(commonShip, placements);
+
             CruiserShip testShip2 = new CruiserShip(true);
-            testShip.displayShip(gameAreaPane);
             testShip2.displayShip(gameAreaPane);
             CannonWeapon testWeapon = new CannonWeapon();
             testWeapon.displayWeapon(testShip2.getPosition(2, 2), testShip2.isEnemy());
-            CannonWeapon testWeapon2 = new CannonWeapon();
-            testWeapon2.displayWeapon(testShip.getPosition(2, 2), testShip.isEnemy());
 
             //pozadi
             grb = new GeneratRandomBackground();

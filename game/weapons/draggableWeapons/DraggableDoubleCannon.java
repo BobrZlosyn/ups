@@ -6,20 +6,28 @@ import game.Placement;
 import game.weapons.CannonWeapon;
 import game.weapons.CommonWeapon;
 import game.weapons.modelsWeapon.ModelCannon;
+import game.weapons.modelsWeapon.ModelDoubleCannon;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 /**
  * Created by BobrZlosyn on 30.09.2016.
  */
-public class DraggableCannon extends CommonDraggableObject{
+public class DraggableDoubleCannon extends CommonDraggableObject{
 
     private double xPosition, yPosition, addX1, addX2, addY1, addY2;
 
-    public DraggableCannon(Pane pane, Placement[][] placements){
+    public DraggableDoubleCannon(Pane pane, Placement[][] placements){
         init();
-        ModelCannon model = createCannon(pane);
+        ModelDoubleCannon model = createCannon(pane);
         addListeners(model, placements);
+    }
+
+    public DraggableDoubleCannon(Pane pane, Placement[][] placements, double x, double y){
+        init();
+        ModelDoubleCannon model = createCannon(pane);
+        addListeners(model, placements);
+        model.setCannonXY(x, y);
     }
 
     private void init(){
@@ -31,8 +39,8 @@ public class DraggableCannon extends CommonDraggableObject{
         addY2 = 10;
     }
 
-    private ModelCannon createCannon(Pane area){
-        ModelCannon modelCannon = new ModelCannon();
+    private ModelDoubleCannon createCannon(Pane area){
+        ModelDoubleCannon modelCannon = new ModelDoubleCannon();
         modelCannon.setCannonXY(xPosition,yPosition);
 
         area.getChildren().addAll(modelCannon.getParts());
@@ -40,7 +48,7 @@ public class DraggableCannon extends CommonDraggableObject{
 
     }
 
-    private void addListeners(ModelCannon modelCannon, Placement[][] placements){
+    private void addListeners(ModelDoubleCannon modelCannon, Placement[][] placements){
         modelCannon.getParts().forEach(shape -> {
             shape.setOnMouseDragged(event -> {
                 moveObject(event, modelCannon, placements);
@@ -54,7 +62,7 @@ public class DraggableCannon extends CommonDraggableObject{
         });
     }
 
-    private void isDragSuccesful(MouseEvent event, ModelCannon modelCannon, Placement [][] placements){
+    private void isDragSuccesful(MouseEvent event, ModelDoubleCannon modelCannon, Placement [][] placements){
 
         Placement bluePlace = findPosition( placements, event.getSceneX(), event.getY(),addX1, addX2, addY1, addY2);
         if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.isEmpty()){
@@ -67,7 +75,7 @@ public class DraggableCannon extends CommonDraggableObject{
         modelCannon.setCannonXY(xPosition, yPosition);
     }
 
-    private void moveObject(MouseEvent event, ModelCannon modelCannon, Placement [][] placements){
+    private void moveObject(MouseEvent event, ModelDoubleCannon modelCannon, Placement [][] placements){
         modelCannon.setCannonXY(event.getSceneX(), event.getY());
         findPosition(placements, event.getSceneX(), event.getY(),addX1, addX2, addY1, addY2);
     }

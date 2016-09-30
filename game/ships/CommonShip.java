@@ -1,7 +1,10 @@
 package game.ships;
 
+import game.GlobalVariables;
 import game.Placement;
 import game.construction.CommonConstruction;
+import game.weapons.CannonWeapon;
+import game.weapons.CommonWeapon;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 
@@ -50,7 +53,24 @@ public class CommonShip extends CommonConstruction {
     }
 
     public void positionOfShip(double x, double y, Pane gameArea){
+    }
 
+    public void fillShipWithEquipment(CommonShip ship, Placement [][] oldShipPlacements){
+        for (int i = 0; i < oldShipPlacements.length; i++){
+            for (int j = 0; j < oldShipPlacements[i].length; j++){
+                Placement place = oldShipPlacements[i][j];
+                if(place == null || place.isEmpty()){
+                    continue;
+                }
+                CommonWeapon commonWeapon = place.getCommonWeapon();
+                if(GlobalVariables.isEmpty(commonWeapon)){
+                    continue;
+                }
+                placements[i][j].setIsEmpty(false);
+                placements[i][j].setCommonWeapon(commonWeapon);
+                commonWeapon.displayWeapon(placements[i][j], ship.isEnemy());
+            }
+        }
     }
 
     public double getX(){

@@ -59,6 +59,7 @@ public class BattleShip extends CommonShip implements IMarkableObject {
         ship.setCenterX(x);
         ship.setCenterY(y);
         createMapOfShip();
+
     }
 
     public void createMapOfShip(){
@@ -144,4 +145,5 @@ public class BattleShip extends CommonShip implements IMarkableObject {
     public Placement getPlacement() {
         return new Placement(ship.getCenterX(), ship.getCenterY(), ship.getRadius());
     }
+
 }

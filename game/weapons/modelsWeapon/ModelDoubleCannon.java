@@ -1,5 +1,9 @@
 package game.weapons.modelsWeapon;
 
+/**
+ * Created by Kanto on 30.09.2016.
+ */
+
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -9,11 +13,11 @@ import java.util.ArrayList;
 /**
  * Created by BobrZlosyn on 30.09.2016.
  */
-public class ModelCannon {
+public class ModelDoubleCannon {
     private Circle room, head;
-    private Rectangle cannon;
+    private Rectangle cannonTop, cannonBottom;
 
-    public ModelCannon(){
+    public ModelDoubleCannon(){
         createCannon();
     }
 
@@ -24,8 +28,11 @@ public class ModelCannon {
         head = new Circle(15);
         head.setFill(Color.YELLOW);
 
-        cannon = new Rectangle(30, 10);
-        cannon.setFill(Color.RED);
+        cannonTop = new Rectangle(30, 8);
+        cannonTop.setFill(Color.RED);
+
+        cannonBottom = new Rectangle(30, 8);
+        cannonBottom.setFill(Color.GREEN);
 
     }
 
@@ -36,12 +43,20 @@ public class ModelCannon {
         head.setCenterX(x);
         head.setCenterY(y);
 
-        cannon.setX(x);
-        cannon.setY(y - cannon.getHeight()/2);
+        cannonTop.setX(x);
+        cannonTop.setY(y - cannonTop.getHeight()/2 - 5);
+
+        cannonBottom.setX(x);
+        cannonBottom.setY(y - cannonBottom.getHeight()/2 + 5);
+
     }
 
-    public Rectangle getCannon() {
-        return cannon;
+    public Rectangle getCannonTop() {
+        return cannonTop;
+    }
+
+    public Rectangle getCannonBottom() {
+        return cannonBottom;
     }
 
     public Circle getRoom() {
@@ -55,7 +70,8 @@ public class ModelCannon {
     public ArrayList<Shape> getParts(){
         ArrayList<Shape> cannonParts = new ArrayList<>();
         cannonParts.add(room);
-        cannonParts.add(cannon);
+        cannonParts.add(cannonTop);
+        cannonParts.add(cannonBottom);
         cannonParts.add(head);
         return cannonParts;
     }

@@ -1,30 +1,23 @@
 package game.weapons;
 
-
 import game.GlobalVariables;
 import game.IMarkableObject;
 import game.Placement;
 import game.weapons.modelsWeapon.ModelCannon;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
 
-import java.util.ArrayList;
-
 /**
- * Created by Kanto on 26.09.2016.
+ * Created by Kanto on 30.09.2016.
  */
-public class CannonWeapon extends CommonWeapon implements IMarkableObject {
-
-    private ModelCannon modelCannon;
+public class DoubleCannonWeapon extends CommonWeapon implements IMarkableObject {
+    private ModelCannon modelDoubleCannon;
     private boolean isMark;
 
-    public CannonWeapon() {
-        super("Cannon",100, 100, 25, 35);
+    public DoubleCannonWeapon() {
+        super("Double cannon",100, 100, 25, 35);
         setIsMark(false);
         createCannon();
     }
@@ -38,27 +31,27 @@ public class CannonWeapon extends CommonWeapon implements IMarkableObject {
     }
 
     private void createCannon() {
-        modelCannon = new ModelCannon();
-        modelCannon.getParts().forEach(shape -> {
+        modelDoubleCannon = new ModelCannon();
+        modelDoubleCannon.getParts().forEach(shape -> {
             markCannon(shape);
         });
 
     }
 
     private void markCannon(Shape shape){
-            shape.setOnMouseClicked(event -> {
-                if(GlobalVariables.isTargeting){
+        shape.setOnMouseClicked(event -> {
+            if(GlobalVariables.isTargeting){
 
-                    target();
-                    return;
-                }
+                target();
+                return;
+            }
 
-                if(!isMark()){
-                    markObject();
-                }else{
-                    unmarkObject();
-                }
-            });
+            if(!isMark()){
+                markObject();
+            }else{
+                unmarkObject();
+            }
+        });
     }
 
     @Override
@@ -71,27 +64,27 @@ public class CannonWeapon extends CommonWeapon implements IMarkableObject {
             return;
         }
 
-        modelCannon.getRoom().setCenterX(x + width/2);
-        modelCannon.getRoom().setCenterY(y + width/2);
+        modelDoubleCannon.getRoom().setCenterX(x + width/2);
+        modelDoubleCannon.getRoom().setCenterY(y + width/2);
 
-        modelCannon.getHead().setCenterX(x + width/2);
-        modelCannon.getHead().setCenterY(y + width/2);
+        modelDoubleCannon.getHead().setCenterX(x + width/2);
+        modelDoubleCannon.getHead().setCenterY(y + width/2);
 
         if(isEnemy()){
-            modelCannon.getCannon().setX(x - 5);
+            modelDoubleCannon.getCannon().setX(x - 5);
         }else {
-            modelCannon.getCannon().setX(x + width/2);
+            modelDoubleCannon.getCannon().setX(x + width/2);
         }
 
-        modelCannon.getCannon().setY(y + width/2 - modelCannon.getCannon().getHeight()/2);
+        modelDoubleCannon.getCannon().setY(y + width/2 - modelDoubleCannon.getCannon().getHeight()/2);
         Pane gameArea = (Pane) position.getField().getParent();
-        gameArea.getChildren().addAll(modelCannon.getParts());
+        gameArea.getChildren().addAll(modelDoubleCannon.getParts());
         position.setIsEmpty(false);
     }
 
     @Override
     public void markObject() {
-        modelCannon.getParts().forEach(shape -> {
+        modelDoubleCannon.getParts().forEach(shape -> {
             shape.setStroke(Color.BLUE);
             shape.setStrokeWidth(1.5);
         });
@@ -105,7 +98,7 @@ public class CannonWeapon extends CommonWeapon implements IMarkableObject {
 
     @Override
     public void unmarkObject() {
-        modelCannon.getParts().forEach(shape -> {
+        modelDoubleCannon.getParts().forEach(shape -> {
             shape.setStroke(Color.TRANSPARENT);
         });
 
@@ -117,7 +110,7 @@ public class CannonWeapon extends CommonWeapon implements IMarkableObject {
 
     @Override
     public void target() {
-        modelCannon.getParts().forEach(shape -> {
+        modelDoubleCannon.getParts().forEach(shape -> {
             shape.setStroke(Color.RED);
             shape.setStrokeWidth(1.5);
         });
@@ -126,19 +119,19 @@ public class CannonWeapon extends CommonWeapon implements IMarkableObject {
 
     @Override
     public void cancelTarget() {
-        modelCannon.getParts().forEach(shape -> {
+        modelDoubleCannon.getParts().forEach(shape -> {
             shape.setStroke(Color.TRANSPARENT);
         });
     }
 
     @Override
     public Placement getPlacement() {
-        return new Placement(modelCannon.getRoom().getCenterX(), modelCannon.getRoom().getCenterY(), modelCannon.getRoom().getRadius());
+        return new Placement(modelDoubleCannon.getRoom().getCenterX(), modelDoubleCannon.getRoom().getCenterY(), modelDoubleCannon.getRoom().getRadius());
     }
 
     @Override
     public void rotateWeapon(double x, double y) {
-        double centerX = modelCannon.getRoom().getCenterX();
+        double centerX = modelDoubleCannon.getRoom().getCenterX();
         double countCx = (x - centerX)*(x - centerX);
         double countAx = (x - centerX)*(x - centerX);
         double countAy = (y - centerX)*(y - centerX);
@@ -148,9 +141,9 @@ public class CannonWeapon extends CommonWeapon implements IMarkableObject {
         double cosinus = Math.toDegrees(Math.acos(sideC / sideA));
 
         if(isEnemy()){
-            modelCannon.getCannon().getTransforms().add(new Rotate(cosinus, centerX, modelCannon.getRoom().getCenterY()));
+            modelDoubleCannon.getCannon().getTransforms().add(new Rotate(cosinus, centerX, modelDoubleCannon.getRoom().getCenterY()));
         }else{
-            modelCannon.getCannon().getTransforms().add(new Rotate(-cosinus, centerX, modelCannon.getRoom().getCenterY()));
+            modelDoubleCannon.getCannon().getTransforms().add(new Rotate(-cosinus, centerX, modelDoubleCannon.getRoom().getCenterY()));
         }
 
     }

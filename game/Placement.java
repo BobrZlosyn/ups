@@ -1,5 +1,6 @@
 package game;
 
+import game.weapons.CommonWeapon;
 import javafx.scene.shape.Rectangle;
 
 /**
@@ -10,6 +11,7 @@ public class Placement {
     private boolean isEmpty;
     private double x, y, size;
     private Rectangle field;
+    private CommonWeapon commonWeapon;
 
     public Placement (double x, double y, double size) {
         setX(x);
@@ -38,6 +40,10 @@ public class Placement {
         this.y = y;
     }
 
+    public void setCommonWeapon(CommonWeapon commonWeapon) {
+        this.commonWeapon = commonWeapon;
+    }
+
     public double getY() {
         return y;
     }
@@ -56,5 +62,9 @@ public class Placement {
 
     public Rectangle getField() {
         return field;
+    }
+
+    public CommonWeapon getCommonWeapon() {
+        return commonWeapon;
     }
 }
