@@ -46,11 +46,14 @@ public class Controller implements Initializable{
         window.add(createMenu.getMenu(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
         setupPickShipMenu(createMenu);
         windowResize();
+        grb = new GeneratRandomBackground();
+        grb.showSpacePort(window);
     }
 
     private void windowResize(){
         window.widthProperty().addListener((observable, oldValue, newValue) -> {
             if(!GlobalVariables.isEmpty(grb)){
+                System.out.println("ahoj");
                 grb.resizeImage(window, newValue.doubleValue(), window.getHeight());
             }
         });
@@ -94,7 +97,6 @@ public class Controller implements Initializable{
             testWeapon.setPlacement(testShip2.getPosition(2,2));
 
             //pozadi
-            grb = new GeneratRandomBackground();
             grb.findImages();
             grb.chooseImage((GridPane) gameAreaPane.getParent());
 

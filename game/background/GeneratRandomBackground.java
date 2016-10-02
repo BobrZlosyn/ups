@@ -30,15 +30,34 @@ public class GeneratRandomBackground {
 
         int size = files.size();
         int index = 0 + (int)(Math.random() * size);
-        String path = files.get(index).getName();
+        String path = "images/" + files.get(index).getName();
         double width = pane.getWidth();
         double height = pane.getHeight();
-        pane.setStyle("-fx-background-image: url('./game/background/images/" + path + "'); -fx-background-repeat: stretch; -fx-background-size: " + width + " " + height +";");
+        pane.setStyle("-fx-background-image: url('./game/background/" + path + "'); -fx-background-repeat: stretch; -fx-background-size: " + width + " " + height +";");
         selectedImage = path;
     }
 
     public void resizeImage(GridPane pane, double newWidth, double newHeight){
-        pane.setStyle("-fx-background-image: url('./game/background/images/" + selectedImage + "'); -fx-background-repeat: stretch; -fx-background-size: " + newWidth + " " + newHeight +";");
+        pane.setStyle("-fx-background-image: url('./game/background/" + selectedImage + "'); -fx-background-repeat: stretch; -fx-background-size: " + newWidth + " " + newHeight +";");
+    }
+
+    public void showSpacePort(GridPane pane){
+        String path = getClass().getResource("imagesSpacePort").getPath();
+        File file = new File(path);
+        files = new ArrayList<File>(Arrays.asList(file.listFiles()));
+        if(files == null || files.isEmpty() ){
+            return;
+        }
+
+        int size = files.size();
+        int index = 0 + (int)(Math.random() * size);
+        String path1 = "imagesSpacePort/" + files.get(index).getName();
+
+        double width = pane.getWidth();
+        double height = pane.getHeight();
+
+        pane.setStyle("-fx-background-image: url('./game/background/" + path1 + "'); -fx-background-repeat: stretch; -fx-background-size: " + width + " " + height +";");
+        selectedImage = path1;
     }
 
 }
