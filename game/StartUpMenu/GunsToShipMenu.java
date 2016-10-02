@@ -1,23 +1,16 @@
 package game.StartUpMenu;
 
 import game.GlobalVariables;
-import game.Placement;
+import game.shields.draggableShileds.DraggableSimpleShield;
 import game.ships.CommonShip;
-import game.weapons.CannonWeapon;
-import game.weapons.CommonWeapon;
 import game.weapons.draggableWeapons.DraggableCannon;
 import game.weapons.draggableWeapons.DraggableDoubleCannon;
 import javafx.geometry.HPos;
 import javafx.scene.control.Button;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 
 /**
  * Created by Kanto on 29.09.2016.
@@ -78,6 +71,7 @@ public class GunsToShipMenu {
         Pane pane = new Pane();
         DraggableCannon draggableCannon = new DraggableCannon(pane, ship.getPlacementPositions());
         DraggableDoubleCannon draggableDoubleCannon = new DraggableDoubleCannon(pane, ship.getPlacementPositions(), 100, 300);
+        DraggableSimpleShield draggableSimpleShield = new DraggableSimpleShield(pane, ship.getPlacementPositions());
         gunsToShipPane.add(pane, 0,1);
     }
     public GridPane getGunsToShipPane() {
@@ -93,6 +87,7 @@ public class GunsToShipMenu {
         if(!GlobalVariables.isEmpty(parent)){
             parent.getChildren().remove(gunsToShipPane);
         }
+        GlobalVariables.setIsShieldUp(false);
     }
 
     public CommonShip getShip() {

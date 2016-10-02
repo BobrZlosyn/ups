@@ -1,11 +1,11 @@
 package game.weapons.draggableWeapons;
 
-import game.CommonDraggableObject;
+import game.construction.CommonDraggableObject;
 import game.GlobalVariables;
-import game.Placement;
-import game.weapons.CannonWeapon;
+import game.construction.IShipEquipment;
+import game.construction.Placement;
 import game.weapons.CommonWeapon;
-import game.weapons.modelsWeapon.ModelCannon;
+import game.weapons.DoubleCannonWeapon;
 import game.weapons.modelsWeapon.ModelDoubleCannon;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -28,6 +28,8 @@ public class DraggableDoubleCannon extends CommonDraggableObject{
         ModelDoubleCannon model = createCannon(pane);
         addListeners(model, placements);
         model.setCannonXY(x, y);
+        xPosition = x;
+        yPosition = y;
     }
 
     private void init(){
@@ -66,8 +68,8 @@ public class DraggableDoubleCannon extends CommonDraggableObject{
 
         Placement bluePlace = findPosition( placements, event.getSceneX(), event.getY(),addX1, addX2, addY1, addY2);
         if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.isEmpty()){
-            CommonWeapon cannonWeapon = new CannonWeapon();
-            cannonWeapon.displayWeapon(bluePlace, false);
+            IShipEquipment cannonWeapon = new DoubleCannonWeapon();
+            cannonWeapon.displayEquipment(bluePlace, false);
             bluePlace.setIsEmpty(false);
             bluePlace.setCommonWeapon(cannonWeapon);
         }

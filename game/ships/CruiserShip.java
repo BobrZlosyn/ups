@@ -1,8 +1,8 @@
 package game.ships;
 
 import game.GlobalVariables;
-import game.IMarkableObject;
-import game.Placement;
+import game.construction.IMarkableObject;
+import game.construction.Placement;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -71,13 +71,21 @@ public class CruiserShip extends CommonShip implements IMarkableObject {
                 Pane parent = ((Pane)ship.getParent());
                 parent.getChildren().add(place);
 
-                place.setY(ship.getY() + size*j + 10*j + 25);
-                place.setX(ship.getX() + size*i + 10*i + 15);
-                shipMapping[i][j] = new Placement(place.getX(), place.getY(), place.getWidth());
+                place.setY(countY(size, j));
+                place.setX(countX(size, i));
+                shipMapping[i][j] = new Placement(place.getX(), place.getY(), place.getWidth(), this);
                 shipMapping[i][j].setField(place);
             }
         }
         setPlacements(shipMapping);
+    }
+
+    private double countX(double size, int i){
+        return ship.getX() + size*i + 10*i + 15;
+    }
+
+    private double countY(double size, int j){
+        return ship.getY() + size*j + 10*j + 25;
     }
 
     public Placement getPosition(int row, int column){
@@ -117,11 +125,50 @@ public class CruiserShip extends CommonShip implements IMarkableObject {
     public Placement getPlacement() {
         double middleX = ship.getX()+ ship.getHeight()/2;
         double middleY = ship.getY()+ ship.getWidth()/2;
-        return new Placement(middleX, middleY, ship.getWidth());
+        return new Placement(middleX, middleY, ship.getWidth(), this);
     }
 
     @Override
     public double getWidth() {
         return ship.getWidth();
+    }
+
+    @Override
+    public void resize(double widthStart, double widthEnd, double heightStart, double heightEnd){
+
+        double centerX = (widthEnd - widthStart)/2 + widthStart - ship.getWidth()/2;
+        double centerY = (heightEnd - heightStart)/2 + heightStart - ship.getHeight()/2;
+        ship.setX(centerX);
+        ship.setY(centerY);
+        Placement placements [][] = getPlacementPositions();
+
+        for(int i = 0; i < placements.length; i++){
+            for(int j = 0; j < placements[i].length; j++){
+                Placement placement = getPosition(i,j);
+                if(GlobalVariables.isEmpty(placement)){
+                    continue;
+                }
+
+                placement.resize(countX(placement.getSize(), i), countY(placement.getSize(), j));
+
+            }
+        }
+    }
+
+    @Override
+    public boolean containsPosition(double x, double y){
+        return ship.contains(x,y);
+    }
+
+    @Override
+    public double getCenterX(){
+        double middleX = ship.getX()+ ship.getHeight()/2;
+        return middleX ;
+    }
+
+    @Override
+    public double getCenterY(){
+        double middleY = ship.getY()+ ship.getWidth()/2;
+        return middleY;
     }
 }

@@ -1,8 +1,9 @@
 package game.weapons.draggableWeapons;
 
-import game.CommonDraggableObject;
+import game.construction.CommonDraggableObject;
 import game.GlobalVariables;
-import game.Placement;
+import game.construction.IShipEquipment;
+import game.construction.Placement;
 import game.weapons.CannonWeapon;
 import game.weapons.CommonWeapon;
 import game.weapons.modelsWeapon.ModelCannon;
@@ -58,8 +59,8 @@ public class DraggableCannon extends CommonDraggableObject{
 
         Placement bluePlace = findPosition( placements, event.getSceneX(), event.getY(),addX1, addX2, addY1, addY2);
         if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.isEmpty()){
-            CommonWeapon cannonWeapon = new CannonWeapon();
-            cannonWeapon.displayWeapon(bluePlace, false);
+            IShipEquipment cannonWeapon = new CannonWeapon();
+            cannonWeapon.displayEquipment(bluePlace, false);
             bluePlace.setIsEmpty(false);
             bluePlace.setCommonWeapon(cannonWeapon);
         }

@@ -1,16 +1,17 @@
 package game.weapons;
 
-import game.Placement;
+import game.construction.IShipEquipment;
+import game.construction.Placement;
 import game.construction.CommonConstruction;
+import game.shots.CommonShot;
 
 /**
  * Created by BobrZlosyn on 25.09.2016.
  */
-public class CommonWeapon extends CommonConstruction{
+public abstract class CommonWeapon extends CommonConstruction implements IShipEquipment{
     private int power;
     private int minStrength;
     private int maxStrength;
-    private boolean isEnemy;
 
     public CommonWeapon (String name, int life, int power, int minStrength, int maxStrength) {
         super(life, name);
@@ -18,10 +19,6 @@ public class CommonWeapon extends CommonConstruction{
         setMinStrength(minStrength);
         setMaxStrength(maxStrength);
         setIsEnemy(false);
-    }
-
-    public void setIsEnemy(boolean isEnemy) {
-        this.isEnemy = isEnemy;
     }
 
     public void setPower(int power) {
@@ -48,16 +45,6 @@ public class CommonWeapon extends CommonConstruction{
         return maxStrength;
     }
 
-    public boolean isEnemy() {
-        return isEnemy;
-    }
-
-    public void displayWeapon(Placement position, boolean isEnemy) {
-
-    }
-
-    public void rotateWeapon(double x, double y){
-
-    }
+    public abstract CommonShot getShot(CommonConstruction target, int damage);
 
 }

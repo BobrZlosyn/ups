@@ -1,5 +1,6 @@
 package game;
 
+import game.ships.CommonShip;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,12 +22,15 @@ public class Controls {
     private ProgressBar shipIntegrityProgress, shipPowerProgress;
     private Label life, power;
     private Button settings;
-    public Controls(){
-        createProgress();
+    public Controls(CommonShip userShip, CommonShip enemyShip){
+        createProgress(userShip);
     }
 
-    private void createProgress(){
+    private void createProgress(CommonShip userShip){
+
         shipIntegrityProgress = new ProgressBar(0.5);
+        shipIntegrityProgress.progressProperty().bind(userShip.getActualLifeBinding());
+
         shipPowerProgress = new ProgressBar(0.5);
         life = new Label("INTEGRITA TRUPU");
         power = new Label("ZBYLÁ ENERGIE");

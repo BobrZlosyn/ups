@@ -1,5 +1,7 @@
 package game;
 
+import game.construction.CommonConstruction;
+import game.construction.Placement;
 import game.weapons.CommonWeapon;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -38,7 +40,6 @@ public class BottomPanel {
 
     private void createButtonSend(Button sendOrders){
         sendOrders.setText("DÁT ROZKAZ K ÚTOKU");
-
         sendOrders.setMaxWidth(Double.MAX_VALUE);
         sendOrders.setMaxHeight(Double.MAX_VALUE);
 
@@ -55,6 +56,16 @@ public class BottomPanel {
         lifeLabel.setAlignment(Pos.CENTER);
         lifeProgress.visibleProperty().bind(GlobalVariables.isSelected);
         lifeLabel.visibleProperty().bind(GlobalVariables.isSelected);
+
+        //nastavi binding na zivot kliknuteho objektu nebo binding odstrani
+        lifeProgress.visibleProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue.booleanValue()){
+                CommonConstruction construction = ((CommonConstruction) GlobalVariables.getMarkedObject());
+                lifeProgress.progressProperty().bind(construction.getActualLifeBinding());
+            }else {
+                lifeProgress.progressProperty().unbind();
+            }
+        });
     }
 
     private void createButtonTargeting(){
@@ -74,7 +85,7 @@ public class BottomPanel {
                 if(!GlobalVariables.isEmpty(GlobalVariables.getTargetObject())){
                     CommonWeapon weapon = (CommonWeapon) GlobalVariables.getMarkedObject();
                     Placement place = GlobalVariables.getTargetObject().getPlacement();
-                    weapon.rotateWeapon(place.getX(), place.getY());
+                    weapon.rotateEquipment(place.getX(), place.getY());
                 }
 
                 setTarget = false;

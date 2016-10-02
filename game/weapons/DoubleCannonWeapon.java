@@ -1,9 +1,12 @@
 package game.weapons;
 
 import game.GlobalVariables;
-import game.IMarkableObject;
-import game.Placement;
-import game.weapons.modelsWeapon.ModelCannon;
+import game.construction.CommonConstruction;
+import game.construction.IMarkableObject;
+import game.construction.Placement;
+import game.shots.CommonShot;
+import game.shots.DoubleBallShot;
+import game.weapons.modelsWeapon.ModelDoubleCannon;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
@@ -13,7 +16,7 @@ import javafx.scene.transform.Rotate;
  * Created by Kanto on 30.09.2016.
  */
 public class DoubleCannonWeapon extends CommonWeapon implements IMarkableObject {
-    private ModelCannon modelDoubleCannon;
+    private ModelDoubleCannon modelDoubleCannon;
     private boolean isMark;
 
     public DoubleCannonWeapon() {
@@ -31,7 +34,7 @@ public class DoubleCannonWeapon extends CommonWeapon implements IMarkableObject 
     }
 
     private void createCannon() {
-        modelDoubleCannon = new ModelCannon();
+        modelDoubleCannon = new ModelDoubleCannon();
         modelDoubleCannon.getParts().forEach(shape -> {
             markCannon(shape);
         });
@@ -41,7 +44,6 @@ public class DoubleCannonWeapon extends CommonWeapon implements IMarkableObject 
     private void markCannon(Shape shape){
         shape.setOnMouseClicked(event -> {
             if(GlobalVariables.isTargeting){
-
                 target();
                 return;
             }
@@ -55,7 +57,7 @@ public class DoubleCannonWeapon extends CommonWeapon implements IMarkableObject 
     }
 
     @Override
-    public void displayWeapon(Placement position, boolean isEnemy) {
+    public void displayEquipment(Placement position, boolean isEnemy) {
         double x = position.getX();
         double y = position.getY();
         double width = position.getSize();
@@ -70,13 +72,17 @@ public class DoubleCannonWeapon extends CommonWeapon implements IMarkableObject 
         modelDoubleCannon.getHead().setCenterX(x + width/2);
         modelDoubleCannon.getHead().setCenterY(y + width/2);
 
+
         if(isEnemy()){
-            modelDoubleCannon.getCannon().setX(x - 5);
+            modelDoubleCannon.getCannonTop().setX(x - 5);
+            modelDoubleCannon.getCannonBottom().setX(x - 5);
         }else {
-            modelDoubleCannon.getCannon().setX(x + width/2);
+            modelDoubleCannon.getCannonTop().setX(x + width/2 );
+            modelDoubleCannon.getCannonBottom().setX(x + width/2 );
         }
 
-        modelDoubleCannon.getCannon().setY(y + width/2 - modelDoubleCannon.getCannon().getHeight()/2);
+        modelDoubleCannon.getCannonTop().setY(y + width/2 - modelDoubleCannon.getCannonTop().getHeight()/2 - 5);
+        modelDoubleCannon.getCannonBottom().setY(y + width/2 - modelDoubleCannon.getCannonBottom().getHeight()/2 + 5);
         Pane gameArea = (Pane) position.getField().getParent();
         gameArea.getChildren().addAll(modelDoubleCannon.getParts());
         position.setIsEmpty(false);
@@ -126,25 +132,40 @@ public class DoubleCannonWeapon extends CommonWeapon implements IMarkableObject 
 
     @Override
     public Placement getPlacement() {
-        return new Placement(modelDoubleCannon.getRoom().getCenterX(), modelDoubleCannon.getRoom().getCenterY(), modelDoubleCannon.getRoom().getRadius());
+        return new Placement(modelDoubleCannon.getRoom().getCenterX(), modelDoubleCannon.getRoom().getCenterY(), modelDoubleCannon.getRoom().getRadius(), null);
     }
 
     @Override
-    public void rotateWeapon(double x, double y) {
-        double centerX = modelDoubleCannon.getRoom().getCenterX();
-        double countCx = (x - centerX)*(x - centerX);
-        double countAx = (x - centerX)*(x - centerX);
-        double countAy = (y - centerX)*(y - centerX);
-        double sideC = Math.sqrt(countCx);
-        double sideA = Math.sqrt(countAx + countAy);
-
-        double cosinus = Math.toDegrees(Math.acos(sideC / sideA));
+    public void rotateEquipment(double x, double y) {
+        Rotate rotation = calculationForRotation(x, y, getCenterX(), getCenterY(), isEnemy());
 
         if(isEnemy()){
-            modelDoubleCannon.getCannon().getTransforms().add(new Rotate(cosinus, centerX, modelDoubleCannon.getRoom().getCenterY()));
+            modelDoubleCannon.getCannonTop().getTransforms().add(rotation);
+            modelDoubleCannon.getCannonBottom().getTransforms().add(rotation);
         }else{
-            modelDoubleCannon.getCannon().getTransforms().add(new Rotate(-cosinus, centerX, modelDoubleCannon.getRoom().getCenterY()));
+            modelDoubleCannon.getCannonTop().getTransforms().add(rotation);
+            modelDoubleCannon.getCannonBottom().getTransforms().add(rotation);
         }
+    }
 
+    @Override
+    public boolean containsPosition(double x, double y){
+        return modelDoubleCannon.getRoom().contains(x, y);
+    }
+
+
+    @Override
+    public double getCenterX(){
+        return modelDoubleCannon.getRoom().getCenterX();
+    }
+
+    @Override
+    public double getCenterY(){
+        return modelDoubleCannon.getRoom().getCenterY();
+    }
+
+    @Override
+    public CommonShot getShot(CommonConstruction target, int damage) {
+        return new DoubleBallShot(target, this, damage);
     }
 }

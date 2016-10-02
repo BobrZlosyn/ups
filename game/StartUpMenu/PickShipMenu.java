@@ -39,6 +39,8 @@ public class PickShipMenu {
         createTitleLabel();
         fillPickingPane();
         marginInPickingPane();
+        resize();
+        battleShip.fire();
     }
 
     private void createTitleLabel(){
@@ -153,6 +155,14 @@ public class PickShipMenu {
         pickship.setMargin(cruiserShip, new Insets(5,5,5,5));
     }
 
+    public Button getBattleShip() {
+        return battleShip;
+    }
+
+    public Button getCruiserShip() {
+        return cruiserShip;
+    }
+
     public GridPane getPickship() {
         return pickship;
     }
@@ -170,5 +180,23 @@ public class PickShipMenu {
         if(!GlobalVariables.isEmpty(parent)){
             parent.getChildren().remove(pickship);
         }
+    }
+
+    private void resize(){
+        showArea.widthProperty().addListener((observable, oldValue, newValue) -> {
+            if(GlobalVariables.isEmpty(choosenShip)){
+                return;
+            }
+
+            choosenShip.resize(0, newValue.intValue(), 0, showArea.getHeight());
+        });
+
+        showArea.heightProperty().addListener((observable, oldValue, newValue) -> {
+            if(GlobalVariables.isEmpty(choosenShip)){
+                return;
+            }
+
+            choosenShip.resize(0, showArea.getWidth(), 0, newValue.intValue());
+        });
     }
 }

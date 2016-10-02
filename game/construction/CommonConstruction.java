@@ -1,30 +1,93 @@
 package game.construction;
 
+import javafx.beans.property.SimpleDoubleProperty;
+
 /**
  * Created by BobrZlosyn on 28.09.2016.
  */
 public class CommonConstruction {
-    private int life;
+    private SimpleDoubleProperty totalLife;
     private String name;
+    private boolean isEnemy;
+    private SimpleDoubleProperty actualLife;
+    private SimpleDoubleProperty actualLifeBinding;
 
-    public CommonConstruction(int life, String name){
+    public CommonConstruction(int totalLife, String name){
         setName(name);
-        setLife(life);
+        this.totalLife = new SimpleDoubleProperty(totalLife);
+        this.actualLife = new SimpleDoubleProperty(totalLife);
+        this.actualLifeBinding = new SimpleDoubleProperty(1);
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setLife(int life) {
-        this.life = life;
+    public void setTotalLife(double totalLife) {
+        this.totalLife.set(totalLife);
+    }
+
+    public void setActualLife(double actualLife) {
+        this.actualLife.set(actualLife);
+    }
+
+    public void setActualLifeBinding(double actualLifeBinding) {
+        this.actualLifeBinding.set(actualLifeBinding);
+    }
+
+    public void setIsEnemy(boolean isEnemy) {
+        this.isEnemy = isEnemy;
     }
 
     public String getName() {
         return name;
     }
 
-    public int getLife() {
-        return life;
+    public SimpleDoubleProperty getTotalLife() {
+        return totalLife;
+    }
+
+    public SimpleDoubleProperty getActualLifeBinding() {
+        return actualLifeBinding;
+    }
+
+    public boolean isEnemy() {
+        return isEnemy;
+    }
+
+    public double getActualLife() {
+        return actualLife.get()/totalLife.get();
+    }
+
+    public void takeDamage(int damage){
+        double life = getTotalLife().get() - damage;
+        if(life > 0){
+            setActualLife(life);
+            setActualLifeBinding(getActualLife());
+        }else {
+            setActualLife(0);
+            setActualLifeBinding(0);
+        }
+    }
+
+    public void destroy(){
+        setActualLife(0);
+        setActualLifeBinding(0);
+    }
+
+    public void resize(double widthStart, double widthEnd, double heightStart, double heightEnd){
+        return;
+    }
+
+    public boolean containsPosition(double x, double y){
+        return false;
+    }
+
+    public double getCenterX(){
+        return 0;
+    }
+
+    public double getCenterY(){
+        return 0;
     }
 }

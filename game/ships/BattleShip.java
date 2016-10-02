@@ -1,9 +1,8 @@
 package game.ships;
 
 import game.GlobalVariables;
-import game.IMarkableObject;
-import game.Placement;
-import javafx.scene.control.ProgressBar;
+import game.construction.IMarkableObject;
+import game.construction.Placement;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -84,14 +83,22 @@ public class BattleShip extends CommonShip implements IMarkableObject {
                 Pane parent = ((Pane)ship.getParent());
                 parent.getChildren().add(place);
 
-                place.setY(ship.getCenterY() - radius + size*j + 10*j + 35);
-                place.setX(ship.getCenterX() - radius + size*i + 15*i + 30);
-                shipMapping[i][j] = new Placement(place.getX(), place.getY(), place.getWidth());
+                place.setY(countY(radius, size, j));
+                place.setX(countX(radius, size, i));
+                shipMapping[i][j] = new Placement(place.getX(), place.getY(), place.getWidth(), this);
                 shipMapping[i][j].setField(place);
             }
 
         }
         setPlacements(shipMapping);
+    }
+
+    private double countX(double radius, double size, int i){
+        return ship.getCenterX() - radius + size*i + 15*i + 30;
+    }
+
+    private double countY(double radius, double size, int j){
+        return ship.getCenterY() - radius + size*j + 10*j + 35;
     }
 
     public Placement getPosition(int row, int column){
@@ -143,7 +150,43 @@ public class BattleShip extends CommonShip implements IMarkableObject {
 
     @Override
     public Placement getPlacement() {
-        return new Placement(ship.getCenterX(), ship.getCenterY(), ship.getRadius());
+        return new Placement(ship.getCenterX(), ship.getCenterY(), ship.getRadius(), this);
     }
 
+    @Override
+    public void resize(double widthStart, double widthEnd, double heightStart, double heightEnd){
+
+        double centerX = (widthEnd - widthStart)/2 + widthStart;
+        double centerY = (heightEnd - heightStart)/2 + heightStart;
+        ship.setCenterX(centerX);
+        ship.setCenterY(centerY);
+        Placement placements [][] = getPlacementPositions();
+
+        for(int i = 0; i < placements.length; i++){
+            for(int j = 0; j < placements[i].length; j++){
+                Placement placement = getPosition(i,j);
+                if(GlobalVariables.isEmpty(placement)){
+                    continue;
+                }
+
+                placement.resize(countX(ship.getRadius(), placement.getSize(), i), countY(ship.getRadius(), placement.getSize(), j));
+
+            }
+        }
+
+    }
+    @Override
+    public boolean containsPosition(double x, double y){
+        return ship.contains(x,y);
+    }
+
+    @Override
+    public double getCenterX(){
+        return ship.getCenterX();
+    }
+
+    @Override
+    public double getCenterY(){
+        return ship.getCenterY();
+    }
 }

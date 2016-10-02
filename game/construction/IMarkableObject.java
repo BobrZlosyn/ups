@@ -1,4 +1,4 @@
-package game;
+package game.construction;
 
 /**
  * Created by BobrZlosyn on 28.09.2016.

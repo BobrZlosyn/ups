@@ -1,5 +1,6 @@
 package game;
 
+import game.construction.IMarkableObject;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 
@@ -13,6 +14,7 @@ public class GlobalVariables {
     public static boolean isTargeting = false;
     public static SimpleBooleanProperty canTarget = new SimpleBooleanProperty(false);
     public static SimpleBooleanProperty isSelected = new SimpleBooleanProperty(false);
+    private static boolean isShieldUp = false;
 
     public static void setMarkedObject(IMarkableObject markedObject) {
         if(!isEmpty(markedObject) && !isEmpty(GlobalVariables.markedObject)){
@@ -47,6 +49,10 @@ public class GlobalVariables {
         GlobalVariables.isTargeting = isTargeting;
     }
 
+    public static void setIsShieldUp(boolean isShieldUp) {
+        GlobalVariables.isShieldUp = isShieldUp;
+    }
+
     public static void setCanTarget(boolean canTarget) {
         GlobalVariables.canTarget.set(canTarget);
     }
@@ -77,5 +83,9 @@ public class GlobalVariables {
 
     public static boolean isEmpty(Object object){
         return object == null;
+    }
+
+    public static boolean isShieldUp() {
+        return isShieldUp;
     }
 }

@@ -1,12 +1,10 @@
 package game.ships;
 
 import game.GlobalVariables;
-import game.Placement;
+import game.construction.IShipEquipment;
+import game.construction.Placement;
 import game.construction.CommonConstruction;
-import game.weapons.CannonWeapon;
-import game.weapons.CommonWeapon;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Rectangle;
 
 /**
  * Created by BobrZlosyn on 25.09.2016.
@@ -20,12 +18,18 @@ public class CommonShip extends CommonConstruction {
     private boolean isEnemy;
     private final int type;
     private Placement [][] placements;
+    private int shieldLife;
 
     public CommonShip (String name, int life, int power, boolean isEnemy, int type) {
         super(life, name);
         setPower(power);
         setIsEnemy(isEnemy);
         this.type = type;
+        setShieldLife(0);
+    }
+
+    public void setShieldLife(int shieldLife) {
+        this.shieldLife = shieldLife;
     }
 
     public void setIsEnemy(boolean isEnemy) {
@@ -48,11 +52,25 @@ public class CommonShip extends CommonConstruction {
         return isEnemy;
     }
 
+    public int getShieldLife() {
+        return shieldLife;
+    }
+
     public void displayShip(Pane gameArea){
         // it should be empty
     }
 
     public void positionOfShip(double x, double y, Pane gameArea){
+    }
+
+    public void damageToShield(int damage){
+        int newShieldLife = getShieldLife() - damage;
+        if(newShieldLife > 0){
+            setShieldLife(newShieldLife);
+        }else {
+            setShieldLife(0);
+        }
+
     }
 
     public void fillShipWithEquipment(CommonShip ship, Placement [][] oldShipPlacements){
@@ -62,13 +80,14 @@ public class CommonShip extends CommonConstruction {
                 if(place == null || place.isEmpty()){
                     continue;
                 }
-                CommonWeapon commonWeapon = place.getCommonWeapon();
-                if(GlobalVariables.isEmpty(commonWeapon)){
+                IShipEquipment shipEquipment = place.getShipEquipment();
+                if(GlobalVariables.isEmpty(shipEquipment)){
                     continue;
                 }
+
+                shipEquipment.displayEquipment(placements[i][j], ship.isEnemy());
                 placements[i][j].setIsEmpty(false);
-                placements[i][j].setCommonWeapon(commonWeapon);
-                commonWeapon.displayWeapon(placements[i][j], ship.isEnemy());
+                placements[i][j].setCommonWeapon(shipEquipment);
             }
         }
     }

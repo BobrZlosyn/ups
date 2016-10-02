@@ -1,6 +1,5 @@
-package game;
-
-import game.weapons.CommonWeapon;
+package game.construction;
+import game.ships.CommonShip;
 import javafx.scene.shape.Rectangle;
 
 /**
@@ -11,13 +10,15 @@ public class Placement {
     private boolean isEmpty;
     private double x, y, size;
     private Rectangle field;
-    private CommonWeapon commonWeapon;
+    private IShipEquipment equipment;
+    private CommonShip ship;
 
-    public Placement (double x, double y, double size) {
+    public Placement (double x, double y, double size, CommonShip ship) {
         setX(x);
         setY(y);
         setSize(size);
         setIsEmpty(true);
+        this.ship = ship;
     }
 
     public void setField(Rectangle field) {
@@ -40,8 +41,8 @@ public class Placement {
         this.y = y;
     }
 
-    public void setCommonWeapon(CommonWeapon commonWeapon) {
-        this.commonWeapon = commonWeapon;
+    public void setCommonWeapon(IShipEquipment equipment) {
+        this.equipment = equipment;
     }
 
     public double getY() {
@@ -64,7 +65,18 @@ public class Placement {
         return field;
     }
 
-    public CommonWeapon getCommonWeapon() {
-        return commonWeapon;
+    public IShipEquipment getShipEquipment() {
+        return equipment;
+    }
+
+    public CommonShip getShip() {
+        return ship;
+    }
+
+    public void resize(double x, double y){
+        field.setX(x);
+        field.setY(y);
+        setX(x);
+        setY(y);
     }
 }
