@@ -2,23 +2,31 @@ package game.shields.draggableShileds;
 
 import game.construction.CommonDraggableObject;
 import game.GlobalVariables;
+import game.construction.CommonModel;
 import game.construction.IShipEquipment;
 import game.construction.Placement;
 import game.shields.SimpleShield;
-import game.shields.shieldModels.ModelSimpleShield;
+import game.shields.shieldModels.SimpleShieldModel;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 
 /**
  * Created by BobrZlosyn on 01.10.2016.
  */
 public class DraggableSimpleShield extends CommonDraggableObject {
-    private double xPosition, yPosition, addX1, addX2, addY1, addY2;
 
     public DraggableSimpleShield(Pane pane, Placement[][] placements){
         init();
-        ModelSimpleShield model = createShield(pane);
+        CommonModel model = createModel(pane, new SimpleShieldModel());
         addListeners(model, placements);
+    }
+
+    public DraggableSimpleShield(Pane pane, Placement[][] placements, boolean isInPlace, Placement placement){
+        modelInPlace = createModel(pane, new SimpleShieldModel());
+        super.isInPlace = isInPlace;
+        super.placement = placement;
+        addListeners(modelInPlace, placements);
     }
 
     private void init(){
@@ -30,44 +38,59 @@ public class DraggableSimpleShield extends CommonDraggableObject {
         addY2 = 30;
     }
 
-    private  ModelSimpleShield createShield(Pane area){
-        ModelSimpleShield simpleShield = new  ModelSimpleShield();
-        simpleShield.setShieldXY(xPosition, yPosition);
-
-        area.getChildren().addAll(simpleShield.getParts());
-        return simpleShield;
-
-    }
-
-    private void addListeners(ModelSimpleShield modelSimpleShield, Placement[][] placements){
-        modelSimpleShield.getParts().forEach(shape -> {
-            shape.setOnMouseDragged(event -> {
-                moveObject(event, modelSimpleShield, placements);
-            });
-        });
-
-        modelSimpleShield.getParts().forEach(shape -> {
-            shape.setOnMouseReleased(event -> {
-                isDragSuccesful(event, modelSimpleShield, placements);
-            });
-        });
-    }
-
-    private void isDragSuccesful(MouseEvent event, ModelSimpleShield modelSimpleShield, Placement [][] placements){
+    protected void isDragSuccesful(MouseEvent event, CommonModel commonModel, Placement [][] placements){
 
         Placement bluePlace = findPosition( placements, event.getSceneX(), event.getY(),addX1, addX2, addY1, addY2);
         if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.isEmpty()){
-            IShipEquipment simpleShield = new SimpleShield();
-            simpleShield.displayEquipment(bluePlace, false);
+            Pane showArea = ((Pane)bluePlace.getField().getParent());
+            DraggableSimpleShield simpleShield = new DraggableSimpleShield(showArea, bluePlace.getShip().getPlacementPositions(), true, bluePlace);
+            double x = bluePlace.getX();
+            double y = bluePlace.getY();
+
+            simpleShield.getModel().setModelXY(x, y);
             bluePlace.setIsEmpty(false);
-            bluePlace.setCommonWeapon(simpleShield);
+            bluePlace.setShipEquipment(simpleShield);
         }
 
-        modelSimpleShield.setShieldXY(xPosition, yPosition);
+        commonModel.setModelXY(xPosition, yPosition);
     }
 
-    private void moveObject(MouseEvent event, ModelSimpleShield modelSimpleShield, Placement [][] placements){
-        modelSimpleShield.setShieldXY(event.getSceneX(), event.getY());
-        findPosition(placements, event.getSceneX(), event.getY(),addX1, addX2, addY1, addY2);
+    @Override
+    protected void moveToAnotherPlace(MouseEvent event, CommonModel commonModel, Placement[][] placements) {
+        Placement bluePlace = findPosition( placements, event.getX(), event.getY(),addX1, addX2, addY1, addY2);
+
+        if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.getRow() == placement.getRow() && bluePlace.getColumn() == placement.getColumn()){
+            double x = bluePlace.getX();
+            double y = bluePlace.getY();
+            commonModel.setModelXY(x, y);
+
+            return;
+        }
+
+        if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.isEmpty()){
+
+            //mazani stareho
+            placement.setIsEmpty(true);
+            placement.setShipEquipment(null);
+            placement.getField().setFill(Color.WHITE);
+
+            double x = bluePlace.getX();
+            double y = bluePlace.getY();
+            commonModel.setModelXY(x, y);
+
+            //pridani noveho
+            placement = bluePlace;
+            placement.setIsEmpty(false);
+            placement.setShipEquipment(this);
+
+
+        }else{
+            removeObject();
+        }
+    }
+
+    @Override
+    public IShipEquipment getObject() {
+        return new SimpleShield();
     }
 }

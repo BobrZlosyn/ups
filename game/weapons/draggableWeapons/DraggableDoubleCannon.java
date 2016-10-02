@@ -1,35 +1,35 @@
 package game.weapons.draggableWeapons;
 
-import game.construction.CommonDraggableObject;
+import game.construction.*;
 import game.GlobalVariables;
-import game.construction.IShipEquipment;
-import game.construction.Placement;
-import game.weapons.CommonWeapon;
 import game.weapons.DoubleCannonWeapon;
 import game.weapons.modelsWeapon.ModelDoubleCannon;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 
 /**
  * Created by BobrZlosyn on 30.09.2016.
  */
 public class DraggableDoubleCannon extends CommonDraggableObject{
 
-    private double xPosition, yPosition, addX1, addX2, addY1, addY2;
-
-    public DraggableDoubleCannon(Pane pane, Placement[][] placements){
-        init();
-        ModelDoubleCannon model = createCannon(pane);
-        addListeners(model, placements);
+    public DraggableDoubleCannon(Pane pane, Placement[][] placements, boolean isInPlace, Placement placement){
+       // init();
+        modelInPlace = createModel(pane, new ModelDoubleCannon());
+        super.isInPlace = isInPlace;
+        super.placement = placement;
+        addListeners(modelInPlace, placements);
     }
 
     public DraggableDoubleCannon(Pane pane, Placement[][] placements, double x, double y){
         init();
-        ModelDoubleCannon model = createCannon(pane);
-        addListeners(model, placements);
-        model.setCannonXY(x, y);
+        CommonModel model = createModel(pane, new ModelDoubleCannon());
+        model.setModelXY(x, y);
         xPosition = x;
         yPosition = y;
+        super.isInPlace = false;
+        super.placement = null;
+        addListeners(model, placements);
     }
 
     private void init(){
@@ -41,45 +41,59 @@ public class DraggableDoubleCannon extends CommonDraggableObject{
         addY2 = 10;
     }
 
-    private ModelDoubleCannon createCannon(Pane area){
-        ModelDoubleCannon modelCannon = new ModelDoubleCannon();
-        modelCannon.setCannonXY(xPosition,yPosition);
-
-        area.getChildren().addAll(modelCannon.getParts());
-        return modelCannon;
-
+    @Override
+    public IShipEquipment getObject() {
+        return new DoubleCannonWeapon();
     }
 
-    private void addListeners(ModelDoubleCannon modelCannon, Placement[][] placements){
-        modelCannon.getParts().forEach(shape -> {
-            shape.setOnMouseDragged(event -> {
-                moveObject(event, modelCannon, placements);
-            });
-        });
-
-        modelCannon.getParts().forEach(shape -> {
-            shape.setOnMouseReleased(event -> {
-                isDragSuccesful(event, modelCannon, placements);
-            });
-        });
-    }
-
-    private void isDragSuccesful(MouseEvent event, ModelDoubleCannon modelCannon, Placement [][] placements){
-
+    @Override
+    protected void isDragSuccesful(MouseEvent event, CommonModel commonModel, Placement[][] placements) {
         Placement bluePlace = findPosition( placements, event.getSceneX(), event.getY(),addX1, addX2, addY1, addY2);
         if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.isEmpty()){
-            IShipEquipment cannonWeapon = new DoubleCannonWeapon();
-            cannonWeapon.displayEquipment(bluePlace, false);
+            Pane showArea = ((Pane)bluePlace.getField().getParent());
+            DraggableDoubleCannon draggableDoubleCannon = new DraggableDoubleCannon(showArea, bluePlace.getShip().getPlacementPositions(), true, bluePlace);
+            double x = bluePlace.getX() + bluePlace.getSize()/2;
+            double y = bluePlace.getY() + bluePlace.getSize()/2;
+
+            draggableDoubleCannon.getModel().setModelXY(x, y);
             bluePlace.setIsEmpty(false);
-            bluePlace.setCommonWeapon(cannonWeapon);
+            bluePlace.setShipEquipment(draggableDoubleCannon);
         }
 
-        modelCannon.setCannonXY(xPosition, yPosition);
+        commonModel.setModelXY(xPosition, yPosition);
     }
 
-    private void moveObject(MouseEvent event, ModelDoubleCannon modelCannon, Placement [][] placements){
-        modelCannon.setCannonXY(event.getSceneX(), event.getY());
-        findPosition(placements, event.getSceneX(), event.getY(),addX1, addX2, addY1, addY2);
-    }
+    @Override
+    protected void moveToAnotherPlace(MouseEvent event, CommonModel commonModel, Placement[][] placements) {
+        Placement bluePlace = findPosition( placements, event.getX(), event.getY(),addX1, addX2, addY1, addY2);
 
+        if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.getRow() == placement.getRow() && bluePlace.getColumn() == placement.getColumn()){
+            double x = bluePlace.getX() + bluePlace.getSize()/2;
+            double y = bluePlace.getY() + bluePlace.getSize()/2;
+            commonModel.setModelXY(x, y);
+
+            return;
+        }
+
+        if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.isEmpty()){
+
+            //mazani stareho
+            placement.setIsEmpty(true);
+            placement.setShipEquipment(null);
+            placement.getField().setFill(Color.WHITE);
+
+            double x = bluePlace.getX() + bluePlace.getSize()/2;
+            double y = bluePlace.getY() + bluePlace.getSize()/2;
+            commonModel.setModelXY(x, y);
+
+            //pridani noveho
+            placement = bluePlace;
+            placement.setIsEmpty(false);
+            placement.setShipEquipment(this);
+
+
+        }else{
+            removeObject();
+        }
+    }
 }

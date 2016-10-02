@@ -15,7 +15,7 @@ import javafx.scene.transform.Rotate;
 /**
  * Created by Kanto on 30.09.2016.
  */
-public class DoubleCannonWeapon extends CommonWeapon implements IMarkableObject {
+public class DoubleCannonWeapon extends CommonWeapon{
     private ModelDoubleCannon modelDoubleCannon;
     private boolean isMark;
 
@@ -86,6 +86,7 @@ public class DoubleCannonWeapon extends CommonWeapon implements IMarkableObject 
         Pane gameArea = (Pane) position.getField().getParent();
         gameArea.getChildren().addAll(modelDoubleCannon.getParts());
         position.setIsEmpty(false);
+        position.setIsWeapon(true);
     }
 
     @Override
@@ -116,6 +117,10 @@ public class DoubleCannonWeapon extends CommonWeapon implements IMarkableObject 
 
     @Override
     public void target() {
+        if(!isEnemy()){
+            return;
+        }
+
         modelDoubleCannon.getParts().forEach(shape -> {
             shape.setStroke(Color.RED);
             shape.setStrokeWidth(1.5);
@@ -131,13 +136,11 @@ public class DoubleCannonWeapon extends CommonWeapon implements IMarkableObject 
     }
 
     @Override
-    public Placement getPlacement() {
-        return new Placement(modelDoubleCannon.getRoom().getCenterX(), modelDoubleCannon.getRoom().getCenterY(), modelDoubleCannon.getRoom().getRadius(), null);
-    }
-
-    @Override
     public void rotateEquipment(double x, double y) {
         Rotate rotation = calculationForRotation(x, y, getCenterX(), getCenterY(), isEnemy());
+        double angleNew = rotation.getAngle() - getAngle();
+        rotation.setAngle(angleNew);
+        setAngle(angleNew);
 
         if(isEnemy()){
             modelDoubleCannon.getCannonTop().getTransforms().add(rotation);

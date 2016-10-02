@@ -32,6 +32,7 @@ public class GunsToShipMenu {
         createNextButton();
         createShowArea();
         fillGunsToShipPane();
+        resize();
     }
 
     private void createNextButton(){
@@ -68,6 +69,7 @@ public class GunsToShipMenu {
         gunsToShipPane.add(next, 1,2);
         gunsToShipPane.add(showArea,1,1);
         ship.positionOfShip(ship.getX(), ship.getY(), showArea);
+
         Pane pane = new Pane();
         DraggableCannon draggableCannon = new DraggableCannon(pane, ship.getPlacementPositions());
         DraggableDoubleCannon draggableDoubleCannon = new DraggableDoubleCannon(pane, ship.getPlacementPositions(), 100, 300);
@@ -92,5 +94,17 @@ public class GunsToShipMenu {
 
     public CommonShip getShip() {
         return ship;
+    }
+
+
+    private void resize(){
+        showArea.widthProperty().addListener((observable, oldValue, newValue) -> {
+
+            ship.resize(0, newValue.intValue(), 0, showArea.getHeight());
+        });
+
+        showArea.heightProperty().addListener((observable, oldValue, newValue) -> {
+            ship.resize(0, showArea.getWidth(), 0, newValue.intValue());
+        });
     }
 }

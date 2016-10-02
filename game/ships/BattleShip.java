@@ -3,6 +3,7 @@ package game.ships;
 import game.GlobalVariables;
 import game.construction.IMarkableObject;
 import game.construction.Placement;
+import game.weapons.CommonWeapon;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -11,7 +12,7 @@ import javafx.scene.shape.Rectangle;
 /**
  * Created by Kanto on 26.09.2016.
  */
-public class BattleShip extends CommonShip implements IMarkableObject {
+public class BattleShip extends CommonShip{
     private Circle ship;
     private boolean isMarked;
 
@@ -42,6 +43,14 @@ public class BattleShip extends CommonShip implements IMarkableObject {
             }
         });
 
+    }
+
+    @Override
+    public void setShieldConstants() {
+        setShieldAddX(150);
+        setShieldAddY(0);
+        setShieldRadiusX(50);
+        setShieldRadiusY(180);
     }
 
     public void displayShip(Pane gameArea){
@@ -85,7 +94,7 @@ public class BattleShip extends CommonShip implements IMarkableObject {
 
                 place.setY(countY(radius, size, j));
                 place.setX(countX(radius, size, i));
-                shipMapping[i][j] = new Placement(place.getX(), place.getY(), place.getWidth(), this);
+                shipMapping[i][j] = new Placement(place.getX(), place.getY(), place.getWidth(), this, i, j);
                 shipMapping[i][j].setField(place);
             }
 
@@ -125,7 +134,9 @@ public class BattleShip extends CommonShip implements IMarkableObject {
 
     @Override
     public void target() {
-
+        if(!isEnemy()){
+            return;
+        }
     }
 
     @Override
@@ -150,7 +161,7 @@ public class BattleShip extends CommonShip implements IMarkableObject {
 
     @Override
     public Placement getPlacement() {
-        return new Placement(ship.getCenterX(), ship.getCenterY(), ship.getRadius(), this);
+        return new Placement(ship.getCenterX(), ship.getCenterY(), ship.getRadius(), this, -1, -1);
     }
 
     @Override
@@ -173,8 +184,8 @@ public class BattleShip extends CommonShip implements IMarkableObject {
 
             }
         }
-
     }
+
     @Override
     public boolean containsPosition(double x, double y){
         return ship.contains(x,y);

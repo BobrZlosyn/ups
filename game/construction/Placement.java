@@ -12,13 +12,22 @@ public class Placement {
     private Rectangle field;
     private IShipEquipment equipment;
     private CommonShip ship;
+    private boolean isWeapon;
+    private int row, column;
 
-    public Placement (double x, double y, double size, CommonShip ship) {
+    public Placement (double x, double y, double size, CommonShip ship, int row, int column) {
         setX(x);
         setY(y);
         setSize(size);
         setIsEmpty(true);
+        setIsWeapon(false);
         this.ship = ship;
+        this.row = row;
+        this.column = column;
+    }
+
+    public void setIsWeapon(boolean isWeapon) {
+        this.isWeapon = isWeapon;
     }
 
     public void setField(Rectangle field) {
@@ -41,7 +50,7 @@ public class Placement {
         this.y = y;
     }
 
-    public void setCommonWeapon(IShipEquipment equipment) {
+    public void setShipEquipment(IShipEquipment equipment) {
         this.equipment = equipment;
     }
 
@@ -59,6 +68,18 @@ public class Placement {
 
     public boolean isEmpty() {
         return isEmpty;
+    }
+
+    public boolean isWeapon() {
+        return isWeapon;
+    }
+
+    public int getColumn() {
+        return column;
+    }
+
+    public int getRow() {
+        return row;
     }
 
     public Rectangle getField() {

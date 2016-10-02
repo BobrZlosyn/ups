@@ -1,6 +1,8 @@
 package game;
 
+import game.construction.CommonConstruction;
 import game.construction.IMarkableObject;
+import game.weapons.CommonWeapon;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 
@@ -9,27 +11,31 @@ import javafx.beans.property.SimpleStringProperty;
  */
 public class GlobalVariables {
     public static SimpleStringProperty name = new SimpleStringProperty();
-    public static IMarkableObject targetObject;
-    public static IMarkableObject markedObject;
+    public static CommonConstruction targetObject;
+    public static CommonConstruction markedObject;
     public static boolean isTargeting = false;
     public static SimpleBooleanProperty canTarget = new SimpleBooleanProperty(false);
     public static SimpleBooleanProperty isSelected = new SimpleBooleanProperty(false);
     private static boolean isShieldUp = false;
 
-    public static void setMarkedObject(IMarkableObject markedObject) {
+    public static void setMarkedObject(CommonConstruction markedObject) {
         if(!isEmpty(markedObject) && !isEmpty(GlobalVariables.markedObject)){
             GlobalVariables.markedObject.unmarkObject();
         }
+
         GlobalVariables.markedObject = markedObject;
         if(!isEmpty(markedObject)){
             setIsSelected(true);
         }else{
+            if(!isEmpty(targetObject)){
+                setTargetObject(targetObject);
+            }
             setIsSelected(false);
         }
 
     }
 
-    public static void setTargetObject(IMarkableObject targetObject) {
+    public static void setTargetObject(CommonConstruction targetObject) {
         if(!isEmpty(GlobalVariables.targetObject)){
             GlobalVariables.targetObject.cancelTarget();
 
@@ -38,6 +44,8 @@ public class GlobalVariables {
                 return;
             }
         }
+
+        ((CommonWeapon)GlobalVariables.getMarkedObject()).setTarget((targetObject).getPlacement());
         GlobalVariables.targetObject = targetObject;
     }
 
@@ -61,11 +69,11 @@ public class GlobalVariables {
         GlobalVariables.name.set(name);
     }
 
-    public static IMarkableObject getMarkedObject() {
+    public static CommonConstruction getMarkedObject() {
         return markedObject;
     }
 
-    public static IMarkableObject getTargetObject() {
+    public static CommonConstruction getTargetObject() {
         return targetObject;
     }
 

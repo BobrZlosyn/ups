@@ -91,7 +91,7 @@ public class Controller implements Initializable{
             testShip2.displayShip(gameAreaPane);
             CannonWeapon testWeapon = new CannonWeapon();
             testWeapon.displayEquipment(testShip2.getPosition(2, 2), testShip2.isEnemy());
-
+            testWeapon.setPlacement(testShip2.getPosition(2,2));
 
             //pozadi
             grb = new GeneratRandomBackground();

@@ -14,6 +14,4 @@ public interface IMarkableObject {
     default void cancelTarget() {
         return;
     }
-
-    Placement getPlacement();
 }

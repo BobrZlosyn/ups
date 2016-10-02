@@ -3,7 +3,8 @@ package game.shields;
 import game.GlobalVariables;
 import game.construction.IMarkableObject;
 import game.construction.Placement;
-import game.shields.shieldModels.ModelSimpleShield;
+import game.shields.shieldModels.SimpleShieldModel;
+import game.ships.CommonShip;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
@@ -14,11 +15,12 @@ import javafx.scene.shape.Shape;
  * Created by BobrZlosyn on 01.10.2016.
  */
 public class SimpleShield extends CommonShield implements IMarkableObject {
-    private ModelSimpleShield modelSimpleShield;
+    private SimpleShieldModel commonShieldModel;
+
     private boolean isMark;
 
     public SimpleShield() {
-        super(150, "Simple shield");
+        super(150, "Simple shield", 0.75, 100);
         setIsMark(false);
         createShield();
     }
@@ -32,8 +34,8 @@ public class SimpleShield extends CommonShield implements IMarkableObject {
     }
 
     private void createShield() {
-        modelSimpleShield = new ModelSimpleShield();
-        modelSimpleShield.getParts().forEach(shape -> {
+        commonShieldModel = new SimpleShieldModel();
+        commonShieldModel.getParts().forEach(shape -> {
             markShield(shape);
         });
 
@@ -63,11 +65,11 @@ public class SimpleShield extends CommonShield implements IMarkableObject {
             return;
         }
 
-        modelSimpleShield.getShield().setX(x);
-        modelSimpleShield.getShield().setY(y);
+        commonShieldModel.getShield().setX(x);
+        commonShieldModel.getShield().setY(y);
 
         Pane gameArea = (Pane) place.getField().getParent();
-        gameArea.getChildren().addAll(modelSimpleShield.getParts());
+        gameArea.getChildren().addAll(commonShieldModel.getParts());
         if(!GlobalVariables.isShieldUp()){
             Arc arc = createShieldField(place);
             gameArea.getChildren().add(arc);
@@ -75,37 +77,38 @@ public class SimpleShield extends CommonShield implements IMarkableObject {
         }
 
         place.setIsEmpty(false);
+
     }
 
     private Arc createShieldField(Placement place){
-        IMarkableObject ship = (IMarkableObject) place.getShip();
+        CommonShip ship = place.getShip();
         Arc arc = new Arc();
 
         if(isEnemy()){
-            arc.setCenterX(ship.getPlacement().getX() - 200);
-            arc.setCenterY(ship.getPlacement().getY() + 115);
+            arc.setCenterX(ship.getCenterX() + ship.getShieldAddX());
+            arc.setCenterY(ship.getCenterY() + ship.getShieldAddY());
             arc.setStartAngle(90);
             arc.setLength(180.0);
             arc.setStyle("-fx-fill: linear-gradient(to right, rgba(0,0,255,1) 0%, rgba(0,0,0,0) 65%)");
         }else {
-            arc.setCenterX(ship.getPlacement().getX() + 150);
-            arc.setCenterY(ship.getPlacement().getY() - 0);
+            arc.setCenterX(ship.getCenterX() + ship.getShieldAddX());
+            arc.setCenterY(ship.getCenterY() + ship.getShieldAddY());
             arc.setStartAngle(270);
             arc.setLength(180.0);
             arc.setStyle("-fx-fill: linear-gradient(to right, rgba(0,0,0,0) 50%, rgba(0,0,255,0.8) 100%)");
         }
 
-        arc.setRadiusX(50);
-        arc.setRadiusY(250);
-
+        arc.setRadiusX(ship.getShieldRadiusX());
+        arc.setRadiusY(ship.getShieldRadiusY());
         arc.setType(ArcType.ROUND);
+        ship.setShieldMaxLife(getShieldLife());
 
         return arc;
     }
 
     @Override
     public void markObject() {
-        modelSimpleShield.getParts().forEach(shape -> {
+        commonShieldModel.getParts().forEach(shape -> {
             shape.setStroke(Color.BLUE);
             shape.setStrokeWidth(1.5);
         });
@@ -119,7 +122,7 @@ public class SimpleShield extends CommonShield implements IMarkableObject {
 
     @Override
     public void unmarkObject() {
-        modelSimpleShield.getParts().forEach(shape -> {
+        commonShieldModel.getParts().forEach(shape -> {
             shape.setStroke(Color.TRANSPARENT);
         });
 
@@ -131,7 +134,11 @@ public class SimpleShield extends CommonShield implements IMarkableObject {
 
     @Override
     public void target() {
-        modelSimpleShield.getParts().forEach(shape -> {
+        if(!isEnemy()){
+            return;
+        }
+
+        commonShieldModel.getParts().forEach(shape -> {
             shape.setStroke(Color.RED);
             shape.setStrokeWidth(1.5);
         });
@@ -140,15 +147,20 @@ public class SimpleShield extends CommonShield implements IMarkableObject {
 
     @Override
     public void cancelTarget() {
-        modelSimpleShield.getParts().forEach(shape -> {
+        commonShieldModel.getParts().forEach(shape -> {
             shape.setStroke(Color.TRANSPARENT);
         });
     }
 
     @Override
-    public Placement getPlacement() {
-        double x = modelSimpleShield.getShield().getX() - modelSimpleShield.getShield().getWidth()/2;
-        double y = modelSimpleShield.getShield().getY() - modelSimpleShield.getShield().getHeight()/2;
-        return new Placement(x, y, modelSimpleShield.getShield().getWidth(), null);
+    public double getCenterX() {
+        double x = commonShieldModel.getShield().getX() - commonShieldModel.getShield().getWidth()/2;
+        return x;
+    }
+
+    @Override
+    public double getCenterY() {
+        double y = commonShieldModel.getShield().getY() - commonShieldModel.getShield().getHeight()/2;
+        return y;
     }
 }

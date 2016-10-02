@@ -10,14 +10,13 @@ import game.shots.SimpleBallShot;
 import game.weapons.modelsWeapon.ModelCannon;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
 
 /**
  * Created by Kanto on 26.09.2016.
  */
-public class CannonWeapon extends CommonWeapon implements IMarkableObject {
+public class CannonWeapon extends CommonWeapon{
 
     private ModelCannon modelCannon;
     private boolean isMark;
@@ -85,7 +84,8 @@ public class CannonWeapon extends CommonWeapon implements IMarkableObject {
         Pane gameArea = (Pane) position.getField().getParent();
         gameArea.getChildren().addAll(modelCannon.getParts());
         position.setIsEmpty(false);
-        position.setCommonWeapon(this);
+        position.setShipEquipment(this);
+        position.setIsWeapon(true);
     }
 
     @Override
@@ -100,6 +100,10 @@ public class CannonWeapon extends CommonWeapon implements IMarkableObject {
         GlobalVariables.setMarkedObject(this);
         GlobalVariables.setName(getName());
         GlobalVariables.setCanTarget(!isEnemy());
+
+        if(!GlobalVariables.isEmpty(getTarget())){
+            ((IMarkableObject)getTarget().getShipEquipment()).target();
+        }
     }
 
     @Override
@@ -116,6 +120,10 @@ public class CannonWeapon extends CommonWeapon implements IMarkableObject {
 
     @Override
     public void target() {
+        if(!isEnemy()){
+            return;
+        }
+
         modelCannon.getParts().forEach(shape -> {
             shape.setStroke(Color.RED);
             shape.setStrokeWidth(1.5);
@@ -131,13 +139,11 @@ public class CannonWeapon extends CommonWeapon implements IMarkableObject {
     }
 
     @Override
-    public Placement getPlacement() {
-        return new Placement(modelCannon.getRoom().getCenterX(), modelCannon.getRoom().getCenterY(), modelCannon.getRoom().getRadius(), null);
-    }
-
-    @Override
     public void rotateEquipment(double x, double y) {
         Rotate rotation = calculationForRotation(x, y, getCenterX(), getCenterY(), isEnemy());
+        double angleNew = rotation.getAngle() - getAngle();
+        rotation.setAngle(angleNew);
+        setAngle(angleNew);
 
         if(isEnemy()){
             modelCannon.getCannon().getTransforms().add(rotation);

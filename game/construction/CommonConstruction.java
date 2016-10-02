@@ -5,12 +5,13 @@ import javafx.beans.property.SimpleDoubleProperty;
 /**
  * Created by BobrZlosyn on 28.09.2016.
  */
-public class CommonConstruction {
+public abstract class CommonConstruction implements IMarkableObject{
     private SimpleDoubleProperty totalLife;
     private String name;
     private boolean isEnemy;
     private SimpleDoubleProperty actualLife;
     private SimpleDoubleProperty actualLifeBinding;
+    private Placement placement;
 
     public CommonConstruction(int totalLife, String name){
         setName(name);
@@ -83,11 +84,15 @@ public class CommonConstruction {
         return false;
     }
 
-    public double getCenterX(){
-        return 0;
+    public abstract double getCenterX();
+
+    public abstract double getCenterY();
+
+    public Placement getPlacement() {
+        return placement;
     }
 
-    public double getCenterY(){
-        return 0;
+    public void setPlacement(Placement placement) {
+        this.placement = placement;
     }
 }

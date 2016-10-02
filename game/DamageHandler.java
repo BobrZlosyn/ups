@@ -161,4 +161,28 @@ public class DamageHandler {
         }
     }
 
+    private String exportShooting(Placement [][] placements){
+        StringBuilder shooting = new StringBuilder();
+        Placement placement, target;
+
+        for(int i = 0; i < placements.length; i++){
+            for(int j = 0; j < placements[i].length; j++){
+                placement = placements[i][j];
+
+                if(GlobalVariables.isEmpty(placement) && !placement.isWeapon()){
+                    continue;
+                }
+
+                shooting.append(i + "," + j + ","); // pridani souradnic utocnika
+                target = ((CommonWeapon) placement.getShipEquipment()).getTarget(); //ziskavani cile
+                shooting.append(target.getRow() + "," + target.getColumn()); //pridani cile
+                shooting.append(";"); //ukonceni zbrane
+            }
+        }
+
+        shooting.append(";;"); // ukonceni strelby
+
+        return shooting.toString();
+    }
+
 }

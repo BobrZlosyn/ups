@@ -1,5 +1,7 @@
 package game.weapons.modelsWeapon;
 
+import game.construction.CommonModel;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -9,7 +11,7 @@ import java.util.ArrayList;
 /**
  * Created by BobrZlosyn on 30.09.2016.
  */
-public class ModelCannon {
+public class ModelCannon extends CommonModel{
     private Circle room, head;
     private Rectangle cannon;
 
@@ -29,7 +31,7 @@ public class ModelCannon {
 
     }
 
-    public void setCannonXY(double x, double y){
+    public void setModelXY(double x, double y){
 
         room.setCenterX(x);
         room.setCenterY(y);
@@ -52,11 +54,17 @@ public class ModelCannon {
         return head;
     }
 
+    @Override
     public ArrayList<Shape> getParts(){
         ArrayList<Shape> cannonParts = new ArrayList<>();
         cannonParts.add(room);
         cannonParts.add(cannon);
         cannonParts.add(head);
         return cannonParts;
+    }
+
+    @Override
+    public Pane getParent() {
+        return  (Pane)room.getParent();
     }
 }

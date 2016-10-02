@@ -10,7 +10,7 @@ import javafx.scene.shape.Rectangle;
 /**
  * Created by Kanto on 26.09.2016.
  */
-public class CruiserShip extends CommonShip implements IMarkableObject {
+public class CruiserShip extends CommonShip{
 
     private Rectangle ship;
     private boolean IsMarked;
@@ -40,6 +40,14 @@ public class CruiserShip extends CommonShip implements IMarkableObject {
             }
         });
 
+    }
+
+    @Override
+    public void setShieldConstants() {
+        setShieldAddX(0);
+        setShieldAddY(100);
+        setShieldRadiusX(75);
+        setShieldRadiusY(250);
     }
 
     public void displayShip( Pane gameArea){
@@ -73,7 +81,7 @@ public class CruiserShip extends CommonShip implements IMarkableObject {
 
                 place.setY(countY(size, j));
                 place.setX(countX(size, i));
-                shipMapping[i][j] = new Placement(place.getX(), place.getY(), place.getWidth(), this);
+                shipMapping[i][j] = new Placement(place.getX(), place.getY(), place.getWidth(), this, i, j);
                 shipMapping[i][j].setField(place);
             }
         }
@@ -113,19 +121,14 @@ public class CruiserShip extends CommonShip implements IMarkableObject {
 
     @Override
     public void target() {
-
+        if(!isEnemy()){
+            return;
+        }
     }
 
     @Override
     public void cancelTarget() {
 
-    }
-
-    @Override
-    public Placement getPlacement() {
-        double middleX = ship.getX()+ ship.getHeight()/2;
-        double middleY = ship.getY()+ ship.getWidth()/2;
-        return new Placement(middleX, middleY, ship.getWidth(), this);
     }
 
     @Override
@@ -170,5 +173,10 @@ public class CruiserShip extends CommonShip implements IMarkableObject {
     public double getCenterY(){
         double middleY = ship.getY()+ ship.getWidth()/2;
         return middleY;
+    }
+
+    @Override
+    public Placement getPlacement() {
+        return new Placement(getCenterX(), getCenterY(), ship.getWidth(), this, -1, -1);
     }
 }

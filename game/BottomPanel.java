@@ -84,8 +84,12 @@ public class BottomPanel {
 
                 if(!GlobalVariables.isEmpty(GlobalVariables.getTargetObject())){
                     CommonWeapon weapon = (CommonWeapon) GlobalVariables.getMarkedObject();
-                    Placement place = GlobalVariables.getTargetObject().getPlacement();
-                    weapon.rotateEquipment(place.getX(), place.getY());
+                    CommonConstruction construction = GlobalVariables.getTargetObject();
+                    weapon.rotateEquipment(construction.getCenterX(), construction.getCenterY());
+                    System.out.println(construction.getPlacement());
+                    weapon.setTarget(construction.getPlacement());
+                    GlobalVariables.setTargetObject(construction);
+                    weapon.unmarkObject();
                 }
 
                 setTarget = false;
