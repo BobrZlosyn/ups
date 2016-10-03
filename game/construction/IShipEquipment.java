@@ -31,4 +31,8 @@ public interface IShipEquipment {
     default void rotateEquipment(double x, double y) {
         return;
     }
+
+    default boolean isWeapon(){
+        return false;
+    }
 }

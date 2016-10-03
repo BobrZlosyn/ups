@@ -6,7 +6,6 @@ import game.construction.IShipEquipment;
 import game.construction.Placement;
 import game.construction.CommonConstruction;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.layout.Pane;
 
 /**
@@ -14,12 +13,8 @@ import javafx.scene.layout.Pane;
  */
 public abstract class CommonShip extends CommonConstruction {
 
-    public static final int BATTLE_SHIP = 1;
-    public static final int CRUISER_SHIP = 2;
-
     private int power;
     private boolean isEnemy;
-    private final int type;
     private Placement [][] placements;
     private int shieldMaxLife;
     private int shieldActualLife;
@@ -29,11 +24,10 @@ public abstract class CommonShip extends CommonConstruction {
     private double shieldAddY;
     private double shieldRadiusY;
 
-    public CommonShip (String name, int life, int power, boolean isEnemy, int type) {
+    public CommonShip (String name, int life, int power, boolean isEnemy) {
         super(life, name);
         setPower(power);
         setIsEnemy(isEnemy);
-        this.type = type;
         shieldActualLife = 0;
         shieldMaxLife = 0;
         setShieldConstants();
@@ -153,10 +147,6 @@ public abstract class CommonShip extends CommonConstruction {
 
     public double getWidth(){
         return 0;
-    }
-
-    public int getType(){
-        return type;
     }
 
     public Placement [][] getPlacementPositions(){

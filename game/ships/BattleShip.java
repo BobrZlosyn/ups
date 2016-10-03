@@ -1,9 +1,11 @@
 package game.ships;
 
+import game.ConstructionTypes;
 import game.GlobalVariables;
 import game.construction.IMarkableObject;
 import game.construction.Placement;
 import game.weapons.CommonWeapon;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -17,7 +19,7 @@ public class BattleShip extends CommonShip{
     private boolean isMarked;
 
     public BattleShip (boolean isEnemy){
-        super("Battle ship", 100, 100, isEnemy, BATTLE_SHIP);
+        super("Battle ship", 100, 100, isEnemy);
         createShip();
         setIsMarked(false);
     }
@@ -47,17 +49,27 @@ public class BattleShip extends CommonShip{
 
     @Override
     public void setShieldConstants() {
-        setShieldAddX(150);
-        setShieldAddY(0);
-        setShieldRadiusX(50);
-        setShieldRadiusY(180);
+        if(isEnemy()){
+            setShieldAddX(-130);
+            setShieldAddY(0);
+            setShieldRadiusX(50);
+            setShieldRadiusY(180);
+        }else{
+            setShieldAddX(130);
+            setShieldAddY(0);
+            setShieldRadiusX(50);
+            setShieldRadiusY(180);
+        }
+
     }
 
     public void displayShip(Pane gameArea){
+
+        double width = ((GridPane)gameArea.getParent()).getWidth() / 2;
         if(isEnemy()){
-            positionOfShip(450, 280, gameArea);
+            positionOfShip(width + width/2, 280, gameArea);
         }else {
-            positionOfShip(200, 280, gameArea);
+            positionOfShip(width - width/2, 280, gameArea);
         }
 
     }
@@ -67,23 +79,22 @@ public class BattleShip extends CommonShip{
         ship.setCenterX(x);
         ship.setCenterY(y);
         createMapOfShip();
-
     }
 
     public void createMapOfShip(){
         int size = 50;
-        int countOfPlaces = (int)(ship.getRadius()*2 - 50 )/50;
+        int countOfPlaces = (int)(ship.getRadius()*2 - 50 )/50 -1;
         Placement[][] shipMapping = new Placement[countOfPlaces][4];
 
         double radius = ship.getRadius();
-        for ( int i = 0; i < countOfPlaces - 1; i++ ){
+        for ( int i = 0; i < countOfPlaces; i++ ){
 
             for ( int j = 0; j < 4; j++ ){
-                if((j == 0 && i == 0) || (j == 0 && i == countOfPlaces - 2)){
+                if((j == 0 && i == 0) || (j == 0 && i == countOfPlaces - 1)){
                     continue;
                 }
 
-                if((j == 3 && i == 0) || (j == 3 && i == countOfPlaces - 2)){
+                if((j == 3 && i == 0) || (j == 3 && i == countOfPlaces - 1)){
                     continue;
                 }
 
@@ -162,6 +173,11 @@ public class BattleShip extends CommonShip{
     @Override
     public Placement getPlacement() {
         return new Placement(ship.getCenterX(), ship.getCenterY(), ship.getRadius(), this, -1, -1);
+    }
+
+    @Override
+    public String getConstructionType() {
+        return ConstructionTypes.BATTLE_SHIP;
     }
 
     @Override

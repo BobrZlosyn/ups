@@ -82,26 +82,25 @@ public class Controller implements Initializable{
             CommonShip commonShip = gunsToShipMenu.getShip();
 
             gunsToShipMenu.clean();
-
-
+            System.out.println(window.getWidth());
             gameAreaPane = new Pane();
             window.add(gameAreaPane, 0, 0, GridPane.REMAINING, 1);
+
             Placement[][] placements = commonShip.getPlacementPositions();
             commonShip.displayShip(gameAreaPane);
             commonShip.fillShipWithEquipment(commonShip, placements);
 
-            CruiserShip testShip2 = new CruiserShip(true);
-            testShip2.displayShip(gameAreaPane);
-            CannonWeapon testWeapon = new CannonWeapon();
-            testWeapon.displayEquipment(testShip2.getPosition(2, 2), testShip2.isEnemy());
-            testWeapon.setPlacement(testShip2.getPosition(2,2));
+
+            ExportImportShip exportImportShip = new ExportImportShip();
+            String exportMsg = exportImportShip.exportShip(commonShip);
+            CommonShip enemyShip = exportImportShip.importShip(exportMsg, gameAreaPane);
 
             //pozadi
             grb.findImages();
             grb.chooseImage((GridPane) gameAreaPane.getParent());
 
             //horni prvky
-            Controls controls = new Controls(commonShip, testShip2);
+            Controls controls = new Controls(commonShip, enemyShip);
             controls.showStatusBars(gameAreaPane);
 
             //dolni prvky
@@ -109,7 +108,7 @@ public class Controller implements Initializable{
             BottomPanel bottomPanel = new BottomPanel(sendDataButton);
             bottomPanel.showPanel(window);
 
-            DamageHandler damageHandler = new DamageHandler(commonShip, testShip2, gameAreaPane);
+            DamageHandler damageHandler = new DamageHandler(commonShip, enemyShip, gameAreaPane);
         });
     }
 

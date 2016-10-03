@@ -1,5 +1,6 @@
 package game.weapons;
 
+import game.ConstructionTypes;
 import game.GlobalVariables;
 import game.construction.CommonConstruction;
 import game.construction.IMarkableObject;
@@ -165,6 +166,11 @@ public class DoubleCannonWeapon extends CommonWeapon{
     @Override
     public double getCenterY(){
         return modelDoubleCannon.getRoom().getCenterY();
+    }
+
+    @Override
+    public String getConstructionType() {
+        return ConstructionTypes.DOUBLE_CANNON_WEAPON;
     }
 
     @Override

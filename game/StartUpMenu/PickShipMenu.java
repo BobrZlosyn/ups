@@ -83,7 +83,7 @@ public class PickShipMenu {
     private void createShip(CommonShip newShip, double x, double y){
 
         if(!GlobalVariables.isEmpty(choosenShip)){
-            if(choosenShip.getType() == newShip.getType()){
+            if(choosenShip.getConstructionType().equals(newShip.getConstructionType())){
                 return;
             }
             showArea.getChildren().remove(begin, end);

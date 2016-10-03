@@ -95,4 +95,6 @@ public abstract class CommonConstruction implements IMarkableObject{
     public void setPlacement(Placement placement) {
         this.placement = placement;
     }
+
+    public abstract String getConstructionType();
 }

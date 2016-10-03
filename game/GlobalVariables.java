@@ -1,7 +1,6 @@
 package game;
 
 import game.construction.CommonConstruction;
-import game.construction.IMarkableObject;
 import game.weapons.CommonWeapon;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -16,7 +15,8 @@ public class GlobalVariables {
     public static boolean isTargeting = false;
     public static SimpleBooleanProperty canTarget = new SimpleBooleanProperty(false);
     public static SimpleBooleanProperty isSelected = new SimpleBooleanProperty(false);
-    private static boolean isShieldUp = false;
+    private static boolean isUsersShieldUp = false;
+    private static boolean isEnemyShieldUp = false;
 
     public static void setMarkedObject(CommonConstruction markedObject) {
         if(!isEmpty(markedObject) && !isEmpty(GlobalVariables.markedObject)){
@@ -57,8 +57,12 @@ public class GlobalVariables {
         GlobalVariables.isTargeting = isTargeting;
     }
 
-    public static void setIsShieldUp(boolean isShieldUp) {
-        GlobalVariables.isShieldUp = isShieldUp;
+    public static void setIsUsersShieldUp(boolean isUsersShieldUp) {
+        GlobalVariables.isUsersShieldUp = isUsersShieldUp;
+    }
+
+    public static void setIsEnemyShieldUp(boolean isEnemyShieldUp) {
+        GlobalVariables.isEnemyShieldUp = isEnemyShieldUp;
     }
 
     public static void setCanTarget(boolean canTarget) {
@@ -93,7 +97,11 @@ public class GlobalVariables {
         return object == null;
     }
 
-    public static boolean isShieldUp() {
-        return isShieldUp;
+    public static boolean isEnemyShieldUp() {
+        return isEnemyShieldUp;
+    }
+
+    public static boolean isUsersShieldUp() {
+        return isUsersShieldUp;
     }
 }

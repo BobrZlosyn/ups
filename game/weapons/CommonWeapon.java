@@ -68,4 +68,8 @@ public abstract class CommonWeapon extends CommonConstruction implements IShipEq
 
     public abstract CommonShot getShot(CommonConstruction target, int damage);
 
+    public boolean isWeapon(){
+        return true;
+    }
+
 }

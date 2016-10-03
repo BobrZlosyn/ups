@@ -1,8 +1,9 @@
 package game.ships;
 
+import game.ConstructionTypes;
 import game.GlobalVariables;
-import game.construction.IMarkableObject;
 import game.construction.Placement;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -16,7 +17,7 @@ public class CruiserShip extends CommonShip{
     private boolean IsMarked;
 
     public CruiserShip(boolean isEnemy) {
-        super("Cruiser ship", 150, 100, isEnemy, CRUISER_SHIP);
+        super("Cruiser ship", 150, 100, isEnemy);
         createShip();
         setIsMarked(false);
     }
@@ -44,18 +45,28 @@ public class CruiserShip extends CommonShip{
 
     @Override
     public void setShieldConstants() {
-        setShieldAddX(0);
-        setShieldAddY(100);
-        setShieldRadiusX(75);
-        setShieldRadiusY(250);
+
+        if(isEnemy()){
+            setShieldAddX(-200);
+            setShieldAddY(100);
+            setShieldRadiusX(75);
+            setShieldRadiusY(250);
+        }else {
+            setShieldAddX(0);
+            setShieldAddY(100);
+            setShieldRadiusX(75);
+            setShieldRadiusY(250);
+        }
+
     }
 
     public void displayShip( Pane gameArea){
 
+        double width = ((GridPane)gameArea.getParent()).getWidth() / 2;
         if(isEnemy()){
-            positionOfShip(500,80, gameArea);
-        }else{
-            positionOfShip(100, 80, gameArea);
+            positionOfShip(width + width/2 - ship.getWidth()/2, 80, gameArea);
+        }else {
+            positionOfShip(width - width/2 - ship.getWidth()/2, 80, gameArea);
         }
     }
 
@@ -69,11 +80,11 @@ public class CruiserShip extends CommonShip{
     public void createMapOfShip(){
         int size = 50;
         int countOfPlaces = (int)(ship.getWidth()-50)/50;
-        int countOfPlacesHeight = (int)(ship.getHeight()-30)/50;
+        int countOfPlacesHeight = (int)(ship.getHeight()-30)/50 -1;
         Placement[][] shipMapping = new Placement[countOfPlaces][countOfPlacesHeight];
 
         for( int i = 0; i < countOfPlaces; i++ ){
-            for( int j = 0; j < countOfPlacesHeight -1; j++) {
+            for( int j = 0; j < countOfPlacesHeight; j++) {
                 Rectangle place = new Rectangle(size, size);
                 place.setFill(Color.WHITE);
                 Pane parent = ((Pane)ship.getParent());
@@ -178,5 +189,10 @@ public class CruiserShip extends CommonShip{
     @Override
     public Placement getPlacement() {
         return new Placement(getCenterX(), getCenterY(), ship.getWidth(), this, -1, -1);
+    }
+
+    @Override
+    public String getConstructionType() {
+        return ConstructionTypes.CRUISER_SHIP;
     }
 }

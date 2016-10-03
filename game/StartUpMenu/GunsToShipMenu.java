@@ -89,7 +89,7 @@ public class GunsToShipMenu {
         if(!GlobalVariables.isEmpty(parent)){
             parent.getChildren().remove(gunsToShipPane);
         }
-        GlobalVariables.setIsShieldUp(false);
+        GlobalVariables.setIsUsersShieldUp(false);
     }
 
     public CommonShip getShip() {

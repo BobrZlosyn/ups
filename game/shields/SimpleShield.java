@@ -1,5 +1,6 @@
 package game.shields;
 
+import game.ConstructionTypes;
 import game.GlobalVariables;
 import game.construction.IMarkableObject;
 import game.construction.Placement;
@@ -70,11 +71,22 @@ public class SimpleShield extends CommonShield implements IMarkableObject {
 
         Pane gameArea = (Pane) place.getField().getParent();
         gameArea.getChildren().addAll(commonShieldModel.getParts());
-        if(!GlobalVariables.isShieldUp()){
-            Arc arc = createShieldField(place);
-            gameArea.getChildren().add(arc);
-            GlobalVariables.setIsShieldUp(true);
+
+        if(isEnemy){
+            if(!GlobalVariables.isEnemyShieldUp()){
+                Arc arc = createShieldField(place);
+                gameArea.getChildren().add(arc);
+                GlobalVariables.setIsUsersShieldUp(true);
+            }
+        }else{
+            if(!GlobalVariables.isUsersShieldUp()){
+                Arc arc = createShieldField(place);
+                gameArea.getChildren().add(arc);
+                GlobalVariables.setIsUsersShieldUp(true);
+            }
         }
+
+
 
         place.setIsEmpty(false);
 
@@ -84,15 +96,14 @@ public class SimpleShield extends CommonShield implements IMarkableObject {
         CommonShip ship = place.getShip();
         Arc arc = new Arc();
 
+        arc.setCenterX(ship.getCenterX() + ship.getShieldAddX());
+        arc.setCenterY(ship.getCenterY() + ship.getShieldAddY());
+
         if(isEnemy()){
-            arc.setCenterX(ship.getCenterX() + ship.getShieldAddX());
-            arc.setCenterY(ship.getCenterY() + ship.getShieldAddY());
             arc.setStartAngle(90);
             arc.setLength(180.0);
-            arc.setStyle("-fx-fill: linear-gradient(to right, rgba(0,0,255,1) 0%, rgba(0,0,0,0) 65%)");
+            arc.setStyle("-fx-fill: linear-gradient(to right, rgba(0,0,255,1) 0%, rgba(0,0,0,0) 40%)");
         }else {
-            arc.setCenterX(ship.getCenterX() + ship.getShieldAddX());
-            arc.setCenterY(ship.getCenterY() + ship.getShieldAddY());
             arc.setStartAngle(270);
             arc.setLength(180.0);
             arc.setStyle("-fx-fill: linear-gradient(to right, rgba(0,0,0,0) 50%, rgba(0,0,255,0.8) 100%)");
@@ -162,5 +173,10 @@ public class SimpleShield extends CommonShield implements IMarkableObject {
     public double getCenterY() {
         double y = commonShieldModel.getShield().getY() - commonShieldModel.getShield().getHeight()/2;
         return y;
+    }
+
+    @Override
+    public String getConstructionType() {
+        return ConstructionTypes.SIMPLE_SHIELD;
     }
 }
