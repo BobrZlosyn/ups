@@ -39,7 +39,6 @@ public class SimpleShield extends CommonShield implements IMarkableObject {
         commonShieldModel.getParts().forEach(shape -> {
             markShield(shape);
         });
-
     }
 
     private void markShield(Shape shape){
@@ -101,14 +100,13 @@ public class SimpleShield extends CommonShield implements IMarkableObject {
 
         if(isEnemy()){
             arc.setStartAngle(90);
-            arc.setLength(180.0);
-            arc.setStyle("-fx-fill: linear-gradient(to right, rgba(0,0,255,1) 0%, rgba(0,0,0,0) 40%)");
+            arc.setStyle("-fx-fill: linear-gradient(to right, rgba(0,0,255,0.8) 0%, rgba(0,0,255,0) 50%)");
         }else {
             arc.setStartAngle(270);
-            arc.setLength(180.0);
-            arc.setStyle("-fx-fill: linear-gradient(to right, rgba(0,0,0,0) 50%, rgba(0,0,255,0.8) 100%)");
+            arc.setStyle("-fx-fill: linear-gradient(to right, rgba(0,0,255,0) 50%, rgba(0,0,255,0.8) 100%)");
         }
 
+        arc.setLength(180.0);
         arc.setRadiusX(ship.getShieldRadiusX());
         arc.setRadiusY(ship.getShieldRadiusY());
         arc.setType(ArcType.ROUND);

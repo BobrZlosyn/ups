@@ -50,16 +50,15 @@ public class BattleShip extends CommonShip{
     @Override
     public void setShieldConstants() {
         if(isEnemy()){
-            setShieldAddX(-130);
+            setShieldAddX(-150);
             setShieldAddY(0);
-            setShieldRadiusX(50);
-            setShieldRadiusY(180);
         }else{
-            setShieldAddX(130);
+            setShieldAddX(150);
             setShieldAddY(0);
-            setShieldRadiusX(50);
-            setShieldRadiusY(180);
         }
+
+        setShieldRadiusX(38);
+        setShieldRadiusY(180);
 
     }
 

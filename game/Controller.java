@@ -82,14 +82,12 @@ public class Controller implements Initializable{
             CommonShip commonShip = gunsToShipMenu.getShip();
 
             gunsToShipMenu.clean();
-            System.out.println(window.getWidth());
             gameAreaPane = new Pane();
             window.add(gameAreaPane, 0, 0, GridPane.REMAINING, 1);
 
             Placement[][] placements = commonShip.getPlacementPositions();
             commonShip.displayShip(gameAreaPane);
             commonShip.fillShipWithEquipment(commonShip, placements);
-
 
             ExportImportShip exportImportShip = new ExportImportShip();
             String exportMsg = exportImportShip.exportShip(commonShip);
