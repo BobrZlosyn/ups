@@ -22,11 +22,11 @@ public class CruiserShip extends CommonShip{
         setIsMarked(false);
     }
 
-    public void setIsMarked(boolean isMarked) {
+    private void setIsMarked(boolean isMarked) {
         IsMarked = isMarked;
     }
 
-    public boolean isMarked() {
+    private boolean isMarked() {
         return IsMarked;
     }
 
@@ -77,7 +77,7 @@ public class CruiserShip extends CommonShip{
         createMapOfShip();
     }
 
-    public void createMapOfShip(){
+    private void createMapOfShip(){
         int size = 50;
         int countOfPlaces = (int)(ship.getWidth()-50)/50;
         int countOfPlacesHeight = (int)(ship.getHeight()-30)/50 -1;
