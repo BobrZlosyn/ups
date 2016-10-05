@@ -12,12 +12,17 @@ public abstract class CommonConstruction implements IMarkableObject{
     private SimpleDoubleProperty actualLife;
     private SimpleDoubleProperty actualLifeBinding;
     private Placement placement;
+    private int energyCost;
 
     public CommonConstruction(int totalLife, String name){
         setName(name);
         this.totalLife = new SimpleDoubleProperty(totalLife);
         this.actualLife = new SimpleDoubleProperty(totalLife);
         this.actualLifeBinding = new SimpleDoubleProperty(1);
+    }
+
+    public void setEnergyCost(int energyCost) {
+        this.energyCost = energyCost;
     }
 
     public void setName(String name) {
@@ -42,6 +47,10 @@ public abstract class CommonConstruction implements IMarkableObject{
 
     public String getName() {
         return name;
+    }
+
+    public int getEnergyCost() {
+        return energyCost;
     }
 
     public SimpleDoubleProperty getTotalLife() {

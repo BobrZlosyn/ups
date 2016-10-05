@@ -4,6 +4,9 @@ import game.GlobalVariables;
 import game.ships.BattleShip;
 import game.ships.CommonShip;
 import game.ships.CruiserShip;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -12,6 +15,9 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
+import javafx.util.Duration;
+
+import java.sql.Time;
 
 
 /**
@@ -24,10 +30,12 @@ public class PickShipMenu {
     private Label title, nameOfShip;
     private CommonShip choosenShip;
     private int begin, end;
+    private boolean isStatusShowedUp;
 
     public PickShipMenu(){
         pickship = createPickingPane();
         showArea = new Pane();
+        isStatusShowedUp = false;
         init();
     }
 
@@ -37,9 +45,11 @@ public class PickShipMenu {
         createNextSetupButton();
         createNameOfShipLabel();
         createTitleLabel();
+        createStatusPane();
         fillPickingPane();
         marginInPickingPane();
         resize();
+
         battleShip.fire();
     }
 
@@ -63,6 +73,7 @@ public class PickShipMenu {
             double x = showArea.getWidth()/2;
             double y = 250;
             createShip(ship, x, y );
+            animationOfStatus.playFromStart();
         });
     }
 
@@ -74,10 +85,13 @@ public class PickShipMenu {
         cruiserShip.setMaxHeight(Double.MAX_VALUE);
         cruiserShip.setOnAction(event -> {
             CruiserShip ship = new CruiserShip(false);
-            double x = showArea.getWidth()/2 - ship.getWidth()/2;
+            double x = showArea.getWidth()/2  - ship.getWidth()/2;
             double y = 80;
             createShip(ship, x, y);
+            animationOfStatus.playFromStart();
         });
+
+
     }
 
     private void createShip(CommonShip newShip, double x, double y){
@@ -95,6 +109,7 @@ public class PickShipMenu {
         end = showArea.getChildren().size();
         nameOfShip.setText(newShip.getName());
 
+
     }
 
     private void createNextSetupButton(){
@@ -109,7 +124,6 @@ public class PickShipMenu {
         pickship.setMaxWidth(Double.MAX_VALUE);
         pickship.setMaxHeight(Double.MAX_VALUE);
 
-        double height = 85/3;
         RowConstraints rowConstraints1 = new RowConstraints();
         rowConstraints1.setPercentHeight(10);
 
@@ -132,13 +146,50 @@ public class PickShipMenu {
         columnConstraints.setPercentWidth(20);
         columnConstraints.setHalignment(HPos.CENTER);
         ColumnConstraints columnConstraints1 = new ColumnConstraints();
-        columnConstraints1.setPercentWidth(80);
+        columnConstraints1.setPercentWidth(50);
         columnConstraints1.setHalignment(HPos.CENTER);
+        ColumnConstraints columnConstraints2 = new ColumnConstraints();
+        columnConstraints2.setPercentWidth(30);
+        columnConstraints2.setHalignment(HPos.CENTER);
 
-        pickship.getColumnConstraints().addAll(columnConstraints, columnConstraints1);
+        pickship.getColumnConstraints().addAll(columnConstraints, columnConstraints1,columnConstraints2);
         pickship.getRowConstraints().addAll(rowConstraints1,rowConstraints2, rowConstraints3, rowConstraints4, rowConstraints5, rowConstraints6);
 
         return pickship;
+    }
+
+    private Pane shipStatus;
+    private GridPane statuses;
+    private Timeline animationOfStatus;
+    private void createStatusPane(){
+        shipStatus = new Pane();
+        statuses = new GridPane();
+        shipStatus.getChildren().add(statuses);
+
+        statuses.setStyle("-fx-background-color: red;");
+        statuses.add(new Label("aaaaaaaa"), 0,0);
+        statuses.setLayoutX(300);
+
+        animationOfStatus = new Timeline(new KeyFrame(Duration.seconds(0.1), event -> animation() ));
+        animationOfStatus.setCycleCount(Animation.INDEFINITE);
+    }
+
+    private void animation(){
+        if(isStatusShowedUp){
+            statuses.setLayoutX(statuses.getLayoutX() + 5);
+            if(statuses.getLayoutX() > shipStatus.getWidth()){
+                isStatusShowedUp = false;
+                animationOfStatus.stop();
+                animationOfStatus.playFromStart();
+            }
+        }else{
+            statuses.setLayoutX(statuses.getLayoutX()-5);
+            if(statuses.getLayoutX() < 0){
+                isStatusShowedUp = true;
+                animationOfStatus.stop();
+            }
+        }
+
     }
 
     private void fillPickingPane(){
@@ -147,7 +198,8 @@ public class PickShipMenu {
         pickship.add(battleShip, 0, 1);
         pickship.add(cruiserShip, 0, 2);
         pickship.add(showArea, 1, 0, 1, 5);
-        pickship.add(nextSetup,1,5);
+        pickship.add(nextSetup,2,5);
+        pickship.add(shipStatus,2,1);
     }
 
     private void marginInPickingPane(){
