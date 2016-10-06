@@ -88,6 +88,10 @@ public class DamageHandler {
     }
 
     private int calculateDamage(CommonShip targetShip, CommonShip attackShip){
+        if(GlobalVariables.isEmpty(targetShip)){
+            return 0;
+        }
+
         targetShip.damageToShield(shieldDmg);
         targetShip.takeDamage(shipDmg);
 

@@ -42,6 +42,11 @@ public class ModelCannon extends CommonModel{
         cannon.setY(y - cannon.getHeight()/2);
     }
 
+    @Override
+    public double getWidth() {
+        return room.getRadius()*2;
+    }
+
     public Rectangle getCannon() {
         return cannon;
     }

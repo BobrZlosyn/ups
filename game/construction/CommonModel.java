@@ -16,5 +16,6 @@ public abstract class CommonModel {
 
     public abstract void setModelXY(double x, double y);
 
+    public abstract double getWidth();
 
 }

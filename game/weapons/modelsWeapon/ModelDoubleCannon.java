@@ -38,6 +38,8 @@ public class ModelDoubleCannon extends CommonModel{
 
     }
 
+
+
     public Rectangle getCannonTop() {
         return cannonTop;
     }
@@ -53,6 +55,7 @@ public class ModelDoubleCannon extends CommonModel{
     public Circle getHead() {
         return head;
     }
+
 
     @Override
     public ArrayList<Shape> getParts(){
@@ -81,5 +84,10 @@ public class ModelDoubleCannon extends CommonModel{
 
         cannonBottom.setX(x);
         cannonBottom.setY(y - cannonBottom.getHeight()/2 + 5);
+    }
+
+    @Override
+    public double getWidth() {
+        return room.getRadius()*2;
     }
 }

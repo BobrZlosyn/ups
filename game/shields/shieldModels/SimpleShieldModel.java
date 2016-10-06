@@ -44,4 +44,9 @@ public class SimpleShieldModel extends CommonModel {
         shield.setX(x);
         shield.setY(y);
     }
+
+    @Override
+    public double getWidth() {
+        return shield.getWidth();
+    }
 }

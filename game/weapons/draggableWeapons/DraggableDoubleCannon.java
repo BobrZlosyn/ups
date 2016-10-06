@@ -23,13 +23,13 @@ public class DraggableDoubleCannon extends CommonDraggableObject{
 
     public DraggableDoubleCannon(Pane pane, Placement[][] placements, double x, double y){
         init();
-        CommonModel model = createModel(pane, new ModelDoubleCannon());
-        model.setModelXY(x, y);
+        modelInPlace = createModel(pane, new ModelDoubleCannon());
+        modelInPlace.setModelXY(x, y);
         xPosition = x;
         yPosition = y;
         super.isInPlace = false;
         super.placement = null;
-        addListeners(model, placements);
+        addListeners(modelInPlace, placements);
     }
 
     private void init(){
@@ -48,7 +48,11 @@ public class DraggableDoubleCannon extends CommonDraggableObject{
 
     @Override
     protected void isDragSuccesful(MouseEvent event, CommonModel commonModel, Placement[][] placements) {
-        Placement bluePlace = findPosition( placements, event.getSceneX(), event.getY(),addX1, addX2, addY1, addY2);
+        double widthPane = commonModel.getParent().getWidth()/2;
+        double widthModel = commonModel.getWidth()/2;
+        double heightPane = commonModel.getParent().getLayoutY();
+
+        Placement bluePlace = findPosition( placements, event.getX() - widthPane + widthModel, event.getY() + heightPane,addX1, addX2, addY1, addY2);
         if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.isEmpty()){
             Pane showArea = ((Pane)bluePlace.getField().getParent());
             DraggableDoubleCannon draggableDoubleCannon = new DraggableDoubleCannon(showArea, bluePlace.getShip().getPlacementPositions(), true, bluePlace);
@@ -90,7 +94,6 @@ public class DraggableDoubleCannon extends CommonDraggableObject{
             placement = bluePlace;
             placement.setIsEmpty(false);
             placement.setShipEquipment(this);
-
 
         }else{
             removeObject();

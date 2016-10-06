@@ -16,11 +16,15 @@ import javafx.scene.paint.Color;
  */
 public class DraggableCannon extends CommonDraggableObject{
 
-    public DraggableCannon(Pane pane, Placement[][] placements){
+    public DraggableCannon(Pane pane, Placement[][] placements, double x, double y){
         init();
-        CommonModel model = createModel(pane, new ModelCannon());
+        xPosition = x;
+        yPosition = y;
+        modelInPlace = createModel(pane, new ModelCannon());
+        modelInPlace.setModelXY(x, y);
         super.isInPlace = false;
-        addListeners(model, placements);
+        super.placement = null;
+        addListeners(modelInPlace, placements);
     }
 
     public DraggableCannon(Pane pane, Placement[][] placements, boolean isInPlace, Placement placement){
@@ -40,9 +44,12 @@ public class DraggableCannon extends CommonDraggableObject{
     }
 
 
-    protected void isDragSuccesful(MouseEvent event, CommonModel modelCannon, Placement [][] placements){
+    protected void isDragSuccesful(MouseEvent event, CommonModel commonModel, Placement [][] placements){
+        double widthPane = commonModel.getParent().getWidth()/2;
+        double widthModel = commonModel.getWidth()/2;
+        double heightPane = commonModel.getParent().getLayoutY();
 
-        Placement bluePlace = findPosition( placements, event.getSceneX(), event.getY(),addX1, addX2, addY1, addY2);
+        Placement bluePlace = findPosition( placements, event.getX() - widthPane + widthModel, event.getY() + heightPane,addX1, addX2, addY1, addY2);
         if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.isEmpty()){
             Pane showArea = ((Pane)bluePlace.getField().getParent());
             DraggableCannon cannonWeapon = new DraggableCannon(showArea, bluePlace.getShip().getPlacementPositions(), true, bluePlace);
@@ -54,7 +61,7 @@ public class DraggableCannon extends CommonDraggableObject{
             bluePlace.setShipEquipment(cannonWeapon);
         }
 
-        modelCannon.setModelXY(xPosition, yPosition);
+        commonModel.setModelXY(xPosition, yPosition);
 
     }
 

@@ -1,5 +1,6 @@
 package game.construction;
 
+import com.sun.org.apache.xml.internal.serializer.utils.SerializerMessages_zh_CN;
 import game.weapons.modelsWeapon.ModelCannon;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -25,6 +26,7 @@ public abstract class CommonDraggableObject implements IShipEquipment{
                 }
 
                 Rectangle pokus = placements[i][j].getField();
+
                 //pravy horni roh, levy horni roh, PH dolu, LH dolu
                 if(pokus.contains(x - xAdd1, y + yAdd1) || pokus.contains(x - xAdd2, y + yAdd1)
                         || pokus.contains(x - xAdd1, y + yAdd2) || pokus.contains(x - xAdd2, y + yAdd2)){
@@ -62,15 +64,17 @@ public abstract class CommonDraggableObject implements IShipEquipment{
     }
 
     protected void moveObject(MouseEvent event, CommonModel commonModel, Placement [][] placements){
+        double widthPane = commonModel.getParent().getWidth()/2;
+        double widthModel = commonModel.getWidth()/2;
+        double heightPane = commonModel.getParent().getLayoutY();
         if(isInPlace){
             placement.getField().setFill(Color.WHITE);
             commonModel.setModelXY(event.getX(), event.getY());
             findPosition(placements, event.getX(), event.getY(),addX1, addX2, addY1, addY2);
         }else {
-            commonModel.setModelXY(event.getSceneX(), event.getY());
-            findPosition(placements, event.getSceneX(), event.getY(),addX1, addX2, addY1, addY2);
+            commonModel.setModelXY(event.getX(), event.getY());
+            findPosition(placements, event.getX() - widthPane + widthModel, event.getY() + heightPane,addX1, addX2, addY1, addY2);
         }
-
     }
 
     protected void addListeners(CommonModel commonModel, Placement[][] placements){

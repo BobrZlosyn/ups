@@ -41,7 +41,7 @@ public class ExportImportShip {
     public CommonShip importShip(String msg, Pane gameArea){
         String shipData [] = msg.split(";;");
 
-        if(shipData.length < 2 ){
+        if(shipData.length < 1 ){
             return null;
         }
 
@@ -50,6 +50,10 @@ public class ExportImportShip {
             return null;
         }
         enemyShip.displayShip(gameArea);
+
+        if(shipData.length < 2){
+            return enemyShip;
+        }
 
         Placement [][] placements = enemyShip.getPlacementPositions();
         String [] equipments = shipData[1].split(";");

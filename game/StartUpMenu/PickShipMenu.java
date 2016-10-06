@@ -53,9 +53,9 @@ public class PickShipMenu {
         createBattleShipButton();
         createCruiserShipButton();
         createNextSetupButton();
+        createStatusPane();
         createNameOfShipLabel();
         createTitleLabel();
-        createStatusPane();
         fillPickingPane();
         marginInPickingPane();
         resize();
@@ -71,6 +71,7 @@ public class PickShipMenu {
     private void createNameOfShipLabel(){
         nameOfShip = new Label("Loď není vybrána");
         nameOfShip.getStyleClass().add("statusLabel");
+        nameOfShip.textProperty().bind(titleOfShip);
     }
 
     private void createBattleShipButton(){
@@ -83,7 +84,6 @@ public class PickShipMenu {
             double x = showArea.getWidth()/2;
             double y = 250;
             createShip(ship, x, y );
-
         });
     }
 
@@ -99,8 +99,6 @@ public class PickShipMenu {
             double y = 80;
             createShip(ship, x, y);
         });
-
-
     }
 
     private void createShip(CommonShip newShip, double x, double y){
@@ -116,11 +114,9 @@ public class PickShipMenu {
         choosenShip = newShip;
         newShip.positionOfShip(x, y, showArea);
         end = showArea.getChildren().size();
-        nameOfShip.setText(newShip.getName());
 
         titleOfShip.setValue(choosenShip.getName());
         life.set(choosenShip.getTotalLife().intValue());
-
 
         animationOfStatus.playFromStart();
     }
@@ -288,7 +284,6 @@ public class PickShipMenu {
                 animationOfStatus.stop();
             }
         }
-
     }
 
     private void fillPickingPane(){
@@ -297,8 +292,8 @@ public class PickShipMenu {
         pickship.add(battleShip, 0, 1);
         pickship.add(cruiserShip, 0, 2);
         pickship.add(showArea, 1, 0, 1, 5);
-        pickship.add(nextSetup,2,5);
-        pickship.add(shipStatus,2,1);
+        pickship.add(nextSetup, 2, 5);
+        pickship.add(shipStatus, 2, 1);
     }
 
     private void marginInPickingPane(){

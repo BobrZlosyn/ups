@@ -177,7 +177,7 @@ printArray(connections, 10);
 	while(1){
 		
 		welcome_s = initializeWelcomeSocket(server_addr);	
- 		listen(welcome_s, 1);
+ 		listen(welcome_s, 5);
  		
 			  /* >>> Step #4 <<<*/
 			  /* Accept a connection.  The accept() will block and then return with*/
@@ -186,8 +186,7 @@ printArray(connections, 10);
 			  addr_len = sizeof(client_addr);
 			  connect_s = accept(welcome_s, (struct sockaddr *)&client_addr, &addr_len);
 			  printf("stred %d \n", connect_s);
-			  if (connect_s < 0)
-			  {
+			  if (connect_s < 0) {
 			    printf("*** ERROR - accept() failed \n");
 			    exit(-1);
 			  }
