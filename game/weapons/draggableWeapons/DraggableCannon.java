@@ -27,6 +27,14 @@ public class DraggableCannon extends CommonDraggableObject{
         addListeners(modelInPlace, placements);
     }
 
+    public DraggableCannon(double x, double y){
+        init();
+        xPosition = x;
+        yPosition = y;
+        super.isInPlace = false;
+        super.placement = null;
+    }
+
     public DraggableCannon(Pane pane, Placement[][] placements, boolean isInPlace, Placement placement){
         modelInPlace = createModel(pane, new ModelCannon());
         super.isInPlace = isInPlace;
@@ -37,19 +45,23 @@ public class DraggableCannon extends CommonDraggableObject{
     private void init(){
         xPosition = 100;
         yPosition = 100;
-        addX1 = 150;
-        addX2 = 160;
+        addX1 = 120;
+        addX2 = 130;
         addY1 = 0;
         addY2 = 10;
     }
 
 
-    protected void isDragSuccesful(MouseEvent event, CommonModel commonModel, Placement [][] placements){
+    public void isDragSuccesful(MouseEvent event, CommonModel commonModel, Placement [][] placements){
         double widthPane = commonModel.getParent().getWidth()/2;
         double widthModel = commonModel.getWidth()/2;
         double heightPane = commonModel.getParent().getLayoutY();
+        double paneY = commonModel.getParent().getLayoutY();
 
-        Placement bluePlace = findPosition( placements, event.getX() - widthPane + widthModel, event.getY() + heightPane,addX1, addX2, addY1, addY2);
+        double objectPositionX = event.getX() - widthPane + widthModel;
+        double objectPositionY = event.getSceneY() - paneY;
+
+        Placement bluePlace = findPosition( placements, objectPositionX , objectPositionY,addX1, addX2, addY1, addY2);
         if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.isEmpty()){
             Pane showArea = ((Pane)bluePlace.getField().getParent());
             DraggableCannon cannonWeapon = new DraggableCannon(showArea, bluePlace.getShip().getPlacementPositions(), true, bluePlace);
@@ -96,6 +108,19 @@ public class DraggableCannon extends CommonDraggableObject{
 
         }else{
             removeObject();
+        }
+    }
+
+    @Override
+    public void createModel(Pane pane, Placement [][] placements, double x, double y) {
+        if(GlobalVariables.isEmpty(modelInPlace)){
+            modelInPlace = createModel(pane, new ModelCannon());
+            xPosition = x;
+            yPosition = y;
+            modelInPlace.setModelXY(xPosition, yPosition);
+            addListeners(modelInPlace, placements);
+        }else{
+            modelInPlace.setModelXY(x, y);
         }
     }
 

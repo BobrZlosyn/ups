@@ -1,9 +1,5 @@
 package game.StartUpMenu;
 
-import game.background.GeneratRandomBackground;
-import game.ships.BattleShip;
-import game.ships.CruiserShip;
-import game.weapons.CannonWeapon;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;

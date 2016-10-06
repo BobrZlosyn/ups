@@ -7,6 +7,7 @@ import game.construction.IShipEquipment;
 import game.construction.Placement;
 import game.shields.SimpleShield;
 import game.shields.shieldModels.SimpleShieldModel;
+import game.weapons.modelsWeapon.ModelDoubleCannon;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -29,23 +30,34 @@ public class DraggableSimpleShield extends CommonDraggableObject {
         addListeners(modelInPlace, placements);
     }
 
+    public DraggableSimpleShield(double x, double y){
+        init();
+        xPosition = x;
+        yPosition = y;
+        super.isInPlace = false;
+        super.placement = null;
+    }
+
     private void init(){
         xPosition = 100;
         yPosition = 200;
-        addX1 = 135; // z leva do prava
-        addX2 = 150; // z prava do leva
-        addY1 = 20;
-        addY2 = 30;
+        addX1 = 115; // z leva do prava
+        addX2 = 130; // z prava do leva
+        addY1 = -10;
+        addY2 = 0;
     }
 
-    protected void isDragSuccesful(MouseEvent event, CommonModel commonModel, Placement [][] placements){
+    public void isDragSuccesful(MouseEvent event, CommonModel commonModel, Placement[][] placements){
+        double widthPane = commonModel.getParent().getWidth()/2;
+        double widthModel = commonModel.getWidth()/2;
+        double paneY = commonModel.getParent().getLayoutY();
 
-        Placement bluePlace = findPosition( placements, event.getSceneX(), event.getY(),addX1, addX2, addY1, addY2);
+        Placement bluePlace = findPosition( placements, event.getX() - widthPane + widthModel, event.getSceneY() - paneY,addX1, addX2, addY1, addY2);
         if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.isEmpty()){
             Pane showArea = ((Pane)bluePlace.getField().getParent());
             DraggableSimpleShield simpleShield = new DraggableSimpleShield(showArea, bluePlace.getShip().getPlacementPositions(), true, bluePlace);
-            double x = bluePlace.getX();
-            double y = bluePlace.getY();
+            double x = bluePlace.getX() + commonModel.getWidth()/2;
+            double y = bluePlace.getY() + commonModel.getWidth()/2;
 
             simpleShield.getModel().setModelXY(x, y);
             bluePlace.setIsEmpty(false);
@@ -74,8 +86,8 @@ public class DraggableSimpleShield extends CommonDraggableObject {
             placement.setShipEquipment(null);
             placement.getField().setFill(Color.WHITE);
 
-            double x = bluePlace.getX();
-            double y = bluePlace.getY();
+            double x = bluePlace.getX() + commonModel.getWidth()/2;
+            double y = bluePlace.getY() + commonModel.getWidth()/2;
             commonModel.setModelXY(x, y);
 
             //pridani noveho
@@ -87,6 +99,20 @@ public class DraggableSimpleShield extends CommonDraggableObject {
         }else{
             removeObject();
         }
+    }
+
+    @Override
+    public void createModel(Pane pane, Placement[][] placements, double x, double y) {
+        if(GlobalVariables.isEmpty(modelInPlace)){
+            modelInPlace = createModel(pane, new SimpleShieldModel());
+            xPosition = x;
+            yPosition = y;
+            modelInPlace.setModelXY(xPosition, yPosition);
+            addListeners(modelInPlace, placements);
+        }else{
+            modelInPlace.setModelXY(x, y);
+        }
+
     }
 
     @Override

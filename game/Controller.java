@@ -53,7 +53,6 @@ public class Controller implements Initializable{
     private void windowResize(){
         window.widthProperty().addListener((observable, oldValue, newValue) -> {
             if(!GlobalVariables.isEmpty(grb)){
-                System.out.println("ahoj");
                 grb.resizeImage(window, newValue.doubleValue(), window.getHeight());
             }
         });
@@ -66,6 +65,13 @@ public class Controller implements Initializable{
     }
 
     private void setupGunsToShipMenu(PickShipMenu pickShipMenu){
+        pickShipMenu.getPrevious().setOnAction(event1 -> {
+            pickShipMenu.clean();
+
+            CreateMenu createMenu = new CreateMenu();
+            window.add(createMenu.getMenu(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
+            setupPickShipMenu(createMenu);
+        });
 
         pickShipMenu.getNextSetup().setOnAction(event -> {
             CommonShip ship = pickShipMenu.getChoosenShip();
@@ -78,6 +84,13 @@ public class Controller implements Initializable{
     }
 
     private void setupStartButton(GunsToShipMenu gunsToShipMenu){
+        gunsToShipMenu.getPrevious().setOnAction(event1 -> {
+            gunsToShipMenu.clean();
+            PickShipMenu pickShipMenu = new PickShipMenu();
+            window.add(pickShipMenu.getPickship(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
+            setupGunsToShipMenu(pickShipMenu);
+        });
+
         gunsToShipMenu.getNextButton().setOnAction(event -> {
             CommonShip commonShip = gunsToShipMenu.getShip();
 
@@ -105,6 +118,14 @@ public class Controller implements Initializable{
             sendDataButton = new Button();
             BottomPanel bottomPanel = new BottomPanel(sendDataButton);
             bottomPanel.showPanel(window);
+            bottomPanel.getQuit().setOnAction(event1 -> {
+
+                window.getChildren().clear();
+                CreateMenu createMenu = new CreateMenu();
+                window.add(createMenu.getMenu(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
+                setupPickShipMenu(createMenu);
+                grb.showSpacePort(window);
+            });
 
             DamageHandler damageHandler = new DamageHandler(commonShip, enemyShip, gameAreaPane);
         });

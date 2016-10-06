@@ -1,6 +1,8 @@
 package game.construction;
 
 import com.sun.org.apache.xml.internal.serializer.utils.SerializerMessages_zh_CN;
+import game.GlobalVariables;
+import game.weapons.draggableWeapons.DraggableDoubleCannon;
 import game.weapons.modelsWeapon.ModelCannon;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -47,6 +49,12 @@ public abstract class CommonDraggableObject implements IShipEquipment{
         this.modelInPlace = modelInPlace;
     }
 
+    public abstract void createModel(Pane pane, Placement [][] placements, double x, double y);
+
+    public void setPlacement(Placement placement) {
+        this.placement = placement;
+    }
+
     public CommonModel getModel() {
         return modelInPlace;
     }
@@ -63,21 +71,23 @@ public abstract class CommonDraggableObject implements IShipEquipment{
         return commonModel;
     }
 
-    protected void moveObject(MouseEvent event, CommonModel commonModel, Placement [][] placements){
+    public void moveObject(MouseEvent event, CommonModel commonModel, Placement [][] placements){
         double widthPane = commonModel.getParent().getWidth()/2;
         double widthModel = commonModel.getWidth()/2;
-        double heightPane = commonModel.getParent().getLayoutY();
+        double paneY = commonModel.getParent().getLayoutY();
         if(isInPlace){
             placement.getField().setFill(Color.WHITE);
             commonModel.setModelXY(event.getX(), event.getY());
             findPosition(placements, event.getX(), event.getY(),addX1, addX2, addY1, addY2);
         }else {
-            commonModel.setModelXY(event.getX(), event.getY());
-            findPosition(placements, event.getX() - widthPane + widthModel, event.getY() + heightPane,addX1, addX2, addY1, addY2);
+            commonModel.setModelXY(event.getX(), event.getSceneY() - paneY);
+            findPosition(placements, event.getX() - widthPane + widthModel, event.getSceneY() - paneY,addX1, addX2, addY1, addY2);
         }
     }
 
-    protected void addListeners(CommonModel commonModel, Placement[][] placements){
+    public abstract void isDragSuccesful(MouseEvent event, CommonModel commonModel, Placement[][] placements);
+
+    public void addListeners(CommonModel commonModel, Placement[][] placements){
         if(isInPlace){
             modelInPlace.getParts().forEach(shape -> {
                 shape.setOnMousePressed(event -> {
@@ -104,8 +114,6 @@ public abstract class CommonDraggableObject implements IShipEquipment{
             });
         });
     }
-
-    protected abstract void isDragSuccesful(MouseEvent event, CommonModel commonModel, Placement [][] placements);
 
     protected void removeObject(){
         Pane showArea = modelInPlace.getParent();

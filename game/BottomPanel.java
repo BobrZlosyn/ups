@@ -37,6 +37,9 @@ public class BottomPanel {
 
     }
 
+    public Button getQuit() {
+        return quit;
+    }
 
     private void createButtonSend(Button sendOrders){
         sendOrders.setText("DÁT ROZKAZ K ÚTOKU");

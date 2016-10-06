@@ -30,7 +30,7 @@ import java.sql.Time;
 public class PickShipMenu {
     private GridPane pickship;
     private Pane showArea;
-    private Button battleShip, cruiserShip, nextSetup;
+    private Button battleShip, cruiserShip, nextSetup, previous;
     private Label title, nameOfShip;
     private CommonShip choosenShip;
     private int begin, end;
@@ -54,6 +54,7 @@ public class PickShipMenu {
         createCruiserShipButton();
         createNextSetupButton();
         createStatusPane();
+        createPreviousButton();
         createNameOfShipLabel();
         createTitleLabel();
         fillPickingPane();
@@ -63,15 +64,30 @@ public class PickShipMenu {
         battleShip.fire();
     }
 
+    private void createPreviousButton(){
+        previous = new Button("zpět");
+        previous.setMaxHeight(Double.MAX_VALUE);
+        previous.setMaxWidth(200);
+    }
+
     private void createTitleLabel(){
         title = new Label("Vyberte váš typ lodi");
         title.getStyleClass().add("statusLabel");
+        title.textProperty().bind(titleOfShip);
+        title.setStyle("-fx-background-color: rgba(0,0,0,0.8);");
+        title.setAlignment(Pos.CENTER);
+        title.setMaxWidth(Double.MAX_VALUE);
+        title.setMaxHeight(Double.MAX_VALUE);
     }
 
     private void createNameOfShipLabel(){
         nameOfShip = new Label("Loď není vybrána");
         nameOfShip.getStyleClass().add("statusLabel");
         nameOfShip.textProperty().bind(titleOfShip);
+        nameOfShip.setStyle("-fx-background-color: rgba(0,0,0,0.8);");
+        nameOfShip.setAlignment(Pos.CENTER);
+        nameOfShip.setMaxWidth(Double.MAX_VALUE);
+        nameOfShip.setMaxHeight(Double.MAX_VALUE);
     }
 
     private void createBattleShipButton(){
@@ -137,32 +153,23 @@ public class PickShipMenu {
         rowConstraints1.setPercentHeight(10);
 
         RowConstraints rowConstraints2 = new RowConstraints();
-        rowConstraints2.setPercentHeight(20);
-
-        RowConstraints rowConstraints3 = new RowConstraints();
-        rowConstraints3.setPercentHeight(20);
-
-        RowConstraints rowConstraints4 = new RowConstraints();
-        rowConstraints4.setPercentHeight(20);
-
-        RowConstraints rowConstraints5 = new RowConstraints();
-        rowConstraints5.setPercentHeight(30);
+        rowConstraints2.setPercentHeight(80);
 
         RowConstraints rowConstraints6 = new RowConstraints();
         rowConstraints6.setPercentHeight(10);
 
         ColumnConstraints columnConstraints = new ColumnConstraints();
-        columnConstraints.setPercentWidth(20);
+        columnConstraints.setPercentWidth(25);
         columnConstraints.setHalignment(HPos.CENTER);
         ColumnConstraints columnConstraints1 = new ColumnConstraints();
-        columnConstraints1.setPercentWidth(50);
-        columnConstraints1.setHalignment(HPos.CENTER);
+        columnConstraints1.setPercentWidth(45);
+        columnConstraints1.setHalignment(HPos.LEFT);
         ColumnConstraints columnConstraints2 = new ColumnConstraints();
         columnConstraints2.setPercentWidth(30);
         columnConstraints2.setHalignment(HPos.CENTER);
 
         pickship.getColumnConstraints().addAll(columnConstraints, columnConstraints1,columnConstraints2);
-        pickship.getRowConstraints().addAll(rowConstraints1,rowConstraints2, rowConstraints3, rowConstraints4, rowConstraints5, rowConstraints6);
+        pickship.getRowConstraints().addAll(rowConstraints1,rowConstraints2, rowConstraints6);
 
         return pickship;
     }
@@ -171,10 +178,16 @@ public class PickShipMenu {
         shipStatus = new Pane();
         statuses = new GridPane();
         shipStatus.getChildren().add(statuses);
-
+        isStatusShowedUp = false;
         statuses.setStyle("-fx-background-color: rgba(0,0,0,0.8);");
-        statuses.setLayoutX(300);
-        statuses.setMinWidth(200);
+
+        shipStatus.widthProperty().addListener((observable, oldValue, newValue) -> {
+            if(!isStatusShowedUp){
+                statuses.setLayoutX(newValue.intValue());
+            }
+            statuses.setMinWidth(newValue.intValue() - 15);
+        });
+
         statuses.setMinHeight(300);
         statuses.setLayoutY(50);
         statuses.setPadding(new Insets(10,10,10,10));
@@ -288,12 +301,15 @@ public class PickShipMenu {
 
     private void fillPickingPane(){
         pickship.add(title, 0, 0);
-        pickship.add(nameOfShip, 1, 0);
+        pickship.add(nameOfShip, 1, 0, 2, 1);
         pickship.add(battleShip, 0, 1);
         pickship.add(cruiserShip, 0, 2);
-        pickship.add(showArea, 1, 0, 1, 5);
-        pickship.add(nextSetup, 2, 5);
+        pickship.add(showArea, 1, 0, 1, 2);
+        pickship.add(nextSetup, 2, 2);
         pickship.add(shipStatus, 2, 1);
+        pickship.add(previous, 1, 2);
+
+        pickship.setHalignment(nameOfShip, HPos.CENTER);
     }
 
     private void marginInPickingPane(){
@@ -315,6 +331,10 @@ public class PickShipMenu {
 
     public Button getNextSetup() {
         return nextSetup;
+    }
+
+    public Button getPrevious() {
+        return previous;
     }
 
     public CommonShip getChoosenShip(){
