@@ -1,6 +1,8 @@
 package game.StartUpMenu;
 
 import game.GlobalVariables;
+import game.construction.AShipEquipment;
+import game.construction.CommonConstruction;
 import game.construction.CommonDraggableObject;
 import game.construction.CommonModel;
 import game.shields.draggableShileds.DraggableSimpleShield;
@@ -10,8 +12,11 @@ import game.weapons.draggableWeapons.DraggableCannon;
 import game.weapons.draggableWeapons.DraggableDoubleCannon;
 import game.weapons.modelsWeapon.ModelCannon;
 import game.weapons.modelsWeapon.ModelDoubleCannon;
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -20,7 +25,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+
+import java.util.ArrayList;
 
 /**
  * Created by Kanto on 29.09.2016.
@@ -28,14 +36,23 @@ import javafx.util.Duration;
 public class GunsToShipMenu {
 
     private CommonShip ship;
+    private SimpleStringProperty nameOfEquipment;
     private GridPane gunsToShipPane;
     private Button next, previous;
-    private Pane showArea;
+    private Pane showArea, shipStatus;
     private VBox items;
     private Label title, nameOfShip;
+    private ArrayList<HBox> hBoxes;
+    private Timeline animationOfStatus;
+    private boolean isStatusShowedUp;
+    private GridPane statuses;
+    private AShipEquipment equipment;
 
     public GunsToShipMenu(CommonShip ship){
         this.ship = ship;
+        hBoxes = new ArrayList();
+        isStatusShowedUp = false;
+        nameOfEquipment = new SimpleStringProperty("");
         init();
     }
 
@@ -46,7 +63,9 @@ public class GunsToShipMenu {
         createTitle();
         createNameOfShip();
         createPreviousButton();
+        createStatusPane();
         fillGunsToShipPane();
+
         resize();
     }
 
@@ -109,14 +128,14 @@ public class GunsToShipMenu {
         gunsToShipPane.getColumnConstraints().addAll(columnConstraints, columnConstraints2, columnConstraints3);
         gunsToShipPane.getRowConstraints().addAll(rowConstraints, rowConstraints1, rowConstraints2);
     }
-    private Pane statusPanel = new Pane();
+
     private void fillGunsToShipPane(){
         gunsToShipPane.add(title, 0, 0);
         gunsToShipPane.add(nameOfShip, 1, 0, 2, 1);
         gunsToShipPane.add(next, 2,2);
         gunsToShipPane.add(previous, 1, 2);
         gunsToShipPane.add(showArea,1,1);
-        gunsToShipPane.add(statusPanel,2,1);
+        gunsToShipPane.add(shipStatus,2,1);
         gunsToShipPane.setHalignment(nameOfShip, HPos.CENTER);
 
         ship.positionOfShip(ship.getX(), ship.getY(), showArea);
@@ -170,6 +189,15 @@ public class GunsToShipMenu {
             int count = 0;
 
             count = event.getClickCount();
+
+            if(count == 1){
+                equipment = (AShipEquipment)draggableObject.getObject();
+                nameOfEquipment.set(((CommonConstruction)draggableObject.getObject()).getName());
+                animationOfStatus.playFromStart();
+                if(hBoxes.isEmpty()){
+                    fillStatusesPaneWithHboxes();
+                }
+            }
 
             if (count > 1 && event.isPrimaryButtonDown()) {
                 gunsToShipPane.add(paneOnTop, 0, 1);
@@ -235,4 +263,162 @@ public class GunsToShipMenu {
             ship.resize(0, showArea.getWidth(), 0, newValue.intValue());
         });
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private void createStatusPane(){
+        shipStatus = new Pane();
+        statuses = new GridPane();
+        shipStatus.getChildren().add(statuses);
+        isStatusShowedUp = false;
+        statuses.setStyle("-fx-background-color: rgba(0,0,0,0.8);");
+
+        shipStatus.widthProperty().addListener((observable, oldValue, newValue) -> {
+            if(!isStatusShowedUp){
+                statuses.setLayoutX(newValue.intValue());
+            }
+            statuses.setMinWidth(newValue.intValue() - 15);
+        });
+
+        statuses.setMinHeight(300);
+        statuses.setLayoutY(50);
+        statuses.setPadding(new Insets(10,10,10,10));
+
+        RowConstraints nameRow = new RowConstraints(); //name of ship
+        nameRow.setPercentHeight(8);
+
+        RowConstraints lifeLabelRow = new RowConstraints(); //life
+        lifeLabelRow.setPercentHeight(8);
+        RowConstraints lifeRow = new RowConstraints(); //life
+        lifeRow.setPercentHeight(8);
+
+        RowConstraints shieldLabelRow = new RowConstraints(); //shield
+        shieldLabelRow.setPercentHeight(8);
+        RowConstraints shieldRow = new RowConstraints(); //shield stat
+        shieldLabelRow.setPercentHeight(8);
+
+
+        RowConstraints armorLabelRow = new RowConstraints(); //armor
+        armorLabelRow.setPercentHeight(8);
+        RowConstraints armorRow = new RowConstraints(); //armor
+        armorRow.setPercentHeight(8);
+
+        RowConstraints speedLabelRow = new RowConstraints(); //speed
+        speedLabelRow.setPercentHeight(8);
+        RowConstraints speedRow = new RowConstraints(); //speed
+        speedRow.setPercentHeight(8);
+
+        RowConstraints energyLabelRow = new RowConstraints(); //energy
+        energyLabelRow.setPercentHeight(8);
+        RowConstraints energyRow = new RowConstraints(); //energy
+        energyRow.setPercentHeight(8);
+
+        RowConstraints descriptionRow = new RowConstraints(); //description
+        descriptionRow.setPercentHeight(12);
+
+        ColumnConstraints columnConstraints = new ColumnConstraints();
+        columnConstraints.setPercentWidth(100);
+        columnConstraints.setHalignment(HPos.CENTER);
+
+
+        statuses.getColumnConstraints().addAll(columnConstraints);
+        statuses.getRowConstraints().addAll(nameRow,lifeLabelRow, lifeRow,
+                shieldLabelRow, shieldRow, armorLabelRow, armorRow, speedLabelRow,
+                speedRow, energyLabelRow, energyRow, descriptionRow);
+
+        Label lifeTitle = new Label("INTEGRITA TRUPU:");
+        lifeTitle.setTextFill(Color.WHITE);
+        Label shieldTitle = new Label("SÍLA ŠTÍTŮ:");
+        shieldTitle.setTextFill(Color.WHITE);
+        Label armorTitle = new Label("SÍLÁ PANCÍŘE:");
+        armorTitle.setTextFill(Color.WHITE);
+        Label speedTitle = new Label("RYCHLOST:");
+        speedTitle.setTextFill(Color.WHITE);
+        Label energyTitle = new Label("ENERGIE:");
+        energyTitle.setTextFill(Color.WHITE);
+
+        statuses.add(lifeTitle, 0, 1);
+        statuses.add(shieldTitle, 0, 3);
+        statuses.add(armorTitle, 0, 5);
+        statuses.add(speedTitle, 0, 7);
+        statuses.add(energyTitle, 0, 9);
+
+
+        Label titleOfShipString = new Label();
+        titleOfShipString.textProperty().bind(nameOfEquipment);
+        titleOfShipString.setTextFill(Color.WHITE);
+
+        statuses.add(titleOfShipString, 0, 0);
+
+        statuses.setHgap(10);
+        statuses.setHalignment(titleOfShipString, HPos.CENTER);
+        animationOfStatus = new Timeline(new KeyFrame(Duration.seconds(0.03), event -> animation() ));
+        animationOfStatus.setCycleCount(Animation.INDEFINITE);
+    }
+
+    private void fillStatusesPaneWithHboxes(){
+        statuses.add(createHBoxStatistic(Color.GREEN, 1000, equipment.getTotalLife().intValue()), 0, 2);
+        statuses.add(createHBoxStatistic(Color.PURPLE, 1000, equipment.getEnergyCost()), 0, 4);
+        statuses.add(createHBoxStatistic(Color.RED, 1000, equipment.getMaxStrength()), 0, 6);
+        statuses.add(createHBoxStatistic(Color.BLUE, 1000, equipment.getShieldBonus()), 0, 8);
+    }
+
+
+    private HBox createHBoxStatistic(Color color, double maxNumber, double actualNumber){
+        HBox statistic = new HBox(3);
+        statistic.setAlignment(Pos.CENTER);
+        ArrayList<Rectangle> rectangles = new ArrayList<>();
+
+        int percentOfStatus = (int)((actualNumber/maxNumber) * 10);
+
+        for(int i = 0; i < 10; i++){
+            Rectangle point = new Rectangle(10, 10);
+
+            if(i > percentOfStatus ){
+                point.setFill(Color.WHITE);
+            }else{
+                point.setFill(color);
+            }
+
+            rectangles.add(point);
+        }
+
+        statistic.getChildren().addAll(rectangles);
+
+        hBoxes.add(statistic);
+        return statistic;
+    }
+
+    private void animation(){
+        if(isStatusShowedUp){
+            statuses.setLayoutX(statuses.getLayoutX() + 10);
+            if(statuses.getLayoutX() > shipStatus.getWidth()){
+                isStatusShowedUp = false;
+                statuses.getChildren().removeAll(hBoxes);
+                animationOfStatus.stop();
+                animationOfStatus.playFromStart();
+                fillStatusesPaneWithHboxes();
+            }
+        }else{
+            statuses.setLayoutX(statuses.getLayoutX()-5);
+            if(statuses.getLayoutX() < 0){
+                isStatusShowedUp = true;
+                animationOfStatus.stop();
+            }
+        }
+    }
+
+
+
 }

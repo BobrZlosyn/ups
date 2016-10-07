@@ -14,14 +14,13 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.sql.Time;
+import java.util.ArrayList;
 
 
 /**
@@ -40,12 +39,15 @@ public class PickShipMenu {
     private Timeline animationOfStatus;
     private SimpleStringProperty titleOfShip;
     private SimpleIntegerProperty life, speed, shield, energy, armor;
+    private VBox menuVBox;
+    private ArrayList<HBox> hBoxes;
 
 
     public PickShipMenu(){
         pickship = createPickingPane();
         showArea = new Pane();
         isStatusShowedUp = false;
+        hBoxes = new ArrayList();
         init();
     }
 
@@ -57,6 +59,7 @@ public class PickShipMenu {
         createPreviousButton();
         createNameOfShipLabel();
         createTitleLabel();
+        createVBox();
         fillPickingPane();
         marginInPickingPane();
         resize();
@@ -95,10 +98,11 @@ public class PickShipMenu {
 
         battleShip.setMaxWidth(Double.MAX_VALUE);
         battleShip.setMaxHeight(Double.MAX_VALUE);
+        battleShip.setMinHeight(70);
         battleShip.setOnAction(event -> {
             BattleShip ship = new BattleShip(false);
             double x = showArea.getWidth()/2;
-            double y = 250;
+            double y = showArea.getHeight()/2 - battleShip.getHeight()/2;
             createShip(ship, x, y );
         });
     }
@@ -109,10 +113,11 @@ public class PickShipMenu {
 
         cruiserShip.setMaxWidth(Double.MAX_VALUE);
         cruiserShip.setMaxHeight(Double.MAX_VALUE);
+        cruiserShip.setMinHeight(70);
         cruiserShip.setOnAction(event -> {
             CruiserShip ship = new CruiserShip(false);
             double x = showArea.getWidth()/2  - ship.getWidth()/2;
-            double y = 80;
+            double y = showArea.getHeight()/2 - ship.getHeight()/2;
             createShip(ship, x, y);
         });
     }
@@ -135,13 +140,23 @@ public class PickShipMenu {
         life.set(choosenShip.getTotalLife().intValue());
 
         animationOfStatus.playFromStart();
+
+        if(hBoxes.isEmpty()){
+            fillStatusesPaneWithHboxes();
+        }
+    }
+
+    private void createVBox(){
+        menuVBox = new VBox(5);
+        menuVBox.setStyle("-fx-background-color: rgba(0,0,0,0.8)");
+        menuVBox.getChildren().addAll(battleShip, cruiserShip);
     }
 
     private void createNextSetupButton(){
         nextSetup = new Button("Pokračovat");
-
         nextSetup.setMaxWidth(Double.MAX_VALUE);
         nextSetup.setMaxHeight(Double.MAX_VALUE);
+
     }
 
     private GridPane createPickingPane(){
@@ -192,37 +207,47 @@ public class PickShipMenu {
         statuses.setLayoutY(50);
         statuses.setPadding(new Insets(10,10,10,10));
 
-        RowConstraints rowConstraints1 = new RowConstraints(); //name of ship
-        rowConstraints1.setPercentHeight(15);
+        RowConstraints nameRow = new RowConstraints(); //name of ship
+        nameRow.setPercentHeight(8);
 
-        RowConstraints rowConstraints2 = new RowConstraints(); //life
-        rowConstraints2.setPercentHeight(10);
+        RowConstraints lifeLabelRow = new RowConstraints(); //life
+        lifeLabelRow.setPercentHeight(8);
+        RowConstraints lifeRow = new RowConstraints(); //life
+        lifeRow.setPercentHeight(8);
 
-        RowConstraints rowConstraints3 = new RowConstraints(); //shield
-        rowConstraints3.setPercentHeight(10);
+        RowConstraints shieldLabelRow = new RowConstraints(); //shield
+        shieldLabelRow.setPercentHeight(8);
+        RowConstraints shieldRow = new RowConstraints(); //shield stat
+        shieldLabelRow.setPercentHeight(8);
 
-        RowConstraints rowConstraints4 = new RowConstraints(); //armor
-        rowConstraints4.setPercentHeight(10);
 
-        RowConstraints rowConstraints5 = new RowConstraints(); //speed
-        rowConstraints5.setPercentHeight(10);
+        RowConstraints armorLabelRow = new RowConstraints(); //armor
+        armorLabelRow.setPercentHeight(8);
+        RowConstraints armorRow = new RowConstraints(); //armor
+        armorRow.setPercentHeight(8);
 
-        RowConstraints rowConstraints6 = new RowConstraints(); //energy
-        rowConstraints6.setPercentHeight(10);
+        RowConstraints speedLabelRow = new RowConstraints(); //speed
+        speedLabelRow.setPercentHeight(8);
+        RowConstraints speedRow = new RowConstraints(); //speed
+        speedRow.setPercentHeight(8);
 
-        RowConstraints rowConstraints7 = new RowConstraints(); //description
-        rowConstraints7.setPercentHeight(35);
+        RowConstraints energyLabelRow = new RowConstraints(); //energy
+        energyLabelRow.setPercentHeight(8);
+        RowConstraints energyRow = new RowConstraints(); //energy
+        energyRow.setPercentHeight(8);
+
+        RowConstraints descriptionRow = new RowConstraints(); //description
+        descriptionRow.setPercentHeight(12);
 
         ColumnConstraints columnConstraints = new ColumnConstraints();
-        columnConstraints.setPercentWidth(60);
-        columnConstraints.setHalignment(HPos.RIGHT);
+        columnConstraints.setPercentWidth(100);
+        columnConstraints.setHalignment(HPos.CENTER);
 
-        ColumnConstraints columnConstraints1 = new ColumnConstraints();
-        columnConstraints1.setPercentWidth(40);
-        columnConstraints1.setHalignment(HPos.LEFT);
 
-        statuses.getColumnConstraints().addAll(columnConstraints, columnConstraints1);
-        statuses.getRowConstraints().addAll(rowConstraints1,rowConstraints2, rowConstraints3, rowConstraints4, rowConstraints5, rowConstraints6, rowConstraints7);
+        statuses.getColumnConstraints().addAll(columnConstraints);
+        statuses.getRowConstraints().addAll(nameRow,lifeLabelRow, lifeRow,
+                shieldLabelRow, shieldRow, armorLabelRow, armorRow, speedLabelRow,
+                speedRow, energyLabelRow, energyRow, descriptionRow);
 
         Label lifeTitle = new Label("INTEGRITA TRUPU:");
         lifeTitle.setTextFill(Color.WHITE);
@@ -236,11 +261,10 @@ public class PickShipMenu {
         energyTitle.setTextFill(Color.WHITE);
 
         statuses.add(lifeTitle, 0, 1);
-        statuses.add(shieldTitle, 0, 2);
-        statuses.add(armorTitle, 0, 3);
-        statuses.add(speedTitle, 0, 4);
-        statuses.add(energyTitle, 0, 5);
-
+        statuses.add(shieldTitle, 0, 3);
+        statuses.add(armorTitle, 0, 5);
+        statuses.add(speedTitle, 0, 7);
+        statuses.add(energyTitle, 0, 9);
 
         titleOfShip = new SimpleStringProperty("");
         life = new SimpleIntegerProperty(10);
@@ -252,34 +276,47 @@ public class PickShipMenu {
         Label titleOfShipString = new Label();
         titleOfShipString.textProperty().bind(titleOfShip);
         titleOfShipString.setTextFill(Color.WHITE);
-        Label lifeNumber = new Label();
-        lifeNumber.setTextFill(Color.WHITE);
-        lifeNumber.textProperty().bind(life.asString());
-        Label shieldNumber = new Label();
-        shieldNumber.textProperty().bind(shield.asString());
-        shieldNumber.setTextFill(Color.WHITE);
-        Label armorNumber = new Label();
-        armorNumber.textProperty().bind(armor.asString());
-        armorNumber.setTextFill(Color.WHITE);
-        Label speedNumber = new Label();
-        speedNumber.textProperty().bind(speed.asString());
-        speedNumber.setTextFill(Color.WHITE);
-        Label energyNumber = new Label();
-        energyNumber.textProperty().bind(energy.asString());
-        energyNumber.setTextFill(Color.WHITE);
 
-        statuses.add(titleOfShipString, 0, 0, 2,1);
-        statuses.add(lifeNumber, 1, 1);
-        statuses.add(shieldNumber, 1, 2);
-        statuses.add(armorNumber, 1, 3);
-        statuses.add(speedNumber, 1, 4);
-        statuses.add(energyNumber, 1, 5);
+        statuses.add(titleOfShipString, 0, 0);
 
         statuses.setHgap(10);
         statuses.setHalignment(titleOfShipString, HPos.CENTER);
         animationOfStatus = new Timeline(new KeyFrame(Duration.seconds(0.03), event -> animation() ));
         animationOfStatus.setCycleCount(Animation.INDEFINITE);
+    }
 
+    private void fillStatusesPaneWithHboxes(){
+        statuses.add(createHBoxStatistic(Color.GREEN, 1000, choosenShip.getTotalLife().intValue()), 0, 2);
+        statuses.add(createHBoxStatistic(Color.BLUE, 1000, choosenShip.getShieldMaxLife()), 0, 4);
+        statuses.add(createHBoxStatistic(Color.YELLOW, 1000, choosenShip.getArmorMaxValue()), 0, 6);
+        statuses.add(createHBoxStatistic(Color.ORANGE, 1000, choosenShip.getSpeedMaxValue()), 0, 8);
+        statuses.add(createHBoxStatistic(Color.PURPLE, 1000, choosenShip.getEnergyMaxValue()), 0, 10);
+    }
+
+
+    private HBox createHBoxStatistic(Color color, double maxNumber, double actualNumber){
+        HBox statistic = new HBox(3);
+        statistic.setAlignment(Pos.CENTER);
+        ArrayList <Rectangle> rectangles = new ArrayList<>();
+
+        int percentOfStatus = (int)((actualNumber/maxNumber) * 10);
+
+        for(int i = 0; i < 10; i++){
+            Rectangle point = new Rectangle(10, 10);
+
+            if(i > percentOfStatus ){
+                point.setFill(Color.WHITE);
+            }else{
+                point.setFill(color);
+            }
+
+            rectangles.add(point);
+        }
+
+        statistic.getChildren().addAll(rectangles);
+
+        hBoxes.add(statistic);
+        return statistic;
     }
 
     private void animation(){
@@ -287,8 +324,10 @@ public class PickShipMenu {
             statuses.setLayoutX(statuses.getLayoutX() + 10);
             if(statuses.getLayoutX() > shipStatus.getWidth()){
                 isStatusShowedUp = false;
+                statuses.getChildren().removeAll(hBoxes);
                 animationOfStatus.stop();
                 animationOfStatus.playFromStart();
+                fillStatusesPaneWithHboxes();
             }
         }else{
             statuses.setLayoutX(statuses.getLayoutX()-5);
@@ -302,9 +341,8 @@ public class PickShipMenu {
     private void fillPickingPane(){
         pickship.add(title, 0, 0);
         pickship.add(nameOfShip, 1, 0, 2, 1);
-        pickship.add(battleShip, 0, 1);
-        pickship.add(cruiserShip, 0, 2);
-        pickship.add(showArea, 1, 0, 1, 2);
+        pickship.add(menuVBox, 0, 1, 1, 2);
+        pickship.add(showArea, 1, 1);
         pickship.add(nextSetup, 2, 2);
         pickship.add(shipStatus, 2, 1);
         pickship.add(previous, 1, 2);
@@ -315,14 +353,6 @@ public class PickShipMenu {
     private void marginInPickingPane(){
         pickship.setMargin(battleShip, new Insets(5,5,5,5));
         pickship.setMargin(cruiserShip, new Insets(5,5,5,5));
-    }
-
-    public Button getBattleShip() {
-        return battleShip;
-    }
-
-    public Button getCruiserShip() {
-        return cruiserShip;
     }
 
     public GridPane getPickship() {
@@ -354,7 +384,9 @@ public class PickShipMenu {
                 return;
             }
 
-            choosenShip.resize(0, newValue.intValue(), 0, showArea.getHeight());
+            double width = newValue.intValue();
+            double height = showArea.getHeight()/2;
+            choosenShip.resize(0, width, 0, height);
         });
 
         showArea.heightProperty().addListener((observable, oldValue, newValue) -> {
@@ -362,7 +394,9 @@ public class PickShipMenu {
                 return;
             }
 
-            choosenShip.resize(0, showArea.getWidth(), 0, newValue.intValue());
+            double width = showArea.getWidth();
+            double height = newValue.intValue()/2 + choosenShip.getHeight()/2;
+            choosenShip.resize(0, width, 0, height);
         });
     }
 }

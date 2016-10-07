@@ -17,7 +17,7 @@ public class CruiserShip extends CommonShip{
     private boolean IsMarked;
 
     public CruiserShip(boolean isEnemy) {
-        super("Cruiser ship", 150, 100, isEnemy);
+        super("Cruiser ship", 300, 200, 300, 600, 900, isEnemy);
         createShip();
         setIsMarked(false);
     }
@@ -145,6 +145,11 @@ public class CruiserShip extends CommonShip{
     @Override
     public double getWidth() {
         return ship.getWidth();
+    }
+
+    @Override
+    public double getHeight() {
+        return ship.getHeight();
     }
 
     @Override

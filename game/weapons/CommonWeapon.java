@@ -1,6 +1,7 @@
 package game.weapons;
 
 import game.GlobalVariables;
+import game.construction.AShipEquipment;
 import game.construction.IShipEquipment;
 import game.construction.Placement;
 import game.construction.CommonConstruction;
@@ -11,7 +12,7 @@ import javafx.scene.transform.Rotate;
 /**
  * Created by BobrZlosyn on 25.09.2016.
  */
-public abstract class CommonWeapon extends CommonConstruction implements IShipEquipment {
+public abstract class CommonWeapon extends AShipEquipment {
     private int power;
     private int minStrength;
     private int maxStrength;
@@ -19,7 +20,7 @@ public abstract class CommonWeapon extends CommonConstruction implements IShipEq
     private double angle;
 
     public CommonWeapon (String name, int life, int power, int minStrength, int maxStrength) {
-        super(life, name);
+        super(life, name, maxStrength);
         setPower(power);
         setMinStrength(minStrength);
         setMaxStrength(maxStrength);

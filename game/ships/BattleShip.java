@@ -19,7 +19,7 @@ public class BattleShip extends CommonShip{
     private boolean isMarked;
 
     public BattleShip (boolean isEnemy){
-        super("Battle ship", 100, 100, isEnemy);
+        super("Battle ship", 500, 800, 600, 200, 200, isEnemy);
         createShip();
         setIsMarked(false);
     }
@@ -167,6 +167,11 @@ public class BattleShip extends CommonShip{
     @Override
     public double getWidth() {
         return ship.getRadius()*2;
+    }
+
+    @Override
+    public double getHeight() {
+        return getWidth();
     }
 
     @Override

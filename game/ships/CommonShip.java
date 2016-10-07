@@ -13,7 +13,9 @@ import javafx.scene.layout.Pane;
  */
 public abstract class CommonShip extends CommonConstruction {
 
-    private int power;
+    private int energyMaxValue, energyActualValue;
+    private int armorMaxValue, armorActualValue;
+    private int speedMaxValue, speedActualValue;
     private boolean isEnemy;
     private Placement [][] placements;
     private int shieldMaxLife;
@@ -24,14 +26,37 @@ public abstract class CommonShip extends CommonConstruction {
     private double shieldAddY;
     private double shieldRadiusY;
 
-    public CommonShip (String name, int life, int power, boolean isEnemy) {
+    public CommonShip (String name, int life, int energy,int armor, int speed, int shield, boolean isEnemy) {
         super(life, name);
-        setPower(power);
+        shieldActualLifeBinding = new SimpleDoubleProperty(0);
+        setEnergyMaxValue(energy);
+        setArmorMaxValue(armor);
+        setSpeedMaxValue(speed);
+        setShieldMaxLife(shield);
         setIsEnemy(isEnemy);
         shieldActualLife = 0;
         shieldMaxLife = 0;
         setShieldConstants();
-        shieldActualLifeBinding = new SimpleDoubleProperty(0);
+    }
+
+    public void setArmorActualValue(int armorActualValue) {
+        this.armorActualValue = armorActualValue;
+    }
+
+    public void setArmorMaxValue(int armorMaxValue) {
+        this.armorMaxValue = armorMaxValue;
+    }
+
+    public void setEnergyActualValue(int energyActualValue) {
+        this.energyActualValue = energyActualValue;
+    }
+
+    public void setEnergyMaxValue(int energyMaxValue) {
+        this.energyMaxValue = energyMaxValue;
+    }
+
+    public void setSpeedMaxValue(int speedMaxValue) {
+        this.speedMaxValue = speedMaxValue;
     }
 
     protected void setShieldAddX(double shieldAddX) {
@@ -62,16 +87,8 @@ public abstract class CommonShip extends CommonConstruction {
         this.isEnemy = isEnemy;
     }
 
-    public void setPower(int power) {
-        this.power = power;
-    }
-
     public void setPlacements(Placement[][] placements) {
         this.placements = placements;
-    }
-
-    public int getPower() {
-        return power;
     }
 
     public boolean isEnemy() {
@@ -100,6 +117,22 @@ public abstract class CommonShip extends CommonConstruction {
 
     public double getShieldRadiusY() {
         return shieldRadiusY;
+    }
+
+    public int getArmorMaxValue() {
+        return armorMaxValue;
+    }
+
+    public int getEnergyMaxValue() {
+        return energyMaxValue;
+    }
+
+    public int getSpeedMaxValue() {
+        return speedMaxValue;
+    }
+
+    public int getShieldMaxLife() {
+        return shieldMaxLife;
     }
 
     public void damageToShield(int damage){
@@ -145,9 +178,9 @@ public abstract class CommonShip extends CommonConstruction {
         return 0;
     }
 
-    public double getWidth(){
-        return 0;
-    }
+    public abstract double getWidth();
+
+    public abstract double getHeight();
 
     public Placement [][] getPlacementPositions(){
         return placements;
