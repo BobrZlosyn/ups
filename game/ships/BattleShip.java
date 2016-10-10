@@ -1,10 +1,9 @@
 package game.ships;
 
-import game.ConstructionTypes;
-import game.GlobalVariables;
-import game.construction.IMarkableObject;
+import game.static_classes.ConstructionTypes;
+import game.static_classes.GameBalance;
+import game.static_classes.GlobalVariables;
 import game.construction.Placement;
-import game.weapons.CommonWeapon;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -19,7 +18,16 @@ public class BattleShip extends CommonShip{
     private boolean isMarked;
 
     public BattleShip (boolean isEnemy){
-        super("Battle ship", 500, 800, 600, 200, 200, isEnemy);
+        super(
+                GameBalance.BATTLE_SHIP_NAME,
+                GameBalance.BATTLE_SHIP_LIFE,
+                GameBalance.BATTLE_SHIP_ENERGY,
+                GameBalance.BATTLE_SHIP_ARMOR,
+                GameBalance.BATTLE_SHIP_SPEED,
+                GameBalance.BATTLE_SHIP_SHIELDS,
+                GameBalance.BATTLE_SHIP_POINTS,
+                isEnemy
+        );
         createShip();
         setIsMarked(false);
     }

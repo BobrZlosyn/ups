@@ -1,8 +1,8 @@
 package game.shields;
 
-import game.ConstructionTypes;
-import game.GlobalVariables;
-import game.construction.IMarkableObject;
+import game.static_classes.ConstructionTypes;
+import game.static_classes.GameBalance;
+import game.static_classes.GlobalVariables;
 import game.construction.Placement;
 import game.shields.shieldModels.SimpleShieldModel;
 import game.ships.CommonShip;
@@ -15,13 +15,20 @@ import javafx.scene.shape.Shape;
 /**
  * Created by BobrZlosyn on 01.10.2016.
  */
-public class SimpleShield extends CommonShield implements IMarkableObject {
+public class SimpleShield extends CommonShield {
     private SimpleShieldModel commonShieldModel;
 
     private boolean isMark;
 
     public SimpleShield() {
-        super(150, "Simple shield", 0.75, 100);
+        super(
+                GameBalance.SHIELD_EQUIPMENT_NAME,
+                GameBalance.SHIELD_EQUIPMENT_LIFE,
+                GameBalance.SHIELD_EQUIPMENT_ENERGY_COST,
+                GameBalance.SHIELD_EQUIPMENT_POINTS_COST,
+                GameBalance.SHIELD_EQUIPMENT_SHIELDS,
+                GameBalance.SHIELD_EQUIPMENT_SUCCESS_CHANCE
+        );
         setIsMark(false);
         createShield();
     }

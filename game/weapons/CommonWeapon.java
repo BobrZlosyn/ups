@@ -1,13 +1,9 @@
 package game.weapons;
 
-import game.GlobalVariables;
 import game.construction.AShipEquipment;
-import game.construction.IShipEquipment;
 import game.construction.Placement;
 import game.construction.CommonConstruction;
 import game.shots.CommonShot;
-import javafx.scene.paint.Color;
-import javafx.scene.transform.Rotate;
 
 /**
  * Created by BobrZlosyn on 25.09.2016.
@@ -19,9 +15,9 @@ public abstract class CommonWeapon extends AShipEquipment {
     private Placement target;
     private double angle;
 
-    public CommonWeapon (String name, int life, int power, int minStrength, int maxStrength) {
-        super(life, name, maxStrength);
-        setPower(power);
+    public CommonWeapon (String name, int life, int energy, int minStrength, int maxStrength, int energyCost, int costOfEquipment) {
+        super(life, name, maxStrength, energyCost, costOfEquipment, 0);
+        setPower(energy);
         setMinStrength(minStrength);
         setMaxStrength(maxStrength);
         setIsEnemy(false);

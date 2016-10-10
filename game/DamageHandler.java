@@ -1,18 +1,11 @@
 package game;
 
 import game.construction.CommonConstruction;
-import game.construction.IShipEquipment;
 import game.construction.Placement;
-import game.shields.SimpleShield;
-import game.ships.BattleShip;
 import game.ships.CommonShip;
-import game.ships.CruiserShip;
 import game.shots.CommonShot;
-import game.shots.DoubleBallShot;
-import game.shots.SimpleBallShot;
-import game.weapons.CannonWeapon;
+import game.static_classes.GlobalVariables;
 import game.weapons.CommonWeapon;
-import game.weapons.DoubleCannonWeapon;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;

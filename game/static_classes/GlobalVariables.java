@@ -1,6 +1,7 @@
-package game;
+package game.static_classes;
 
 import game.construction.CommonConstruction;
+import game.ships.CommonShip;
 import game.weapons.CommonWeapon;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -17,6 +18,7 @@ public class GlobalVariables {
     public static SimpleBooleanProperty isSelected = new SimpleBooleanProperty(false);
     private static boolean isUsersShieldUp = false;
     private static boolean isEnemyShieldUp = false;
+    public static CommonShip choosenShip;
 
     public static void setMarkedObject(CommonConstruction markedObject) {
         if(!isEmpty(markedObject) && !isEmpty(GlobalVariables.markedObject)){

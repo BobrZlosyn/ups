@@ -1,13 +1,12 @@
 package game.shields.draggableShileds;
 
 import game.construction.CommonDraggableObject;
-import game.GlobalVariables;
+import game.static_classes.GlobalVariables;
 import game.construction.CommonModel;
 import game.construction.IShipEquipment;
 import game.construction.Placement;
 import game.shields.SimpleShield;
 import game.shields.shieldModels.SimpleShieldModel;
-import game.weapons.modelsWeapon.ModelDoubleCannon;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -53,6 +52,11 @@ public class DraggableSimpleShield extends CommonDraggableObject {
         double paneY = commonModel.getParent().getLayoutY();
 
         Placement bluePlace = findPosition( placements, event.getX() - widthPane + widthModel, event.getSceneY() - paneY,addX1, addX2, addY1, addY2);
+        if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.getField().getFill().equals(Color.RED)){
+            bluePlace.getField().setFill(Color.WHITE);
+            return;
+        }
+
         if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.isEmpty()){
             Pane showArea = ((Pane)bluePlace.getField().getParent());
             DraggableSimpleShield simpleShield = new DraggableSimpleShield(showArea, bluePlace.getShip().getPlacementPositions(), true, bluePlace);
@@ -62,42 +66,7 @@ public class DraggableSimpleShield extends CommonDraggableObject {
             simpleShield.getModel().setModelXY(x, y);
             bluePlace.setIsEmpty(false);
             bluePlace.setShipEquipment(simpleShield);
-        }
-
-        commonModel.setModelXY(xPosition, yPosition);
-    }
-
-    @Override
-    protected void moveToAnotherPlace(MouseEvent event, CommonModel commonModel, Placement[][] placements) {
-        Placement bluePlace = findPosition( placements, event.getX(), event.getY(),addX1, addX2, addY1, addY2);
-
-        if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.getRow() == placement.getRow() && bluePlace.getColumn() == placement.getColumn()){
-            double x = bluePlace.getX();
-            double y = bluePlace.getY();
-            commonModel.setModelXY(x, y);
-
-            return;
-        }
-
-        if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.isEmpty()){
-
-            //mazani stareho
-            placement.setIsEmpty(true);
-            placement.setShipEquipment(null);
-            placement.getField().setFill(Color.WHITE);
-
-            double x = bluePlace.getX() + commonModel.getWidth()/2;
-            double y = bluePlace.getY() + commonModel.getWidth()/2;
-            commonModel.setModelXY(x, y);
-
-            //pridani noveho
-            placement = bluePlace;
-            placement.setIsEmpty(false);
-            placement.setShipEquipment(this);
-
-
-        }else{
-            removeObject();
+            substractPoints();
         }
     }
 

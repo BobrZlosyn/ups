@@ -3,10 +3,16 @@ package game.StartUpMenu;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 /**
  * Created by BobrZlosyn on 28.09.2016.
@@ -14,6 +20,8 @@ import javafx.scene.layout.RowConstraints;
 public class CreateMenu {
     private GridPane menu;
     private Button start, settings, about, exit;
+    private Label connection;
+    private Circle indicator;
 
     public CreateMenu(){
         menu = createGridpane();
@@ -25,6 +33,7 @@ public class CreateMenu {
         createStartAbout();
         createStartExit();
         createStartSettings();
+        createConnectionIndicator();
         fillMenuPane();
         marginInMenuPane();
     }
@@ -35,43 +44,55 @@ public class CreateMenu {
         menu.setMaxHeight(Double.MAX_VALUE);
 
         RowConstraints rowConstraints1 = new RowConstraints();
-        rowConstraints1.setPercentHeight(30);
+        rowConstraints1.setPercentHeight(25);
 
-        RowConstraints rowConstraints2 = new RowConstraints(50);
+        RowConstraints rowConstraints = new RowConstraints();
+        rowConstraints.setPercentHeight(5);
+
+        RowConstraints rowConstraints2 = new RowConstraints();
         rowConstraints2.setPercentHeight(10);
         rowConstraints2.setMaxHeight(100);
 
-        RowConstraints rowConstraints3 = new RowConstraints(50);
+        RowConstraints rowConstraints3 = new RowConstraints();
         rowConstraints3.setPercentHeight(10);
         rowConstraints3.setMaxHeight(100);
 
-        RowConstraints rowConstraints4 = new RowConstraints(50);
+        RowConstraints rowConstraints4 = new RowConstraints();
         rowConstraints4.setPercentHeight(10);
         rowConstraints4.setMaxHeight(100);
 
-        RowConstraints rowConstraints5 = new RowConstraints(50);
+        RowConstraints rowConstraints5 = new RowConstraints();
         rowConstraints5.setPercentHeight(10);
         rowConstraints5.setMaxHeight(100);
 
+        RowConstraints rowConstraints7 = new RowConstraints();
+        rowConstraints7.setPercentHeight(5);
+
         RowConstraints rowConstraints6 = new RowConstraints();
-        rowConstraints6.setPercentHeight(30);
+        rowConstraints6.setPercentHeight(25);
+        rowConstraints6.setValignment(VPos.BOTTOM);
 
         ColumnConstraints columnConstraints1 = new ColumnConstraints();
-        columnConstraints1.setPercentWidth(30);
+        columnConstraints1.setPercentWidth(37.5);
         columnConstraints1.setHalignment(HPos.CENTER);
         ColumnConstraints columnConstraints = new ColumnConstraints();
-        columnConstraints.setPercentWidth(35);
+        columnConstraints.setPercentWidth(5);
         ColumnConstraints columnConstraints2 = new ColumnConstraints();
-        columnConstraints2.setPercentWidth(35);
+        columnConstraints2.setPercentWidth(25);
+        ColumnConstraints columnConstraints3 = new ColumnConstraints();
+        columnConstraints3.setPercentWidth(5);
+        ColumnConstraints columnConstraints4 = new ColumnConstraints();
+        columnConstraints4.setPercentWidth(37.5);
+        columnConstraints4.setHalignment(HPos.RIGHT);
 
-        menu.getColumnConstraints().addAll(columnConstraints, columnConstraints1, columnConstraints2);
-        menu.getRowConstraints().addAll(rowConstraints1,rowConstraints2, rowConstraints3, rowConstraints4, rowConstraints5, rowConstraints6);
+        menu.getColumnConstraints().addAll(columnConstraints1,columnConstraints, columnConstraints2, columnConstraints3, columnConstraints4);
+        menu.getRowConstraints().addAll(rowConstraints1, rowConstraints, rowConstraints2, rowConstraints3, rowConstraints4, rowConstraints5, rowConstraints7, rowConstraints6);
 
         return menu;
     }
 
     private void createStartButton(){
-        start = new Button("HRÁT");
+        start = new Button("NOVÁ HRA");
         start.setMaxWidth(Double.MAX_VALUE);
         start.setMaxHeight(Double.MAX_VALUE);
     }
@@ -97,12 +118,29 @@ public class CreateMenu {
         });
     }
 
+    private void createConnectionIndicator(){
+        connection = new Label("Neřipojeno");
+        connection.setTextFill(Color.RED);
+        connection.setStyle("-fx-background-color: rgba(0,0,0,0.75);");
+        connection.setPadding(new Insets( 10, 0, 10, 0));
+        connection.setMinWidth(125);
+        connection.setAlignment(Pos.CENTER);
+        indicator = new Circle(3, Color.RED);
+
+    }
+
 
     private void fillMenuPane(){
-        menu.add(start,1,1);
-        menu.add(settings,1,2);
-        menu.add(about,1,3);
-        menu.add(exit,1,4);
+        Pane pane = new Pane();
+        pane.setStyle("-fx-background-color: rgba(0,0,0,0.8);");
+        menu.add(pane,1,1,3,6);
+        menu.add(start,2,2);
+        menu.add(settings,2,3);
+        menu.add(about,2,4);
+        menu.add(exit,2,5);
+        menu.add(connection, 4, 7);
+        menu.add(indicator, 4, 7);
+
     }
 
     private void marginInMenuPane(){
@@ -110,6 +148,7 @@ public class CreateMenu {
         menu.setMargin(settings, new Insets(5, 0, 5, 0));
         menu.setMargin(about, new Insets(5, 0, 5, 0));
         menu.setMargin(exit, new Insets(5, 0, 5, 0));
+        menu.setMargin(indicator, new Insets(0, 100, 15, 0));
     }
 
     public GridPane getMenu() {

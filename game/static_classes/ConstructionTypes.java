@@ -1,4 +1,4 @@
-package game;
+package game.static_classes;
 
 import game.construction.IShipEquipment;
 import game.shields.SimpleShield;

@@ -1,9 +1,9 @@
 package game.weapons;
 
-import game.ConstructionTypes;
-import game.GlobalVariables;
+import game.static_classes.ConstructionTypes;
+import game.static_classes.GameBalance;
+import game.static_classes.GlobalVariables;
 import game.construction.CommonConstruction;
-import game.construction.IMarkableObject;
 import game.construction.Placement;
 import game.shots.CommonShot;
 import game.shots.DoubleBallShot;
@@ -21,7 +21,15 @@ public class DoubleCannonWeapon extends CommonWeapon{
     private boolean isMark;
 
     public DoubleCannonWeapon() {
-        super("Double cannon",100, 100, 25, 35);
+        super(
+                GameBalance.DOUBLE_CANNON_EQUIPMENT_NAME,
+                GameBalance.DOUBLE_CANNON_EQUIPMENT_LIFE,
+                GameBalance.DOUBLE_CANNON_EQUIPMENT_ENERGY_COST,
+                GameBalance.DOUBLE_CANNON_EQUIPMENT_MIN_STRENGTH,
+                GameBalance.DOUBLE_CANNON_EQUIPMENT_MAX_STRENGTH,
+                GameBalance.DOUBLE_CANNON_EQUIPMENT_ENERGY_COST,
+                GameBalance.DOUBLE_CANNON_EQUIPMENT_POINTS_COST
+        );
         setIsMark(false);
         createCannon();
     }

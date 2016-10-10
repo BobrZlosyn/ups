@@ -1,7 +1,7 @@
 package game;
 
 import game.construction.CommonConstruction;
-import game.construction.Placement;
+import game.static_classes.GlobalVariables;
 import game.weapons.CommonWeapon;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;

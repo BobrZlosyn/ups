@@ -1,7 +1,8 @@
 package game.ships;
 
-import game.ConstructionTypes;
-import game.GlobalVariables;
+import game.static_classes.ConstructionTypes;
+import game.static_classes.GameBalance;
+import game.static_classes.GlobalVariables;
 import game.construction.Placement;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -17,7 +18,16 @@ public class CruiserShip extends CommonShip{
     private boolean IsMarked;
 
     public CruiserShip(boolean isEnemy) {
-        super("Cruiser ship", 300, 200, 300, 600, 900, isEnemy);
+        super(
+                GameBalance.CRUISER_SHIP_NAME,
+                GameBalance.CRUISER_SHIP_LIFE,
+                GameBalance.CRUISER_SHIP_ENERGY,
+                GameBalance.CRUISER_SHIP_ARMOR,
+                GameBalance.CRUISER_SHIP_SPEED,
+                GameBalance.CRUISER_SHIP_SHIELDS,
+                GameBalance.CRUISER_SHIP_POINTS,
+                isEnemy
+        );
         createShip();
         setIsMarked(false);
     }

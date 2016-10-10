@@ -6,20 +6,13 @@ import game.StartUpMenu.PickShipMenu;
 import game.background.GeneratRandomBackground;
 import game.construction.Placement;
 import game.ships.CommonShip;
-import game.ships.CruiserShip;
-import game.weapons.CannonWeapon;
+import game.static_classes.GlobalVariables;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
-import javafx.scene.shape.Arc;
-import javafx.scene.shape.ArcType;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -74,10 +67,10 @@ public class Controller implements Initializable{
         });
 
         pickShipMenu.getNextSetup().setOnAction(event -> {
-            CommonShip ship = pickShipMenu.getChoosenShip();
+            GlobalVariables.choosenShip = pickShipMenu.getChoosenShip();
             pickShipMenu.clean();
 
-            GunsToShipMenu gunsToShipMenu = new GunsToShipMenu(ship);
+            GunsToShipMenu gunsToShipMenu = new GunsToShipMenu(GlobalVariables.choosenShip);
             window.add(gunsToShipMenu.getGunsToShipPane(),0,0, GridPane.REMAINING, GridPane.REMAINING);
             setupStartButton(gunsToShipMenu);
         });
@@ -92,18 +85,17 @@ public class Controller implements Initializable{
         });
 
         gunsToShipMenu.getNextButton().setOnAction(event -> {
-            CommonShip commonShip = gunsToShipMenu.getShip();
 
             gunsToShipMenu.clean();
             gameAreaPane = new Pane();
             window.add(gameAreaPane, 0, 0, GridPane.REMAINING, 1);
 
-            Placement[][] placements = commonShip.getPlacementPositions();
-            commonShip.displayShip(gameAreaPane);
-            commonShip.fillShipWithEquipment(commonShip, placements);
+            Placement[][] placements = GlobalVariables.choosenShip.getPlacementPositions();
+            GlobalVariables.choosenShip.displayShip(gameAreaPane);
+            GlobalVariables.choosenShip.fillShipWithEquipment(GlobalVariables.choosenShip, placements);
 
             ExportImportShip exportImportShip = new ExportImportShip();
-            String exportMsg = exportImportShip.exportShip(commonShip);
+            String exportMsg = exportImportShip.exportShip(GlobalVariables.choosenShip);
             CommonShip enemyShip = exportImportShip.importShip(exportMsg, gameAreaPane);
 
             //pozadi
@@ -111,7 +103,7 @@ public class Controller implements Initializable{
             grb.chooseImage((GridPane) gameAreaPane.getParent());
 
             //horni prvky
-            Controls controls = new Controls(commonShip, enemyShip);
+            Controls controls = new Controls(GlobalVariables.choosenShip, enemyShip);
             controls.showStatusBars(gameAreaPane);
 
             //dolni prvky
@@ -119,7 +111,7 @@ public class Controller implements Initializable{
             BottomPanel bottomPanel = new BottomPanel(sendDataButton);
             bottomPanel.showPanel(window);
             bottomPanel.getQuit().setOnAction(event1 -> {
-
+                controls.stopAnimations();
                 window.getChildren().clear();
                 CreateMenu createMenu = new CreateMenu();
                 window.add(createMenu.getMenu(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
@@ -127,7 +119,7 @@ public class Controller implements Initializable{
                 grb.showSpacePort(window);
             });
 
-            DamageHandler damageHandler = new DamageHandler(commonShip, enemyShip, gameAreaPane);
+            DamageHandler damageHandler = new DamageHandler(GlobalVariables.choosenShip, enemyShip, gameAreaPane);
         });
     }
 

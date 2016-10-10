@@ -1,7 +1,7 @@
 package game.weapons.draggableWeapons;
 
 import game.construction.*;
-import game.GlobalVariables;
+import game.static_classes.GlobalVariables;
 import game.weapons.DoubleCannonWeapon;
 import game.weapons.modelsWeapon.ModelDoubleCannon;
 import javafx.scene.input.MouseEvent;
@@ -72,13 +72,17 @@ public class DraggableDoubleCannon extends CommonDraggableObject{
     public void isDragSuccesful(MouseEvent event, CommonModel commonModel, Placement[][] placements) {
         double widthPane = commonModel.getParent().getWidth()/2;
         double widthModel = commonModel.getWidth()/2;
-        double heightPane = commonModel.getParent().getLayoutY();
         double paneY = commonModel.getParent().getLayoutY();
 
         double objectPositionX = event.getX() - widthPane + widthModel;
         double objectPositionY = event.getSceneY() - paneY;
 
         Placement bluePlace = findPosition( placements, objectPositionX  , objectPositionY ,addX1, addX2, addY1, addY2);
+        if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.getField().getFill().equals(Color.RED)){
+            bluePlace.getField().setFill(Color.WHITE);
+            return;
+        }
+
         if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.isEmpty()){
             Pane showArea = ((Pane)bluePlace.getField().getParent());
             DraggableDoubleCannon draggableDoubleCannon = new DraggableDoubleCannon(showArea, bluePlace.getShip().getPlacementPositions(), true, bluePlace);
@@ -88,41 +92,7 @@ public class DraggableDoubleCannon extends CommonDraggableObject{
             draggableDoubleCannon.getModel().setModelXY(x, y);
             bluePlace.setIsEmpty(false);
             bluePlace.setShipEquipment(draggableDoubleCannon);
-        }
-
-        commonModel.setModelXY(xPosition, yPosition);
-    }
-
-    @Override
-    protected void moveToAnotherPlace(MouseEvent event, CommonModel commonModel, Placement[][] placements) {
-        Placement bluePlace = findPosition( placements, event.getX(), event.getY(),addX1, addX2, addY1, addY2);
-
-        if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.getRow() == placement.getRow() && bluePlace.getColumn() == placement.getColumn()){
-            double x = bluePlace.getX() + bluePlace.getSize()/2;
-            double y = bluePlace.getY() + bluePlace.getSize()/2;
-            commonModel.setModelXY(x, y);
-
-            return;
-        }
-
-        if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.isEmpty()){
-
-            //mazani stareho
-            placement.setIsEmpty(true);
-            placement.setShipEquipment(null);
-            placement.getField().setFill(Color.WHITE);
-
-            double x = bluePlace.getX() + bluePlace.getSize()/2;
-            double y = bluePlace.getY() + bluePlace.getSize()/2;
-            commonModel.setModelXY(x, y);
-
-            //pridani noveho
-            placement = bluePlace;
-            placement.setIsEmpty(false);
-            placement.setShipEquipment(this);
-
-        }else{
-            removeObject();
+            substractPoints();
         }
     }
 }

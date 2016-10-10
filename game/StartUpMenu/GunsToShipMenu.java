@@ -1,6 +1,7 @@
 package game.StartUpMenu;
 
-import game.GlobalVariables;
+import game.static_classes.GameBalance;
+import game.static_classes.GlobalVariables;
 import game.construction.AShipEquipment;
 import game.construction.CommonConstruction;
 import game.construction.CommonDraggableObject;
@@ -15,17 +16,17 @@ import game.weapons.modelsWeapon.ModelDoubleCannon;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -131,21 +132,39 @@ public class GunsToShipMenu {
 
     private void fillGunsToShipPane(){
         gunsToShipPane.add(title, 0, 0);
-        gunsToShipPane.add(nameOfShip, 1, 0, 2, 1);
+        gunsToShipPane.add(nameOfShip, 1, 0);
         gunsToShipPane.add(next, 2,2);
         gunsToShipPane.add(previous, 1, 2);
         gunsToShipPane.add(showArea,1,1);
         gunsToShipPane.add(shipStatus,2,1);
         gunsToShipPane.setHalignment(nameOfShip, HPos.CENTER);
 
-        ship.positionOfShip(ship.getX(), ship.getY(), showArea);
 
+        Circle pointsCircle = new Circle();
+        pointsCircle.setRadius(25);
+        pointsCircle.setStroke(Color.WHITE);
+        pointsCircle.setFill(Color.TRANSPARENT);
+
+        Label pointsLabel = new Label();
+        pointsLabel.textProperty().bind(GlobalVariables.choosenShip.getAvailablePointsProperty().asString());
+        pointsLabel.setFont(Font.font(16));
+        pointsLabel.setTextFill(Color.WHITE);
+        pointsLabel.setMaxWidth(Double.MAX_VALUE);
+        pointsLabel.setMaxHeight(Double.MAX_VALUE);
+        pointsLabel.setAlignment(Pos.CENTER);
+        pointsLabel.setStyle("-fx-background-color: rgba(0,0,0,0.8);");
+        gunsToShipPane.add(pointsLabel, 2, 0);
+        gunsToShipPane.add(pointsCircle, 2, 0);
+        gunsToShipPane.setHalignment(pointsLabel, HPos.CENTER);
+        gunsToShipPane.setHalignment(pointsCircle, HPos.CENTER);
+
+        ship.positionOfShip(ship.getX(), ship.getY(), showArea);
         items = new VBox(5);
         items.setStyle("-fx-background-color: rgba(0,0,0,0.8);");
 
-        items.getChildren().add(createItem(new ModelDoubleCannon(), "Double Cannon", 35, 35, new DraggableDoubleCannon(35, 35)));
-        items.getChildren().add(createItem(new ModelCannon(), "Cannon", 35, 35, new DraggableCannon(35, 35)));
-        items.getChildren().add(createItem(new SimpleShieldModel(), "Simple shield", 35, 35, new DraggableSimpleShield(35, 35)));
+        items.getChildren().add(createItem(new ModelDoubleCannon(), GameBalance.DOUBLE_CANNON_EQUIPMENT_NAME, 35, 35, new DraggableDoubleCannon(35, 35)));
+        items.getChildren().add(createItem(new ModelCannon(), GameBalance.CANNON_EQUIPMENT_NAME, 35, 35, new DraggableCannon(35, 35)));
+        items.getChildren().add(createItem(new SimpleShieldModel(), GameBalance.SHIELD_EQUIPMENT_NAME, 35, 35, new DraggableSimpleShield(35, 35)));
 
         gunsToShipPane.add(items, 0,1, 1, 2);
     }
@@ -191,9 +210,14 @@ public class GunsToShipMenu {
             count = event.getClickCount();
 
             if(count == 1){
-                equipment = (AShipEquipment)draggableObject.getObject();
                 nameOfEquipment.set(((CommonConstruction)draggableObject.getObject()).getName());
-                animationOfStatus.playFromStart();
+                AShipEquipment shipEquipment = (AShipEquipment)draggableObject.getObject();
+                if(GlobalVariables.isEmpty(equipment) || !(shipEquipment.getConstructionType()).equals(equipment.getConstructionType())){
+                    animationOfStatus.playFromStart();
+                    isStatusShowedUp = true;
+                }
+
+                equipment = shipEquipment;
                 if(hBoxes.isEmpty()){
                     fillStatusesPaneWithHboxes();
                 }
@@ -215,14 +239,11 @@ public class GunsToShipMenu {
 
         overPane.setOnMouseReleased(event -> {
             gunsToShipPane.getChildren().remove(paneOnTop);
-
             if(GlobalVariables.isEmpty(draggableObject.getModel())){
                 return;
             }
 
             draggableObject.isDragSuccesful(event, draggableObject.getModel(), ship.getPlacementPositions());
-
-
         });
 
         item.getChildren().addAll(overPane);
@@ -256,11 +277,17 @@ public class GunsToShipMenu {
     private void resize(){
         showArea.widthProperty().addListener((observable, oldValue, newValue) -> {
 
-            ship.resize(0, newValue.intValue(), 0, showArea.getHeight());
+            double width = newValue.intValue();
+            double height = showArea.getHeight()/2 + ship.getHeight()/2;
+            ship.resize(0, width, 0, height);
         });
 
         showArea.heightProperty().addListener((observable, oldValue, newValue) -> {
-            ship.resize(0, showArea.getWidth(), 0, newValue.intValue());
+
+            System.out.println(newValue);
+            double width = showArea.getWidth();
+            double height = newValue.intValue()/2 + ship.getHeight()/2;
+            ship.resize(0, width, 0, height);
         });
     }
 
@@ -296,36 +323,24 @@ public class GunsToShipMenu {
         statuses.setPadding(new Insets(10,10,10,10));
 
         RowConstraints nameRow = new RowConstraints(); //name of ship
-        nameRow.setPercentHeight(8);
 
         RowConstraints lifeLabelRow = new RowConstraints(); //life
-        lifeLabelRow.setPercentHeight(8);
         RowConstraints lifeRow = new RowConstraints(); //life
-        lifeRow.setPercentHeight(8);
 
         RowConstraints shieldLabelRow = new RowConstraints(); //shield
-        shieldLabelRow.setPercentHeight(8);
         RowConstraints shieldRow = new RowConstraints(); //shield stat
-        shieldLabelRow.setPercentHeight(8);
 
 
         RowConstraints armorLabelRow = new RowConstraints(); //armor
-        armorLabelRow.setPercentHeight(8);
         RowConstraints armorRow = new RowConstraints(); //armor
-        armorRow.setPercentHeight(8);
 
         RowConstraints speedLabelRow = new RowConstraints(); //speed
-        speedLabelRow.setPercentHeight(8);
         RowConstraints speedRow = new RowConstraints(); //speed
-        speedRow.setPercentHeight(8);
 
         RowConstraints energyLabelRow = new RowConstraints(); //energy
-        energyLabelRow.setPercentHeight(8);
         RowConstraints energyRow = new RowConstraints(); //energy
-        energyRow.setPercentHeight(8);
 
         RowConstraints descriptionRow = new RowConstraints(); //description
-        descriptionRow.setPercentHeight(12);
 
         ColumnConstraints columnConstraints = new ColumnConstraints();
         columnConstraints.setPercentWidth(100);
@@ -337,22 +352,19 @@ public class GunsToShipMenu {
                 shieldLabelRow, shieldRow, armorLabelRow, armorRow, speedLabelRow,
                 speedRow, energyLabelRow, energyRow, descriptionRow);
 
-        Label lifeTitle = new Label("INTEGRITA TRUPU:");
+        Label lifeTitle = new Label("ZDRAVÍ VYBAVENÍ");
         lifeTitle.setTextFill(Color.WHITE);
-        Label shieldTitle = new Label("SÍLA ŠTÍTŮ:");
+        Label shieldTitle = new Label("SPOTŘEBA ENERGIE");
         shieldTitle.setTextFill(Color.WHITE);
-        Label armorTitle = new Label("SÍLÁ PANCÍŘE:");
+        Label armorTitle = new Label("ÚTOČNÁ SÍLA");
         armorTitle.setTextFill(Color.WHITE);
-        Label speedTitle = new Label("RYCHLOST:");
+        Label speedTitle = new Label("ŠTÍTY");
         speedTitle.setTextFill(Color.WHITE);
-        Label energyTitle = new Label("ENERGIE:");
-        energyTitle.setTextFill(Color.WHITE);
 
         statuses.add(lifeTitle, 0, 1);
         statuses.add(shieldTitle, 0, 3);
         statuses.add(armorTitle, 0, 5);
         statuses.add(speedTitle, 0, 7);
-        statuses.add(energyTitle, 0, 9);
 
 
         Label titleOfShipString = new Label();
@@ -361,17 +373,28 @@ public class GunsToShipMenu {
 
         statuses.add(titleOfShipString, 0, 0);
 
-        statuses.setHgap(10);
+        statuses.setVgap(10);
         statuses.setHalignment(titleOfShipString, HPos.CENTER);
         animationOfStatus = new Timeline(new KeyFrame(Duration.seconds(0.03), event -> animation() ));
         animationOfStatus.setCycleCount(Animation.INDEFINITE);
     }
 
     private void fillStatusesPaneWithHboxes(){
-        statuses.add(createHBoxStatistic(Color.GREEN, 1000, equipment.getTotalLife().intValue()), 0, 2);
-        statuses.add(createHBoxStatistic(Color.PURPLE, 1000, equipment.getEnergyCost()), 0, 4);
-        statuses.add(createHBoxStatistic(Color.RED, 1000, equipment.getMaxStrength()), 0, 6);
-        statuses.add(createHBoxStatistic(Color.BLUE, 1000, equipment.getShieldBonus()), 0, 8);
+        statuses.add(createHBoxStatistic(Color.GREEN, GameBalance.EQUIPMENT_LIFE, equipment.getTotalLife().intValue()), 0, 2);
+        statuses.add(createHBoxStatistic(Color.PURPLE, GameBalance.EQUIPMENT_ENERGY_COST, equipment.getEnergyCost()), 0, 4);
+        statuses.add(createHBoxStatistic(Color.RED, GameBalance.EQUIPMENT_STRENGTH, equipment.getMaxStrength()), 0, 6);
+        statuses.add(createHBoxStatistic(Color.BLUE, GameBalance.EQUIPMENT_SHIELDS, equipment.getShieldBonus()), 0, 8);
+
+        Circle pointsCircle = new Circle();
+        pointsCircle.setRadius(25);
+        pointsCircle.setStroke(Color.WHITE);
+
+        Label pointsLabel = new Label(equipment.getCostOfEquipment() + "");
+        pointsLabel.setFont(Font.font(16));
+        pointsLabel.setTextFill(Color.WHITE);
+
+        statuses.add(pointsCircle, 0, 10);
+        statuses.add(pointsLabel, 0, 10);
     }
 
 
@@ -385,7 +408,7 @@ public class GunsToShipMenu {
         for(int i = 0; i < 10; i++){
             Rectangle point = new Rectangle(10, 10);
 
-            if(i > percentOfStatus ){
+            if(i >= percentOfStatus ){
                 point.setFill(Color.WHITE);
             }else{
                 point.setFill(color);

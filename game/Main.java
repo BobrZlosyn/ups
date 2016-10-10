@@ -13,6 +13,8 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Space Battles");
         primaryStage.setScene(new Scene(root, 800, 600));
+        primaryStage.setMinWidth(800);
+        primaryStage.setMinHeight(600);
         primaryStage.getScene().getStylesheets().add(getClass().getResource("gameCSS.css").toExternalForm());
         primaryStage.show();
     }

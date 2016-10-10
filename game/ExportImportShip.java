@@ -4,6 +4,8 @@ import game.construction.CommonConstruction;
 import game.construction.IShipEquipment;
 import game.construction.Placement;
 import game.ships.CommonShip;
+import game.static_classes.ConstructionTypes;
+import game.static_classes.GlobalVariables;
 import javafx.scene.layout.Pane;
 
 /**

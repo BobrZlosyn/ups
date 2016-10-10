@@ -1,9 +1,6 @@
 package game.construction;
 
-import com.sun.org.apache.xml.internal.serializer.utils.SerializerMessages_zh_CN;
-import game.GlobalVariables;
-import game.weapons.draggableWeapons.DraggableDoubleCannon;
-import game.weapons.modelsWeapon.ModelCannon;
+import game.static_classes.GlobalVariables;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -32,8 +29,18 @@ public abstract class CommonDraggableObject implements IShipEquipment{
                 //pravy horni roh, levy horni roh, PH dolu, LH dolu
                 if(pokus.contains(x - xAdd1, y + yAdd1) || pokus.contains(x - xAdd2, y + yAdd1)
                         || pokus.contains(x - xAdd1, y + yAdd2) || pokus.contains(x - xAdd2, y + yAdd2)){
-                    pokus.setFill(Color.BLUE);
-                    place = placements[i][j];
+
+                    if(GlobalVariables.choosenShip.getAvailablePoints() < ((AShipEquipment)getObject()).getCostOfEquipment()){
+                        if(pokus.getFill().equals(Color.BLUE)){
+                            continue;
+                        }
+                        pokus.setFill(Color.RED);
+                        place = placements[i][j];
+
+                    }else{
+                        pokus.setFill(Color.BLUE);
+                        place = placements[i][j];
+                    }
                 }else{
                     if(placements[i][j].isEmpty()){
                         pokus.setFill(Color.WHITE);
@@ -91,6 +98,7 @@ public abstract class CommonDraggableObject implements IShipEquipment{
         if(isInPlace){
             modelInPlace.getParts().forEach(shape -> {
                 shape.setOnMousePressed(event -> {
+                    addPoints();
                     Pane showArea = modelInPlace.getParent();
                     showArea.getChildren().removeAll(modelInPlace.getParts());
                     showArea.getChildren().addAll(modelInPlace.getParts());
@@ -124,5 +132,54 @@ public abstract class CommonDraggableObject implements IShipEquipment{
         placement.getField().setFill(Color.WHITE);
     }
 
-    protected abstract void moveToAnotherPlace(MouseEvent event, CommonModel commonModel, Placement [][] placements);
+    protected void moveToAnotherPlace(MouseEvent event, CommonModel commonModel, Placement[][] placements) {
+
+        Placement bluePlace = findPosition( placements, event.getX(), event.getY(),addX1, addX2, addY1, addY2);
+        if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.getField().getFill().equals(Color.RED)){
+            bluePlace.getField().setFill(Color.WHITE);
+            return;
+        }
+
+        //pridani na stejnou pozici
+        if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.getRow() == placement.getRow() && bluePlace.getColumn() == placement.getColumn()){
+            double x = bluePlace.getX() + bluePlace.getSize()/2;
+            double y = bluePlace.getY() + bluePlace.getSize()/2;
+            commonModel.setModelXY(x, y);
+            substractPoints();
+            return;
+        }
+
+        //presunuti na jinou pozici
+        if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.isEmpty()){
+            substractPoints();
+            //mazani stareho
+            placement.setIsEmpty(true);
+            placement.setShipEquipment(null);
+            placement.getField().setFill(Color.WHITE);
+
+            double x = bluePlace.getX() + bluePlace.getSize()/2;
+            double y = bluePlace.getY() + bluePlace.getSize()/2;
+            commonModel.setModelXY(x, y);
+
+            //pridani noveho
+            placement = bluePlace;
+            placement.setIsEmpty(false);
+            placement.setShipEquipment(this);
+
+        }else{
+            removeObject();
+        }
+    }
+
+    protected void substractPoints(){
+        AShipEquipment equipment = (AShipEquipment) getObject();
+        GlobalVariables.choosenShip.setAvailablePoints(equipment.getCostOfEquipment());
+    }
+
+    protected void addPoints(){
+        if(isInPlace){
+            AShipEquipment equipment = (AShipEquipment) getObject();
+            GlobalVariables.choosenShip.setAvailablePoints(-equipment.getCostOfEquipment());
+        }
+    }
 }

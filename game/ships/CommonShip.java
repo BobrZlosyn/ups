@@ -1,11 +1,12 @@
 package game.ships;
 
-import game.GlobalVariables;
+import game.static_classes.GlobalVariables;
 import game.construction.CommonDraggableObject;
 import game.construction.IShipEquipment;
 import game.construction.Placement;
 import game.construction.CommonConstruction;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.layout.Pane;
 
 /**
@@ -16,27 +17,47 @@ public abstract class CommonShip extends CommonConstruction {
     private int energyMaxValue, energyActualValue;
     private int armorMaxValue, armorActualValue;
     private int speedMaxValue, speedActualValue;
+    private int pointsForEquipment;
     private boolean isEnemy;
     private Placement [][] placements;
     private int shieldMaxLife;
     private int shieldActualLife;
     private SimpleDoubleProperty shieldActualLifeBinding;
+    private SimpleIntegerProperty availablePoints;
+    private SimpleDoubleProperty actualEnergy;
     private double shieldRadiusX;
     private double shieldAddX;
     private double shieldAddY;
     private double shieldRadiusY;
 
-    public CommonShip (String name, int life, int energy,int armor, int speed, int shield, boolean isEnemy) {
+    public CommonShip (String name, int life, int energy,int armor, int speed, int shield, int pointsForEquipment, boolean isEnemy) {
         super(life, name);
         shieldActualLifeBinding = new SimpleDoubleProperty(0);
+        actualEnergy = new SimpleDoubleProperty(1);
+        energyActualValue = energy;
         setEnergyMaxValue(energy);
         setArmorMaxValue(armor);
         setSpeedMaxValue(speed);
-        setShieldMaxLife(shield);
+        setShieldMaxLife(100);
+        setPointsForEquipment(pointsForEquipment);
         setIsEnemy(isEnemy);
-        shieldActualLife = 0;
-        shieldMaxLife = 0;
+        availablePoints = new SimpleIntegerProperty(pointsForEquipment);
+        shieldActualLife = 100;
+        shieldMaxLife = 100;
         setShieldConstants();
+    }
+
+    public void setActualEnergy(int cost) {
+        energyActualValue -= cost;
+        this.actualEnergy.set(((double)energyActualValue)/energyMaxValue);
+    }
+
+    public void setAvailablePoints(int costPoints) {
+        availablePoints.set(availablePoints.getValue() - costPoints);
+    }
+
+    public void setPointsForEquipment(int pointsForEquipment) {
+        this.pointsForEquipment = pointsForEquipment;
     }
 
     public void setArmorActualValue(int armorActualValue) {
@@ -99,6 +120,10 @@ public abstract class CommonShip extends CommonConstruction {
         return shieldActualLifeBinding;
     }
 
+    public SimpleDoubleProperty getActualEnergy() {
+        return actualEnergy;
+    }
+
     public abstract void displayShip(Pane gameArea);
 
     public abstract void positionOfShip(double x, double y, Pane gameArea);
@@ -107,8 +132,28 @@ public abstract class CommonShip extends CommonConstruction {
         return shieldAddX;
     }
 
+    public int getShieldActualLife() {
+        return shieldActualLife;
+    }
+
     public double getShieldAddY() {
         return shieldAddY;
+    }
+
+    public int getAvailablePoints() {
+        return availablePoints.get();
+    }
+
+    public int getActualEnergyLevel(){
+        return energyActualValue;
+    }
+
+    public SimpleIntegerProperty getAvailablePointsProperty() {
+        return availablePoints;
+    }
+
+    public int getPointsForEquipment() {
+        return pointsForEquipment;
     }
 
     public double getShieldRadiusX() {
