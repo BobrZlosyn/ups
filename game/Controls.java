@@ -12,6 +12,7 @@ import javafx.geometry.VPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -163,13 +164,21 @@ public class Controls {
         this.shipIntegrity = shipIntegrity;
     }
 
-
+    private ProgressIndicator progress;
     private void createTimeRemaining(){
-        circle = new Circle(35);
-        circle.setCenterY(circle.getRadius() + 10);
+        circle = new Circle(32);
+        circle.setCenterY(circle.getRadius() + 19);
         circle.setStroke(Color.WHITE);
 
+        progress = new ProgressIndicator(0);
+        progress.setMinSize(100,100);
+        progress.setLayoutY(10);
+
         timeValue = new SimpleIntegerProperty(120);
+        timeValue.addListener((observable, oldValue, newValue) -> {
+            double number = 1 - ((double)newValue.intValue())/120;
+            progress.setProgress(number);
+        });
 
         time = new Label();
         time.setMinWidth(circle.getRadius() * 2);
@@ -177,7 +186,7 @@ public class Controls {
         time.setTextFill(Color.WHITE);
         time.setAlignment(Pos.CENTER);
         time.setFont(Font.font(22));
-        time.setLayoutY(circle.getRadius() - 6);
+        time.setLayoutY(circle.getRadius() + 3);
 
         roundTimeAnimation = new Timeline(new KeyFrame(Duration.seconds(1), event -> roundTimeAnimation()));
         roundTimeAnimation.setCycleCount(120);
@@ -185,8 +194,9 @@ public class Controls {
     }
 
     private void setTimeRemaining(Pane gameArea){
-        gameArea.getChildren().addAll(circle, time);
+        gameArea.getChildren().addAll(progress, circle, time);
         gameArea.widthProperty().addListener((observable, oldValue, newValue) -> {
+            progress.setLayoutX(newValue.intValue()/2 - 50);
             circle.setCenterX(newValue.intValue()/2);
             time.setLayoutX(newValue.intValue()/2 - circle.getRadius());
         });
