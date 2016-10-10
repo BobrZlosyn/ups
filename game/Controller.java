@@ -1,7 +1,7 @@
 package game;
 
 import game.StartUpMenu.CreateMenu;
-import game.StartUpMenu.EndOfGame;
+import game.StartUpMenu.EndOfGameMenu;
 import game.StartUpMenu.GunsToShipMenu;
 import game.StartUpMenu.PickShipMenu;
 import game.background.GeneratRandomBackground;
@@ -165,7 +165,7 @@ public class Controller implements Initializable{
         usersShip.getActualLifeBinding().addListener((observable, oldValue, newValue) -> {
 
             if(newValue.doubleValue() <= 0){
-                EndOfGame endOfGame = new EndOfGame(false);
+                EndOfGameMenu endOfGame = new EndOfGameMenu(false);
                 endWindowSetting(endOfGame);
             }
         });
@@ -173,7 +173,7 @@ public class Controller implements Initializable{
         enemyShip.getActualLifeBinding().addListener((observable, oldValue, newValue) -> {
 
             if (newValue.doubleValue() <= 0) {
-                EndOfGame endOfGame = new EndOfGame(true);
+                EndOfGameMenu endOfGame = new EndOfGameMenu(true);
                 endWindowSetting(endOfGame);
             }
         });
@@ -183,7 +183,7 @@ public class Controller implements Initializable{
      * nastavuje tlacitka na obrazovce s ukoncenou hrou
      * @param endOfGame
      */
-    private void endWindowSetting(EndOfGame endOfGame){
+    private void endWindowSetting(EndOfGameMenu endOfGame){
         endOfGame.setupWindow(window);
         controls.stopAnimations();
 

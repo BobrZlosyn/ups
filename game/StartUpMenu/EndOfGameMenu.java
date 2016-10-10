@@ -16,14 +16,14 @@ import java.util.ArrayList;
 /**
  * Created by BobrZlosyn on 10.10.2016.
  */
-public class EndOfGame1 {
+public class EndOfGameMenu {
 
     private Label result, text;
     private Button newGame, backToMenu;
     private Pane pane;
     private GridPane endWindow;
 
-    public EndOfGame1(boolean isUserWinner){
+    public EndOfGameMenu(boolean isUserWinner){
         createLabel(isUserWinner);
         createBackToMenuButton();
         createNewGameButton();
@@ -33,10 +33,10 @@ public class EndOfGame1 {
     private void createLabel(boolean isUserWinner){
 
         if (isUserWinner) {
-            result = new Label("V√≠tƒõzstv√≠!");
+            result = new Label("VÌtÏzstvÌ!");
             result.setTextFill(Color.GREEN);
         }else {
-            result = new Label("Por√°≈æka!");
+            result = new Label("Por·ûka!");
             result.setTextFill(Color.RED);
         }
 
@@ -51,7 +51,7 @@ public class EndOfGame1 {
             text = new Label(getRandomTextToWinner());
             text.setTextFill(Color.GREEN);
         }else{
-            text = new Label("Jste ostudou na≈°√≠ flotily.");
+            text = new Label("Jste ostudou naöÌ flotily.");
             text.setTextFill(Color.RED);
         }
 
@@ -62,13 +62,13 @@ public class EndOfGame1 {
     }
 
     private void createNewGameButton(){
-        newGame = new Button("Dal≈°√≠ bitva");
+        newGame = new Button("DalöÌ bitva");
         newGame.setMaxWidth(Double.MAX_VALUE);
         newGame.setMaxHeight(100);
     }
 
     private void createBackToMenuButton(){
-        backToMenu = new Button("Zpƒõt do menu");
+        backToMenu = new Button("ZpÏt do menu");
         backToMenu.setMaxWidth(Double.MAX_VALUE);
         backToMenu.setMaxHeight(100);
     }
@@ -122,8 +122,8 @@ public class EndOfGame1 {
 
     private String getRandomTextToWinner(){
         ArrayList <String> texts = new ArrayList();
-        texts.add("Blahop≈ôejeme kapit√°ne, zniƒçil jste nep≈ô√°tele s ledov√Ωm klidem.");
-        texts.add("Rebelov√© byli rozpr√°≈°eni do v≈°ech kout≈Ø vesm√≠ru jen d√≠ky v√°m.");
+        texts.add("Blahop¯ejeme kapit·ne, zniËil jste nep¯·tele s ledov˝m klidem.");
+        texts.add("RebelovÈ byli rozpr·öeni do vöech kout˘ vesmÌru jen dÌky v·m.");
 
         return texts.get(1);
 
@@ -132,7 +132,7 @@ public class EndOfGame1 {
 
     private String getRandomTextToLoser(){
         ArrayList <String> texts = new ArrayList();
-        texts.add("Jste ostudou na≈°√≠ flotily.");
+        texts.add("Jste ostudou naöÌ flotily.");
         return texts.get(0);
     }
 
@@ -147,6 +147,5 @@ public class EndOfGame1 {
     public Button getNewGame() {
         return newGame;
     }
-
 
 }
