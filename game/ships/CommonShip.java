@@ -5,6 +5,7 @@ import game.construction.CommonDraggableObject;
 import game.construction.IShipEquipment;
 import game.construction.Placement;
 import game.construction.CommonConstruction;
+import game.weapons.CommonWeapon;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.layout.Pane;
@@ -32,24 +33,33 @@ public abstract class CommonShip extends CommonConstruction {
 
     public CommonShip (String name, int life, int energy,int armor, int speed, int shield, int pointsForEquipment, boolean isEnemy) {
         super(life, name);
-        shieldActualLifeBinding = new SimpleDoubleProperty(0);
+        if(shield == 0){
+            shieldActualLifeBinding = new SimpleDoubleProperty(0);
+        }else {
+            shieldActualLifeBinding = new SimpleDoubleProperty(1);
+        }
+
         actualEnergy = new SimpleDoubleProperty(1);
         energyActualValue = energy;
         setEnergyMaxValue(energy);
         setArmorMaxValue(armor);
         setSpeedMaxValue(speed);
-        setShieldMaxLife(100);
+        setShieldMaxLife(shield);
         setPointsForEquipment(pointsForEquipment);
         setIsEnemy(isEnemy);
         availablePoints = new SimpleIntegerProperty(pointsForEquipment);
-        shieldActualLife = 100;
-        shieldMaxLife = 100;
+        shieldActualLife = shield;
         setShieldConstants();
     }
 
     public void setActualEnergy(int cost) {
         energyActualValue -= cost;
         this.actualEnergy.set(((double)energyActualValue)/energyMaxValue);
+    }
+
+    public void setShieldActualLife(int shieldActualLife) {
+        this.shieldActualLifeBinding.set(((double) shieldActualLife) / shieldMaxLife);
+        this.shieldActualLife = shieldActualLife;
     }
 
     public void setAvailablePoints(int costPoints) {
@@ -70,6 +80,7 @@ public abstract class CommonShip extends CommonConstruction {
 
     public void setEnergyActualValue(int energyActualValue) {
         this.energyActualValue = energyActualValue;
+        this.shieldActualLifeBinding.set(((double)energyActualValue) / energyMaxValue);
     }
 
     public void setEnergyMaxValue(int energyMaxValue) {
@@ -192,7 +203,7 @@ public abstract class CommonShip extends CommonConstruction {
 
     }
 
-    public void fillShipWithEquipment(CommonShip ship, Placement [][] oldShipPlacements){
+    public void fillShipWithEquipment(CommonShip ship, Placement [][] oldShipPlacements, boolean isFirstCreation){
         for (int i = 0; i < oldShipPlacements.length; i++){
             for (int j = 0; j < oldShipPlacements[i].length; j++){
                 Placement place = oldShipPlacements[i][j];
@@ -205,12 +216,27 @@ public abstract class CommonShip extends CommonConstruction {
                     continue;
                 }
 
-                IShipEquipment construction = ((CommonDraggableObject) shipEquipment).getObject();
-                construction.displayEquipment(placements[i][j], ship.isEnemy());
-                placements[i][j].setIsEmpty(false);
-                placements[i][j].setShipEquipment(construction);
-                ((CommonConstruction)construction).setPlacement(placements[i][j]);
+                if(isFirstCreation){
+                    IShipEquipment construction = ((CommonDraggableObject) shipEquipment).getObject();
+                    construction.displayEquipment(placements[i][j], ship.isEnemy());
+                    placements[i][j].setIsEmpty(false);
+                    placements[i][j].setShipEquipment(construction);
+                    ((CommonConstruction)construction).setPlacement(placements[i][j]);
 
+                }else {
+                    shipEquipment.displayEquipment(placements[i][j], ship.isEnemy());
+                    placements[i][j].setIsEmpty(false);
+                    placements[i][j].setShipEquipment(shipEquipment);
+                    ((CommonConstruction) shipEquipment).setPlacement(placements[i][j]);
+                    ((CommonConstruction) shipEquipment).setActualLife(((CommonConstruction) shipEquipment).getTotalLife().get());
+                    ((CommonConstruction) shipEquipment).unmarkObject();
+                    ((CommonConstruction) shipEquipment).cancelTarget();
+
+                    if (shipEquipment.isWeapon()) {
+                        shipEquipment.rotateToDefaultPosition();
+                        ((CommonWeapon) shipEquipment).setTarget(null);
+                    }
+                }
             }
         }
     }
@@ -229,5 +255,12 @@ public abstract class CommonShip extends CommonConstruction {
 
     public Placement [][] getPlacementPositions(){
         return placements;
+    }
+
+
+    public void restartValues(){
+        setEnergyActualValue(getEnergyMaxValue());
+        setActualLife(getTotalLife().get());
+        setShieldActualLife(getShieldMaxLife());
     }
 }

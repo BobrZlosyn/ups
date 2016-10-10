@@ -1,6 +1,7 @@
 package game.shields.shieldModels;
 
 import game.construction.CommonModel;
+import javafx.animation.Timeline;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -20,7 +21,7 @@ public class SimpleShieldModel extends CommonModel {
 
     private void createShiled(){
         shield = new Rectangle(50,50);
-        shield.setFill(Color.ORANGE);
+        setDefaultSkin();
     }
 
     public Rectangle getShield() {
@@ -48,5 +49,15 @@ public class SimpleShieldModel extends CommonModel {
     @Override
     public double getWidth() {
         return shield.getWidth();
+    }
+
+    @Override
+    public void setDefaultSkin() {
+        shield.setFill(Color.ORANGE);
+    }
+
+    @Override
+    public void destructionAnimation() {
+
     }
 }

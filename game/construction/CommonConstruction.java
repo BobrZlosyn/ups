@@ -8,17 +8,23 @@ import javafx.beans.property.SimpleDoubleProperty;
 public abstract class CommonConstruction implements IMarkableObject{
     private SimpleDoubleProperty totalLife;
     private String name;
-    private boolean isEnemy;
+    private boolean isEnemy, isMarked;
     private SimpleDoubleProperty actualLife;
     private SimpleDoubleProperty actualLifeBinding;
     private Placement placement;
     private int energyCost;
+
 
     public CommonConstruction(int totalLife, String name){
         setName(name);
         this.totalLife = new SimpleDoubleProperty(totalLife);
         this.actualLife = new SimpleDoubleProperty(totalLife);
         this.actualLifeBinding = new SimpleDoubleProperty(1);
+        isMarked = false;
+    }
+
+    public void setIsMarked(boolean isMarked) {
+        this.isMarked = isMarked;
     }
 
     public void setEnergyCost(int energyCost) {
@@ -34,6 +40,7 @@ public abstract class CommonConstruction implements IMarkableObject{
     }
 
     public void setActualLife(double actualLife) {
+        this.actualLifeBinding.set(actualLife /totalLife.get());
         this.actualLife.set(actualLife);
     }
 
@@ -65,12 +72,16 @@ public abstract class CommonConstruction implements IMarkableObject{
         return isEnemy;
     }
 
+    public boolean isMarked() {
+        return isMarked;
+    }
+
     public double getActualLife() {
         return actualLife.get();
     }
 
     public void takeDamage(int damage){
-        double life = getTotalLife().get() - damage;
+        double life = getActualLife() - damage;
         if(life > 0){
             setActualLife(life);
             setActualLifeBinding(actualLife.get()/totalLife.get());
@@ -78,12 +89,15 @@ public abstract class CommonConstruction implements IMarkableObject{
             setActualLife(0);
             setActualLifeBinding(0);
         }
+
+        if(damage != 0){
+            damageHit();
+        }
     }
 
-    public void destroy(){
-        setActualLife(0);
-        setActualLifeBinding(0);
-    }
+    public abstract void destroy();
+
+    public abstract void damageHit();
 
     public void resize(double widthStart, double widthEnd, double heightStart, double heightEnd){
         return;

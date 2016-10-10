@@ -72,6 +72,7 @@ public class ExportImportShip {
             placements[row][column].setShipEquipment(equipment);
             placements[row][column].setIsEmpty(false);
             placements[row][column].setIsWeapon(equipment.isWeapon());
+            ((CommonConstruction)equipment).setPlacement(placements[row][column]);
         }
 
         return enemyShip;

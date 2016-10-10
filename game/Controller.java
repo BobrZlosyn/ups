@@ -1,6 +1,7 @@
 package game;
 
 import game.StartUpMenu.CreateMenu;
+import game.StartUpMenu.EndOfGame;
 import game.StartUpMenu.GunsToShipMenu;
 import game.StartUpMenu.PickShipMenu;
 import game.background.GeneratRandomBackground;
@@ -29,9 +30,7 @@ public class Controller implements Initializable{
     private Button sendDataButton;
     private Pane gameAreaPane;
     GeneratRandomBackground grb;
-    public void setConnectionStatusLabel(String text) {
-//        connectionStatusLabel.setText(text);
-    }
+    Controls controls;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -43,6 +42,9 @@ public class Controller implements Initializable{
         grb.showSpacePort(window);
     }
 
+    /**
+     * prekresluje pozadi pri zmene velikosti
+     */
     private void windowResize(){
         window.widthProperty().addListener((observable, oldValue, newValue) -> {
             if(!GlobalVariables.isEmpty(grb)){
@@ -57,6 +59,10 @@ public class Controller implements Initializable{
         });
     }
 
+    /**
+     * zobrazi obrazovku pro vybaveni lodi
+     * @param pickShipMenu
+     */
     private void setupGunsToShipMenu(PickShipMenu pickShipMenu){
         pickShipMenu.getPrevious().setOnAction(event1 -> {
             pickShipMenu.clean();
@@ -76,6 +82,11 @@ public class Controller implements Initializable{
         });
     }
 
+
+    /**
+     * spusti obrazovku se hrou
+     * @param gunsToShipMenu
+     */
     private void setupStartButton(GunsToShipMenu gunsToShipMenu){
         gunsToShipMenu.getPrevious().setOnAction(event1 -> {
             gunsToShipMenu.clean();
@@ -87,42 +98,54 @@ public class Controller implements Initializable{
         gunsToShipMenu.getNextButton().setOnAction(event -> {
 
             gunsToShipMenu.clean();
-            gameAreaPane = new Pane();
-            window.add(gameAreaPane, 0, 0, GridPane.REMAINING, 1);
-
-            Placement[][] placements = GlobalVariables.choosenShip.getPlacementPositions();
-            GlobalVariables.choosenShip.displayShip(gameAreaPane);
-            GlobalVariables.choosenShip.fillShipWithEquipment(GlobalVariables.choosenShip, placements);
-
-            ExportImportShip exportImportShip = new ExportImportShip();
-            String exportMsg = exportImportShip.exportShip(GlobalVariables.choosenShip);
-            CommonShip enemyShip = exportImportShip.importShip(exportMsg, gameAreaPane);
-
-            //pozadi
-            grb.findImages();
-            grb.chooseImage((GridPane) gameAreaPane.getParent());
-
-            //horni prvky
-            Controls controls = new Controls(GlobalVariables.choosenShip, enemyShip);
-            controls.showStatusBars(gameAreaPane);
-
-            //dolni prvky
-            sendDataButton = new Button();
-            BottomPanel bottomPanel = new BottomPanel(sendDataButton);
-            bottomPanel.showPanel(window);
-            bottomPanel.getQuit().setOnAction(event1 -> {
-                controls.stopAnimations();
-                window.getChildren().clear();
-                CreateMenu createMenu = new CreateMenu();
-                window.add(createMenu.getMenu(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
-                setupPickShipMenu(createMenu);
-                grb.showSpacePort(window);
-            });
-
-            DamageHandler damageHandler = new DamageHandler(GlobalVariables.choosenShip, enemyShip, gameAreaPane);
+            startGame(true);
         });
     }
 
+    private void startGame(boolean isFirstCreated){
+
+        gameAreaPane = new Pane();
+        window.add(gameAreaPane, 0, 0, GridPane.REMAINING, 1);
+
+        Placement[][] placements = GlobalVariables.choosenShip.getPlacementPositions();
+        GlobalVariables.choosenShip.displayShip(gameAreaPane);
+        GlobalVariables.choosenShip.fillShipWithEquipment(GlobalVariables.choosenShip, placements, isFirstCreated);
+
+        //vytvari nepratelskou lod
+        ExportImportShip exportImportShip = new ExportImportShip();
+        String exportMsg = exportImportShip.exportShip(GlobalVariables.choosenShip);
+        CommonShip enemyShip = exportImportShip.importShip(exportMsg, gameAreaPane);
+
+        endWindowShowUp(GlobalVariables.choosenShip, enemyShip);
+
+        //pozadi
+        grb.findImages();
+        grb.chooseImage((GridPane) gameAreaPane.getParent());
+
+        //horni prvky
+        controls = new Controls(GlobalVariables.choosenShip, enemyShip);
+        controls.showStatusBars(gameAreaPane);
+
+        //dolni prvky
+        sendDataButton = new Button();
+        BottomPanel bottomPanel = new BottomPanel(sendDataButton);
+        bottomPanel.showPanel(window);
+        bottomPanel.getQuit().setOnAction(event1 -> {
+            GlobalVariables.choosenShip.setActualLifeBinding(0);
+        });
+
+        DamageHandler damageHandler = new DamageHandler(GlobalVariables.choosenShip, enemyShip, gameAreaPane);
+        sendDataButton.setOnAction(event1 -> {
+            String actions = damageHandler.exportShooting(GlobalVariables.choosenShip.getPlacementPositions());
+            damageHandler.doDamage(actions);
+        });
+    }
+
+
+    /**
+     * zobrazi obrazovku pro vyber lodi
+     * @param createMenu
+     */
     private void setupPickShipMenu(CreateMenu createMenu){
         createMenu.getStart().setOnAction(event -> {
             createMenu.clean();
@@ -130,6 +153,53 @@ public class Controller implements Initializable{
             window.add(pickShipMenu.getPickship(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
 
             setupGunsToShipMenu(pickShipMenu);
+        });
+    }
+
+    /**
+     * zobrazi obrazovku na konci hry pokud nektera hra je znicena
+     * @param usersShip
+     * @param enemyShip
+     */
+    private void endWindowShowUp(CommonShip usersShip, CommonShip enemyShip){
+        usersShip.getActualLifeBinding().addListener((observable, oldValue, newValue) -> {
+
+            if(newValue.doubleValue() <= 0){
+                EndOfGame endOfGame = new EndOfGame(false);
+                endWindowSetting(endOfGame);
+            }
+        });
+
+        enemyShip.getActualLifeBinding().addListener((observable, oldValue, newValue) -> {
+
+            if (newValue.doubleValue() <= 0) {
+                EndOfGame endOfGame = new EndOfGame(true);
+                endWindowSetting(endOfGame);
+            }
+        });
+    }
+
+    /**
+     * nastavuje tlacitka na obrazovce s ukoncenou hrou
+     * @param endOfGame
+     */
+    private void endWindowSetting(EndOfGame endOfGame){
+        endOfGame.setupWindow(window);
+        controls.stopAnimations();
+
+        endOfGame.getBackToMenu().setOnAction(event -> {
+            window.getChildren().clear();
+            CreateMenu createMenu = new CreateMenu();
+            window.add(createMenu.getMenu(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
+            setupPickShipMenu(createMenu);
+            grb.showSpacePort(window);
+        });
+
+        endOfGame.getNewGame().setOnAction(event -> {
+            window.getChildren().clear();
+            GlobalVariables.choosenShip.restartValues();
+            GlobalVariables.choosenShip.unmarkObject();
+            startGame(false);
         });
     }
 }

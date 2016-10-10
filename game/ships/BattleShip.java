@@ -4,18 +4,22 @@ import game.static_classes.ConstructionTypes;
 import game.static_classes.GameBalance;
 import game.static_classes.GlobalVariables;
 import game.construction.Placement;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
+import java.time.Duration;
+
 /**
  * Created by Kanto on 26.09.2016.
  */
 public class BattleShip extends CommonShip{
     private Circle ship;
-    private boolean isMarked;
+    private Timeline hit;
 
     public BattleShip (boolean isEnemy){
         super(
@@ -30,14 +34,7 @@ public class BattleShip extends CommonShip{
         );
         createShip();
         setIsMarked(false);
-    }
-
-    public boolean isMarked() {
-        return isMarked;
-    }
-
-    public void setIsMarked(boolean isMarked) {
-        this.isMarked = isMarked;
+        createTimelineHit();
     }
 
     private void createShip(){
@@ -46,11 +43,7 @@ public class BattleShip extends CommonShip{
 
 
         ship.setOnMouseClicked(event -> {
-            if(isMarked()){
-                unmarkObject();
-            } else {
-                markObject();
-            }
+            markingHandle(isMarked(), this);
         });
 
     }
@@ -155,11 +148,15 @@ public class BattleShip extends CommonShip{
         if(!isEnemy()){
             return;
         }
+
+        ship.setStroke(Color.RED);
+        ship.setStrokeWidth(1.5);
+        GlobalVariables.setTargetObject(this);
     }
 
     @Override
     public void cancelTarget() {
-
+        ship.setStroke(Color.TRANSPARENT);
     }
 
     @Override
@@ -190,6 +187,24 @@ public class BattleShip extends CommonShip{
     @Override
     public String getConstructionType() {
         return ConstructionTypes.BATTLE_SHIP;
+    }
+
+    @Override
+    public void destroy() {
+
+    }
+
+    private void createTimelineHit(){
+        hit = new Timeline(new KeyFrame(javafx.util.Duration.seconds(GlobalVariables.damageHitDuration),event -> {
+            ship.setFill(Color.BLACK);
+        }));
+        hit.setCycleCount(1);
+    }
+
+    @Override
+    public void damageHit() {
+        ship.setFill(GlobalVariables.damageHit);
+        hit.playFromStart();
     }
 
     @Override

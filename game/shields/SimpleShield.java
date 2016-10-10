@@ -1,5 +1,6 @@
 package game.shields;
 
+import game.construction.CommonModel;
 import game.static_classes.ConstructionTypes;
 import game.static_classes.GameBalance;
 import game.static_classes.GlobalVariables;
@@ -18,8 +19,6 @@ import javafx.scene.shape.Shape;
 public class SimpleShield extends CommonShield {
     private SimpleShieldModel commonShieldModel;
 
-    private boolean isMark;
-
     public SimpleShield() {
         super(
                 GameBalance.SHIELD_EQUIPMENT_NAME,
@@ -29,16 +28,8 @@ public class SimpleShield extends CommonShield {
                 GameBalance.SHIELD_EQUIPMENT_SHIELDS,
                 GameBalance.SHIELD_EQUIPMENT_SUCCESS_CHANCE
         );
-        setIsMark(false);
+        setIsMarked(false);
         createShield();
-    }
-
-    public void setIsMark(boolean isMark) {
-        this.isMark = isMark;
-    }
-
-    public boolean isMark() {
-        return isMark;
     }
 
     private void createShield() {
@@ -50,16 +41,7 @@ public class SimpleShield extends CommonShield {
 
     private void markShield(Shape shape){
         shape.setOnMouseClicked(event -> {
-            if(GlobalVariables.isTargeting){
-                target();
-                return;
-            }
-
-            if(!isMark()){
-                markObject();
-            }else{
-                unmarkObject();
-            }
+            markingHandle(isMarked(), this);
         });
     }
 
@@ -129,7 +111,7 @@ public class SimpleShield extends CommonShield {
             shape.setStrokeWidth(1.5);
         });
 
-        setIsMark(true);
+        setIsMarked(true);
 
         GlobalVariables.setMarkedObject(this);
         GlobalVariables.setName(getName());
@@ -142,7 +124,7 @@ public class SimpleShield extends CommonShield {
             shape.setStroke(Color.TRANSPARENT);
         });
 
-        setIsMark(false);
+        setIsMarked(false);
         GlobalVariables.setMarkedObject(null);
         GlobalVariables.setName("");
         GlobalVariables.setCanTarget(false);
@@ -183,5 +165,10 @@ public class SimpleShield extends CommonShield {
     @Override
     public String getConstructionType() {
         return ConstructionTypes.SIMPLE_SHIELD;
+    }
+
+    @Override
+    public CommonModel getModel() {
+        return commonShieldModel;
     }
 }

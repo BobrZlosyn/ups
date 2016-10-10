@@ -32,7 +32,12 @@ public interface IShipEquipment {
         return;
     }
 
+    default void rotateToDefaultPosition(){
+        return;
+    }
+
     default boolean isWeapon(){
         return false;
     }
+
 }

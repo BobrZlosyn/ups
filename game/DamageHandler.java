@@ -36,12 +36,10 @@ public class DamageHandler {
         this.gameArea = gameArea;
         shots = new ArrayList();
         removeShots = new ArrayList();
-        doDamage("");
     }
 
     //msg - 1-0;; Shield Damage - 0-N;; Ship damage - 0-N;; Placement position From - 1-N,1-N,Placement position Target - 1-N, 1-N, Damage - 0-N; other placements ...;
     public int doDamage(String msgWithDmg){
-        msgWithDmg = "1;;35;;25;;2,2,2,2,85;";
         decodeMsg(msgWithDmg);
 
         if(toEnemy){
@@ -109,15 +107,26 @@ public class DamageHandler {
                 int jTarget = Integer.parseInt(positions[3]);
                 int damage = Integer.parseInt(positions[4]);
 
+                double x, y;
                 Placement placeAttacker = attackPlacements[iAtacker][jAtacker];
-                Placement placeTarget = targetPlacements[iTarget][jTarget];
-                if(GlobalVariables.isEmpty(placeAttacker) || placeAttacker.isEmpty()
-                        || GlobalVariables.isEmpty(placeTarget) || placeTarget.isEmpty()){
-                    return -5;
+                CommonConstruction target;
+
+                if(iTarget == -1 && jTarget == -1){
+                    x = enemyShip.getCenterX();
+                    y = enemyShip.getCenterY();
+                    target = enemyShip;
+                }else {
+                    Placement placeTarget = targetPlacements[iTarget][jTarget];
+                    if(GlobalVariables.isEmpty(placeAttacker) || placeAttacker.isEmpty()
+                            || GlobalVariables.isEmpty(placeTarget) || placeTarget.isEmpty()){
+                        return -5;
+                    }
+                    target = (CommonConstruction) placeTarget.getShipEquipment();
+                    x = target.getCenterX();
+                    y = target.getCenterY();
                 }
-                CommonConstruction target = (CommonConstruction) placeTarget.getShipEquipment();
-                double x = target.getCenterX();
-                double y = target.getCenterY();
+
+
                 placeAttacker.getShipEquipment().rotateEquipment(x, y);
 
 
@@ -164,26 +173,32 @@ public class DamageHandler {
         }
     }
 
-    private String exportShooting(Placement [][] placements){
+    public String exportShooting(Placement [][] placements){
         StringBuilder shooting = new StringBuilder();
         Placement placement, target;
-
+        shooting.append("1;;0;;0;;");
         for(int i = 0; i < placements.length; i++){
             for(int j = 0; j < placements[i].length; j++){
                 placement = placements[i][j];
 
-                if(GlobalVariables.isEmpty(placement) && !placement.isWeapon()){
+                if(GlobalVariables.isEmpty(placement) || !placement.isWeapon()){
+                    continue;
+                }
+
+                target = ((CommonWeapon) placement.getShipEquipment()).getTarget(); //ziskavani cile
+
+                if(GlobalVariables.isEmpty(target)){
                     continue;
                 }
 
                 shooting.append(i + "," + j + ","); // pridani souradnic utocnika
-                target = ((CommonWeapon) placement.getShipEquipment()).getTarget(); //ziskavani cile
                 shooting.append(target.getRow() + "," + target.getColumn()); //pridani cile
+                shooting.append(",120");
                 shooting.append(";"); //ukonceni zbrane
             }
         }
 
-        shooting.append(";;"); // ukonceni strelby
+        shooting.append(";"); // ukonceni strelby
 
         return shooting.toString();
     }

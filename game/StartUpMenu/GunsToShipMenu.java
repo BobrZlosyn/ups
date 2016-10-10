@@ -142,17 +142,29 @@ public class GunsToShipMenu {
 
         Circle pointsCircle = new Circle();
         pointsCircle.setRadius(25);
-        pointsCircle.setStroke(Color.WHITE);
         pointsCircle.setFill(Color.TRANSPARENT);
+        pointsCircle.setStroke(Color.WHITE);
 
         Label pointsLabel = new Label();
         pointsLabel.textProperty().bind(GlobalVariables.choosenShip.getAvailablePointsProperty().asString());
+        pointsLabel.textProperty().addListener((observable, oldValue, newValue) -> {
+            int points = Integer.parseInt(newValue);
+            if(points < 2){
+                pointsLabel.setTextFill(Color.RED);
+                pointsCircle.setStroke(Color.RED);
+            }else {
+                pointsCircle.setStroke(Color.WHITE);
+                pointsLabel.setTextFill(Color.WHITE);
+            }
+        });
+
         pointsLabel.setFont(Font.font(16));
-        pointsLabel.setTextFill(Color.WHITE);
         pointsLabel.setMaxWidth(Double.MAX_VALUE);
         pointsLabel.setMaxHeight(Double.MAX_VALUE);
         pointsLabel.setAlignment(Pos.CENTER);
         pointsLabel.setStyle("-fx-background-color: rgba(0,0,0,0.8);");
+        pointsLabel.setTextFill(Color.WHITE);
+
         gunsToShipPane.add(pointsLabel, 2, 0);
         gunsToShipPane.add(pointsCircle, 2, 0);
         gunsToShipPane.setHalignment(pointsLabel, HPos.CENTER);
@@ -244,6 +256,7 @@ public class GunsToShipMenu {
             }
 
             draggableObject.isDragSuccesful(event, draggableObject.getModel(), ship.getPlacementPositions());
+            draggableObject.removeModel(paneOnTop);
         });
 
         item.getChildren().addAll(overPane);
@@ -284,7 +297,6 @@ public class GunsToShipMenu {
 
         showArea.heightProperty().addListener((observable, oldValue, newValue) -> {
 
-            System.out.println(newValue);
             double width = showArea.getWidth();
             double height = newValue.intValue()/2 + ship.getHeight()/2;
             ship.resize(0, width, 0, height);

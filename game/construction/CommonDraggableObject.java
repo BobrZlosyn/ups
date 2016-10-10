@@ -58,6 +58,11 @@ public abstract class CommonDraggableObject implements IShipEquipment{
 
     public abstract void createModel(Pane pane, Placement [][] placements, double x, double y);
 
+    public void removeModel(Pane pane){
+        pane.getChildren().removeAll(modelInPlace.getParts());
+        modelInPlace = null;
+    }
+
     public void setPlacement(Placement placement) {
         this.placement = placement;
     }

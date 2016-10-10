@@ -21,14 +21,9 @@ public class ModelCannon extends CommonModel{
 
     private void createCannon(){
         room = new Circle(25);
-        room.setFill(Color.ORANGE);
-
         head = new Circle(15);
-        head.setFill(Color.YELLOW);
-
         cannon = new Rectangle(30, 10);
-        cannon.setFill(Color.RED);
-
+        setDefaultSkin();
     }
 
     public void setModelXY(double x, double y){
@@ -45,6 +40,19 @@ public class ModelCannon extends CommonModel{
     @Override
     public double getWidth() {
         return room.getRadius()*2;
+    }
+
+    @Override
+    public void setDefaultSkin() {
+
+        room.setFill(Color.ORANGE);
+        head.setFill(Color.YELLOW);
+        cannon.setFill(Color.RED);
+    }
+
+    @Override
+    public void destructionAnimation() {
+
     }
 
     public Rectangle getCannon() {

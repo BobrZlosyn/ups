@@ -2,9 +2,10 @@ package game.static_classes;
 
 import game.construction.CommonConstruction;
 import game.ships.CommonShip;
-import game.weapons.CommonWeapon;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.paint.Color;
+
 
 /**
  * Created by BobrZlosyn on 28.09.2016.
@@ -19,6 +20,8 @@ public class GlobalVariables {
     private static boolean isUsersShieldUp = false;
     private static boolean isEnemyShieldUp = false;
     public static CommonShip choosenShip;
+    public static Color damageHit = Color.RED;
+    public static double damageHitDuration = 0.2;
 
     public static void setMarkedObject(CommonConstruction markedObject) {
         if(!isEmpty(markedObject) && !isEmpty(GlobalVariables.markedObject)){
@@ -47,7 +50,6 @@ public class GlobalVariables {
             }
         }
 
-        ((CommonWeapon)GlobalVariables.getMarkedObject()).setTarget((targetObject).getPlacement());
         GlobalVariables.targetObject = targetObject;
     }
 

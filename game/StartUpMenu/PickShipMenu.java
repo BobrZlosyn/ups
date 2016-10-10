@@ -379,7 +379,7 @@ public class PickShipMenu {
             if(GlobalVariables.isEmpty(choosenShip)){
                 return;
             }
-            System.out.println(newValue);
+
             double width = showArea.getWidth();
             double height = newValue.intValue()/2 + choosenShip.getHeight()/2;
             choosenShip.resize(0, width, 0, height);

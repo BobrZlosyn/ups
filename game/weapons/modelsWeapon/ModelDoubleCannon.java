@@ -5,11 +5,15 @@ package game.weapons.modelsWeapon;
  */
 
 import game.construction.CommonModel;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.util.Duration;
+
 import java.util.ArrayList;
 
 /**
@@ -25,20 +29,11 @@ public class ModelDoubleCannon extends CommonModel{
 
     private void createCannon(){
         room = new Circle(25);
-        room.setFill(Color.ORANGE);
-
         head = new Circle(15);
-        head.setFill(Color.YELLOW);
-
         cannonTop = new Rectangle(30, 8);
-        cannonTop.setFill(Color.RED);
-
         cannonBottom = new Rectangle(30, 8);
-        cannonBottom.setFill(Color.GREEN);
-
+        setDefaultSkin();
     }
-
-
 
     public Rectangle getCannonTop() {
         return cannonTop;
@@ -55,7 +50,6 @@ public class ModelDoubleCannon extends CommonModel{
     public Circle getHead() {
         return head;
     }
-
 
     @Override
     public ArrayList<Shape> getParts(){
@@ -89,5 +83,35 @@ public class ModelDoubleCannon extends CommonModel{
     @Override
     public double getWidth() {
         return room.getRadius()*2;
+    }
+
+    @Override
+    public void setDefaultSkin() {
+
+        room.setFill(Color.ORANGE);
+        head.setFill(Color.YELLOW);
+        cannonTop.setFill(Color.RED);
+        cannonBottom.setFill(Color.GREEN);
+    }
+
+    protected int countCycle;
+    @Override
+    public void destructionAnimation() {
+        double centerX = getRoom().getCenterX();
+        double centerY = getRoom().getCenterY();
+
+        Pane pane = getParent();
+        pane.getChildren().removeAll(getParts());
+
+        countCycle = 0;
+        Timeline destructionAnimation = new Timeline(new KeyFrame(Duration.seconds(0.3), event -> {
+            if(countCycle > 98){
+
+            }
+
+            countCycle++;
+        }));
+        destructionAnimation.setCycleCount(100);
+        destructionAnimation.playFromStart();
     }
 }

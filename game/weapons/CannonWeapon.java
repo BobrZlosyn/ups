@@ -1,11 +1,11 @@
 package game.weapons;
 
 
+import game.construction.CommonModel;
 import game.static_classes.ConstructionTypes;
 import game.static_classes.GameBalance;
 import game.static_classes.GlobalVariables;
 import game.construction.CommonConstruction;
-import game.construction.IMarkableObject;
 import game.construction.Placement;
 import game.shots.CommonShot;
 import game.shots.SimpleBallShot;
@@ -21,7 +21,6 @@ import javafx.scene.transform.Rotate;
 public class CannonWeapon extends CommonWeapon{
 
     private ModelCannon modelCannon;
-    private boolean isMark;
 
     public CannonWeapon() {
         super(
@@ -33,16 +32,8 @@ public class CannonWeapon extends CommonWeapon{
                 GameBalance.CANNON_EQUIPMENT_ENERGY_COST,
                 GameBalance.CANNON_EQUIPMENT_POINTS_COST
         );
-        setIsMark(false);
+        setIsMarked(false);
         createCannon();
-    }
-
-    public void setIsMark(boolean isMark) {
-        this.isMark = isMark;
-    }
-
-    public boolean isMark() {
-        return isMark;
     }
 
     private void createCannon() {
@@ -55,16 +46,7 @@ public class CannonWeapon extends CommonWeapon{
 
     private void markCannon(Shape shape){
             shape.setOnMouseClicked(event -> {
-                if(GlobalVariables.isTargeting){
-                    target();
-                    return;
-                }
-
-                if(!isMark()){
-                    markObject();
-                }else{
-                    unmarkObject();
-                }
+                markingHandle(isMarked(), this);
             });
     }
 
@@ -105,15 +87,12 @@ public class CannonWeapon extends CommonWeapon{
             shape.setStrokeWidth(1.5);
         });
 
-        setIsMark(true);
+        setIsMarked(true);
 
         GlobalVariables.setMarkedObject(this);
         GlobalVariables.setName(getName());
         GlobalVariables.setCanTarget(!isEnemy());
 
-        if(!GlobalVariables.isEmpty(getTarget())){
-            ((IMarkableObject)getTarget().getShipEquipment()).target();
-        }
     }
 
     @Override
@@ -122,7 +101,7 @@ public class CannonWeapon extends CommonWeapon{
             shape.setStroke(Color.TRANSPARENT);
         });
 
-        setIsMark(false);
+        setIsMarked(false);
         GlobalVariables.setMarkedObject(null);
         GlobalVariables.setName("");
         GlobalVariables.setCanTarget(false);
@@ -160,8 +139,16 @@ public class CannonWeapon extends CommonWeapon{
         }else{
             modelCannon.getCannon().getTransforms().add(rotation);
         }
-
     }
+
+    @Override
+    public void rotateToDefaultPosition() {
+        double newAngle = -getAngle();
+        setAngle(0);
+        modelCannon.getCannon().getTransforms().add(new Rotate(newAngle, getCenterX(), getCenterY()));
+    }
+
+
     @Override
     public boolean containsPosition(double x, double y){
         return modelCannon.getRoom().contains(x,y);
@@ -185,5 +172,10 @@ public class CannonWeapon extends CommonWeapon{
     @Override
     public CommonShot getShot(CommonConstruction target, int damage) {
         return new SimpleBallShot(target, this, damage);
+    }
+
+    @Override
+    public CommonModel getModel() {
+        return modelCannon;
     }
 }

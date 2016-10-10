@@ -18,4 +18,8 @@ public abstract class CommonModel {
 
     public abstract double getWidth();
 
+    public abstract void setDefaultSkin();
+
+    public abstract void destructionAnimation();
+
 }

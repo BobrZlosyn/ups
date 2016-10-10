@@ -1,5 +1,6 @@
 package game.weapons;
 
+import game.construction.CommonModel;
 import game.static_classes.ConstructionTypes;
 import game.static_classes.GameBalance;
 import game.static_classes.GlobalVariables;
@@ -18,7 +19,6 @@ import javafx.scene.transform.Rotate;
  */
 public class DoubleCannonWeapon extends CommonWeapon{
     private ModelDoubleCannon modelDoubleCannon;
-    private boolean isMark;
 
     public DoubleCannonWeapon() {
         super(
@@ -30,16 +30,8 @@ public class DoubleCannonWeapon extends CommonWeapon{
                 GameBalance.DOUBLE_CANNON_EQUIPMENT_ENERGY_COST,
                 GameBalance.DOUBLE_CANNON_EQUIPMENT_POINTS_COST
         );
-        setIsMark(false);
+        setIsMarked(false);
         createCannon();
-    }
-
-    public void setIsMark(boolean isMark) {
-        this.isMark = isMark;
-    }
-
-    public boolean isMark() {
-        return isMark;
     }
 
     private void createCannon() {
@@ -52,16 +44,7 @@ public class DoubleCannonWeapon extends CommonWeapon{
 
     private void markCannon(Shape shape){
         shape.setOnMouseClicked(event -> {
-            if(GlobalVariables.isTargeting){
-                target();
-                return;
-            }
-
-            if(!isMark()){
-                markObject();
-            }else{
-                unmarkObject();
-            }
+            markingHandle(isMarked(), this);
         });
     }
 
@@ -105,7 +88,7 @@ public class DoubleCannonWeapon extends CommonWeapon{
             shape.setStrokeWidth(1.5);
         });
 
-        setIsMark(true);
+        setIsMarked(true);
 
         GlobalVariables.setMarkedObject(this);
         GlobalVariables.setName(getName());
@@ -118,7 +101,7 @@ public class DoubleCannonWeapon extends CommonWeapon{
             shape.setStroke(Color.TRANSPARENT);
         });
 
-        setIsMark(false);
+        setIsMarked(false);
         GlobalVariables.setMarkedObject(null);
         GlobalVariables.setName("");
         GlobalVariables.setCanTarget(false);
@@ -146,10 +129,12 @@ public class DoubleCannonWeapon extends CommonWeapon{
 
     @Override
     public void rotateEquipment(double x, double y) {
+        rotateToDefaultPosition();
         Rotate rotation = calculationForRotation(x, y, getCenterX(), getCenterY(), isEnemy());
         double angleNew = rotation.getAngle() - getAngle();
         rotation.setAngle(angleNew);
         setAngle(angleNew);
+
 
         if(isEnemy()){
             modelDoubleCannon.getCannonTop().getTransforms().add(rotation);
@@ -158,6 +143,14 @@ public class DoubleCannonWeapon extends CommonWeapon{
             modelDoubleCannon.getCannonTop().getTransforms().add(rotation);
             modelDoubleCannon.getCannonBottom().getTransforms().add(rotation);
         }
+    }
+
+    @Override
+    public void rotateToDefaultPosition() {
+        double newAngle = -getAngle();
+        setAngle(0);
+        modelDoubleCannon.getCannonTop().getTransforms().add(new Rotate(newAngle, getCenterX(), getCenterY()));
+        modelDoubleCannon.getCannonBottom().getTransforms().add(new Rotate(newAngle, getCenterX(), getCenterY()));
     }
 
     @Override
@@ -184,5 +177,10 @@ public class DoubleCannonWeapon extends CommonWeapon{
     @Override
     public CommonShot getShot(CommonConstruction target, int damage) {
         return new DoubleBallShot(target, this, damage);
+    }
+
+    @Override
+    public CommonModel getModel() {
+        return modelDoubleCannon;
     }
 }

@@ -35,6 +35,7 @@ public class Controls {
     private Label time;
     private SimpleIntegerProperty timeValue;
     private Timeline roundTimeAnimation;
+    private ProgressIndicator progress;
 
     public Controls(CommonShip userShip, CommonShip enemyShip){
         createProgress(userShip);
@@ -164,7 +165,6 @@ public class Controls {
         this.shipIntegrity = shipIntegrity;
     }
 
-    private ProgressIndicator progress;
     private void createTimeRemaining(){
         circle = new Circle(32);
         circle.setCenterY(circle.getRadius() + 19);
@@ -173,6 +173,7 @@ public class Controls {
         progress = new ProgressIndicator(0);
         progress.setMinSize(100,100);
         progress.setLayoutY(10);
+        progress.getStyleClass().add("timeIndicator");
 
         timeValue = new SimpleIntegerProperty(120);
         timeValue.addListener((observable, oldValue, newValue) -> {
@@ -219,13 +220,26 @@ public class Controls {
         if(timeValue.get() > 1){
             timeValue.set(timeValue.get() - 1);
         }else {
-            stopAnimations();
+            resetAnimation();
         }
     }
 
     public void stopAnimations(){
+        if(GlobalVariables.isEmpty(roundTimeAnimation)){
+            return;
+        }
+
         roundTimeAnimation.stop();
         roundTimeAnimation = null;
+    }
+
+    public void resetAnimation(){
+        if(GlobalVariables.isEmpty(roundTimeAnimation)){
+            return;
+        }
+
+        timeValue.set(120);
+        roundTimeAnimation.playFromStart();
     }
 
 

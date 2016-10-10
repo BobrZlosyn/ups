@@ -4,6 +4,8 @@ import game.static_classes.ConstructionTypes;
 import game.static_classes.GameBalance;
 import game.static_classes.GlobalVariables;
 import game.construction.Placement;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -15,7 +17,7 @@ import javafx.scene.shape.Rectangle;
 public class CruiserShip extends CommonShip{
 
     private Rectangle ship;
-    private boolean IsMarked;
+    private Timeline hit;
 
     public CruiserShip(boolean isEnemy) {
         super(
@@ -30,27 +32,16 @@ public class CruiserShip extends CommonShip{
         );
         createShip();
         setIsMarked(false);
+        createTimelineHit();
     }
 
-    private void setIsMarked(boolean isMarked) {
-        IsMarked = isMarked;
-    }
-
-    private boolean isMarked() {
-        return IsMarked;
-    }
 
     private void createShip(){
         ship = new Rectangle(200, 400);
         ship.setStyle("-fx-background-color: red;");
         ship.setOnMouseClicked(event -> {
-            if(isMarked()){
-                unmarkObject();
-            }else {
-                markObject();
-            }
+            markingHandle(isMarked(), this);
         });
-
     }
 
     @Override
@@ -145,11 +136,15 @@ public class CruiserShip extends CommonShip{
         if(!isEnemy()){
             return;
         }
+
+        ship.setStroke(Color.RED);
+        ship.setStrokeWidth(1.5);
+        GlobalVariables.setTargetObject(this);
     }
 
     @Override
     public void cancelTarget() {
-
+        ship.setStroke(Color.TRANSPARENT);
     }
 
     @Override
@@ -160,6 +155,24 @@ public class CruiserShip extends CommonShip{
     @Override
     public double getHeight() {
         return ship.getHeight();
+    }
+
+    @Override
+    public void destroy() {
+
+    }
+
+    private void createTimelineHit(){
+        hit = new Timeline(new KeyFrame(javafx.util.Duration.seconds(GlobalVariables.damageHitDuration),event -> {
+            ship.setFill(Color.BLACK);
+        }));
+        hit.setCycleCount(1);
+    }
+
+    @Override
+    public void damageHit() {
+        ship.setFill(GlobalVariables.damageHit);
+        hit.playFromStart();
     }
 
     @Override
