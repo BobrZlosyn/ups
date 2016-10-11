@@ -33,10 +33,10 @@ public class EndOfGameMenu {
     private void createLabel(boolean isUserWinner){
 
         if (isUserWinner) {
-            result = new Label("Vítìzství!");
+            result = new Label("VÃ­tÄ›zstvÃ­!");
             result.setTextFill(Color.GREEN);
         }else {
-            result = new Label("Poráka!");
+            result = new Label("PorÃ¡Å¾ka!");
             result.setTextFill(Color.RED);
         }
 
@@ -51,7 +51,7 @@ public class EndOfGameMenu {
             text = new Label(getRandomTextToWinner());
             text.setTextFill(Color.GREEN);
         }else{
-            text = new Label("Jste ostudou naší flotily.");
+            text = new Label("Jste ostudou naÅ¡Ã­ flotily.");
             text.setTextFill(Color.RED);
         }
 
@@ -62,13 +62,13 @@ public class EndOfGameMenu {
     }
 
     private void createNewGameButton(){
-        newGame = new Button("Další bitva");
+        newGame = new Button("DalÅ¡Ã­ bitva");
         newGame.setMaxWidth(Double.MAX_VALUE);
         newGame.setMaxHeight(100);
     }
 
     private void createBackToMenuButton(){
-        backToMenu = new Button("Zpìt do menu");
+        backToMenu = new Button("ZpÄ›t do menu");
         backToMenu.setMaxWidth(Double.MAX_VALUE);
         backToMenu.setMaxHeight(100);
     }
@@ -122,8 +122,8 @@ public class EndOfGameMenu {
 
     private String getRandomTextToWinner(){
         ArrayList <String> texts = new ArrayList();
-        texts.add("Blahopøejeme kapitáne, znièil jste nepøátele s ledovım klidem.");
-        texts.add("Rebelové byli rozprášeni do všech koutù vesmíru jen díky vám.");
+        texts.add("BlahopÅ™ejeme kapitÃ¡ne, zniÄil jste nepÅ™Ã¡tele s ledovÃ½m klidem.");
+        texts.add("RebelovÃ© byli rozprÃ¡Å¡eni do vÅ¡ech koutÅ¯ vesmÃ­ru jen dÃ­ky vÃ¡m.");
 
         return texts.get(1);
 
@@ -132,7 +132,7 @@ public class EndOfGameMenu {
 
     private String getRandomTextToLoser(){
         ArrayList <String> texts = new ArrayList();
-        texts.add("Jste ostudou naší flotily.");
+        texts.add("Jste ostudou naÅ¡Ã­ flotily.");
         return texts.get(0);
     }
 

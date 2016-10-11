@@ -25,6 +25,10 @@ public abstract class CommonShot {
         return damage;
     }
 
+    public CommonConstruction getAttacker() {
+        return attacker;
+    }
+
     public CommonConstruction getTarget() {
         return target;
     }

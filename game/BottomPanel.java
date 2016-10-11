@@ -13,7 +13,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.paint.Color;
+
 
 /**
  * Created by BobrZlosyn on 26.09.2016.
@@ -26,7 +29,7 @@ public class BottomPanel {
     private Label name, lifeLabel;
     private boolean setTarget;
     private ProgressBar lifeProgress;
-
+    private String background;
 
 
     public BottomPanel(Button sendOrders){
@@ -37,7 +40,7 @@ public class BottomPanel {
         createLifeProgressBar();
         createCancelTargetButton();
         createPanel(sendOrders);
-
+        createNamePane();
     }
 
     public Button getQuit() {
@@ -48,7 +51,6 @@ public class BottomPanel {
         sendOrders.setText("DÁT ROZKAZ K ÚTOKU");
         sendOrders.setMaxWidth(Double.MAX_VALUE);
         sendOrders.setMaxHeight(Double.MAX_VALUE);
-
     }
 
     private void createCancelTargetButton(){
@@ -71,6 +73,7 @@ public class BottomPanel {
         lifeProgress = new ProgressBar(1);
         lifeProgress.setMaxWidth(Double.MAX_VALUE);
         lifeProgress.setMaxHeight(Double.MAX_VALUE);
+        lifeProgress.getStyleClass().add("lifeStatus");
 
         lifeLabel = new Label("život konstrukce");
         lifeLabel.getStyleClass().add("statusLabel");
@@ -83,7 +86,13 @@ public class BottomPanel {
         lifeProgress.visibleProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue.booleanValue()){
                 CommonConstruction construction = GlobalVariables.getMarkedObject();
+                lifeLabel.setText((int)construction.getActualLife() + "/" + (int)construction.getTotalLife().get());
                 lifeProgress.progressProperty().bind(construction.getActualLifeBinding());
+                lifeProgress.progressProperty().addListener((observable1, oldValue1, newValue1) -> {
+
+                    int actualLife = (int) (newValue1.doubleValue() * construction.getTotalLife().get());
+                    lifeLabel.setText(actualLife + "/" + (int) construction.getTotalLife().get());
+                });
             }else {
                 lifeProgress.progressProperty().unbind();
             }
@@ -97,20 +106,24 @@ public class BottomPanel {
         targeting.visibleProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue.booleanValue()){
                 CommonWeapon weapon = (CommonWeapon) GlobalVariables.getMarkedObject();
+                notEnoughEnergy(GlobalVariables.getMarkedObject());
+
                 if(GlobalVariables.isEmpty(weapon.getTarget())){ //zbran ma vybrany cil
                     cancelTarget.setVisible(false);
-                    targeting.setText("Zaměřit cíl");
                     return;
                 }
 
                 cancelTarget.setVisible(true);
                 targeting.setText("Změnit cíl");
+                targeting.setDisable(false);
                 IMarkableObject equipment =(IMarkableObject) weapon.getTarget().getShipEquipment();
                 if(GlobalVariables.isEmpty(equipment)){ // cilem je lod
                     weapon.getTarget().getShip().target();
                 }else { // cilem je vybaveni na lodi
                     equipment.target();
                 }
+            }else {
+                cancelTarget.setVisible(false);
             }
         });
 
@@ -133,6 +146,22 @@ public class BottomPanel {
         targeting.setText("Potvrdit cíl");
     }
 
+    private void notEnoughEnergy(CommonConstruction commonConstruction){
+        int energy = commonConstruction.getPlacement().getShip().getActualEnergyLevel();
+        int cost = commonConstruction.getEnergyCost();
+        if(energy < cost){
+            targeting.setText("Nedostatek energie");
+            targeting.setDisable(true);
+        }else{
+            targeting.setText("Zaměřit cíl");
+            targeting.setDisable(false);
+        }
+    }
+
+
+    /**
+     * potvrdi cil a zameri ho
+     */
     private void acknoledgeTarget(){
         CommonWeapon weapon = (CommonWeapon) GlobalVariables.getMarkedObject();
         int energyCost = weapon.getEnergyCost();
@@ -148,27 +177,29 @@ public class BottomPanel {
             CommonConstruction construction = GlobalVariables.getTargetObject();
             weapon.rotateEquipment(construction.getCenterX(), construction.getCenterY());
             GlobalVariables.setTargetObject(construction);
-
+            construction.target();
             //odeber energii pokud zbran nema vybrano cil
             if(GlobalVariables.isEmpty(weapon.getTarget())){
                 ship.setActualEnergy(energyCost);
             }
 
             weapon.setTarget(construction.getPlacement());
-            weapon.unmarkObject();
+            cancelTarget.setVisible(true);
+            targeting.setText("Změnit cíl");
         }else {
             if(!GlobalVariables.isEmpty(weapon.getTarget())){
                 weapon.setTarget(null);
                 ship.setActualEnergy(-energyCost);
                 weapon.rotateToDefaultPosition();
-                weapon.unmarkObject();
             }
+            cancelTarget.setVisible(false);
+            targeting.setText("Zaměřit cíl");
         }
 
-        cancelTarget.setVisible(false);
+
         setTarget = false;
         GlobalVariables.setIsTargeting(false);
-        targeting.setText("Zaměřit cíl");
+
     }
 
     private void createButtonQuit(){
@@ -192,9 +223,10 @@ public class BottomPanel {
         RowConstraints rowConstraints2 = new RowConstraints(50);
 
         ColumnConstraints columnConstraints = new ColumnConstraints();
-        columnConstraints.setPercentWidth(40);
+        columnConstraints.setPercentWidth(20);
         ColumnConstraints columnConstraints1 = new ColumnConstraints();
-        columnConstraints1.setPercentWidth(20);
+        columnConstraints1.setPercentWidth(40);
+        columnConstraints1.setHalignment(HPos.CENTER);
         ColumnConstraints columnConstraints2 = new ColumnConstraints();
         columnConstraints2.setPercentWidth(20);
         ColumnConstraints columnConstraints3 = new ColumnConstraints();
@@ -205,13 +237,12 @@ public class BottomPanel {
         panel.getColumnConstraints().addAll(columnConstraints, columnConstraints1, columnConstraints2, columnConstraints3);
         panel.getRowConstraints().addAll(rowConstraints1, rowConstraints2);
 
-        panel.add(name, 1,0);
         panel.add(sendOrders, 3, 0);
         panel.add(quit, 3, 1);
         panel.add(targeting, 2, 1);
         panel.add(cancelTarget, 2, 0);
-        panel.add(lifeProgress, 0, 1);
-        panel.add(lifeLabel, 0, 1);
+        panel.add(lifeProgress, 0, 0);
+        panel.add(lifeLabel, 0, 0);
 
         panel.setMargin(sendOrders, new Insets(15,10,5,10));
         panel.setMargin(cancelTarget, new Insets(15,10,5,10));
@@ -220,11 +251,30 @@ public class BottomPanel {
         panel.setMargin(lifeProgress, new Insets(10,10,10,10));
     }
 
-    public void showPanel(GridPane window){
+    public void showPanel(GridPane window, Pane gameArea){
         window.add(panel,0,1,GridPane.REMAINING,GridPane.REMAINING);
+        gameArea.getChildren().addAll(name);
+
+        gameArea.widthProperty().addListener((observable, oldValue, newValue) -> {
+            name.setLayoutX(newValue.doubleValue()/2 - 200/2);
+        });
+        gameArea.heightProperty().addListener((observable, oldValue, newValue) -> {
+            name.setLayoutY(newValue.doubleValue() - 35);
+        });
+    }
+    private void createNamePane(){
+
+        name.setMaxWidth(200);
+        name.setMinWidth(200);
+        name.setMaxHeight(35);
+        name.setMinHeight(35);
+        name.setAlignment(Pos.CENTER);
+        name.getStyleClass().add("bottomPanel");
+        name.setStyle("-fx-border-radius: 100 100 0 0;" +
+                        "-fx-background-radius: 100 100 0 0;");
     }
 
-    public void removePanle(GridPane window){
+    public void removePanel(GridPane window){
         window.getChildren().remove(panel);
     }
 }

@@ -161,6 +161,11 @@ public class DamageHandler {
             if(simpleBallShot1.pocitatTrasu()){
                 simpleBallShot1.removeShot(gameArea);
                 simpleBallShot1.getTarget().takeDamage(simpleBallShot1.getDamage());
+                if(simpleBallShot1.getTarget().getActualLife() == 0){
+                    simpleBallShot1.getTarget().cancelTarget();
+                    ((CommonWeapon)simpleBallShot1.getAttacker()).setTarget(null);
+                }
+
                 removeShots.add(simpleBallShot1);
             }
         });

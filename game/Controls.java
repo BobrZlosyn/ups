@@ -1,6 +1,7 @@
 package game;
 
 import game.ships.CommonShip;
+import game.static_classes.GameBalance;
 import game.static_classes.GlobalVariables;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -37,10 +38,10 @@ public class Controls {
     private Timeline roundTimeAnimation;
     private ProgressIndicator progress;
 
-    public Controls(CommonShip userShip, CommonShip enemyShip){
+    public Controls(CommonShip userShip, CommonShip enemyShip, Button sendOrders){
         createProgress(userShip);
         createSettingsButton();
-        createTimeRemaining();
+        createTimeRemaining(sendOrders);
     }
 
     private void createProgress(CommonShip userShip){
@@ -165,7 +166,7 @@ public class Controls {
         this.shipIntegrity = shipIntegrity;
     }
 
-    private void createTimeRemaining(){
+    private void createTimeRemaining(Button sendOrders){
         circle = new Circle(32);
         circle.setCenterY(circle.getRadius() + 19);
         circle.setStroke(Color.WHITE);
@@ -175,9 +176,9 @@ public class Controls {
         progress.setLayoutY(10);
         progress.getStyleClass().add("timeIndicator");
 
-        timeValue = new SimpleIntegerProperty(120);
+        timeValue = new SimpleIntegerProperty(GameBalance.ROUND_TIME);
         timeValue.addListener((observable, oldValue, newValue) -> {
-            double number = 1 - ((double)newValue.intValue())/120;
+            double number = 1 - ((double)newValue.intValue())/GameBalance.ROUND_TIME;
             progress.setProgress(number);
         });
 
@@ -189,8 +190,8 @@ public class Controls {
         time.setFont(Font.font(22));
         time.setLayoutY(circle.getRadius() + 3);
 
-        roundTimeAnimation = new Timeline(new KeyFrame(Duration.seconds(1), event -> roundTimeAnimation()));
-        roundTimeAnimation.setCycleCount(120);
+        roundTimeAnimation = new Timeline(new KeyFrame(Duration.seconds(1), event -> roundTimeAnimation(sendOrders)));
+        roundTimeAnimation.setCycleCount(GameBalance.ROUND_TIME);
         roundTimeAnimation.playFromStart();
     }
 
@@ -215,11 +216,12 @@ public class Controls {
         return shipPower;
     }
 
-    private void roundTimeAnimation(){
+    private void roundTimeAnimation(Button sendOrders){
 
         if(timeValue.get() > 1){
             timeValue.set(timeValue.get() - 1);
         }else {
+            sendOrders.fire();
             resetAnimation();
         }
     }
@@ -238,7 +240,7 @@ public class Controls {
             return;
         }
 
-        timeValue.set(120);
+        timeValue.set(GameBalance.ROUND_TIME);
         roundTimeAnimation.playFromStart();
     }
 

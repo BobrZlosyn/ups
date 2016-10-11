@@ -123,13 +123,13 @@ public class Controller implements Initializable{
         grb.chooseImage((GridPane) gameAreaPane.getParent());
 
         //horni prvky
-        controls = new Controls(GlobalVariables.choosenShip, enemyShip);
+        sendDataButton = new Button();
+        controls = new Controls(GlobalVariables.choosenShip, enemyShip, sendDataButton);
         controls.showStatusBars(gameAreaPane);
 
         //dolni prvky
-        sendDataButton = new Button();
         BottomPanel bottomPanel = new BottomPanel(sendDataButton);
-        bottomPanel.showPanel(window);
+        bottomPanel.showPanel(window, gameAreaPane);
         bottomPanel.getQuit().setOnAction(event1 -> {
             GlobalVariables.choosenShip.setActualLifeBinding(0);
         });
@@ -138,6 +138,7 @@ public class Controller implements Initializable{
         sendDataButton.setOnAction(event1 -> {
             String actions = damageHandler.exportShooting(GlobalVariables.choosenShip.getPlacementPositions());
             damageHandler.doDamage(actions);
+            controls.resetAnimation();
         });
     }
 

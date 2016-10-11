@@ -6,6 +6,13 @@ package game.static_classes;
 public class GameBalance {
 
     /**
+     * GLOBAL THINGS
+     */
+
+    public static final int ROUND_TIME = 120;
+
+
+    /**
      *
      * MAXIMUM ON STATISTIC
      *
@@ -61,7 +68,7 @@ public class GameBalance {
     public static final int CANNON_EQUIPMENT_MAX_STRENGTH = 50;
     public static final int CANNON_EQUIPMENT_POINTS_COST = 2;
 
-    public static final String DOUBLE_CANNON_EQUIPMENT_NAME = "Zdvojené dělo";
+    public static final String DOUBLE_CANNON_EQUIPMENT_NAME = "Dvojité dělo";
     public static final int DOUBLE_CANNON_EQUIPMENT_LIFE = 250;
     public static final int DOUBLE_CANNON_EQUIPMENT_SHIELDS = 0;
     public static final int DOUBLE_CANNON_EQUIPMENT_ENERGY_COST = 110;
