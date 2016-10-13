@@ -84,7 +84,6 @@ public class Controls {
             power.setText(text.toString());
         });
 
-
         if(userShip.getShieldMaxLife() != 0){
             shipShieldProgress = new ProgressBar(0.5);
             shipShieldProgress.progressProperty().bind(userShip.getShieldActualLifeBinding());
@@ -92,7 +91,7 @@ public class Controls {
             shield = new Label();
             shield.setAlignment(Pos.CENTER);
             shipShieldProgress.widthProperty().addListener((observable1, oldValue1, newValue1) -> {
-                shield.setMinWidth(newValue1.intValue());
+                shield.setMinWidth(newValue1.doubleValue());
             });
 
             shield.setText(userShip.getShieldMaxLife() + "/" + userShip.getShieldMaxLife());

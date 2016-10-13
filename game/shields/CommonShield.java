@@ -7,6 +7,7 @@ import game.construction.IShipEquipment;
 import game.static_classes.GlobalVariables;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.paint.Color;
 
 /**
@@ -16,10 +17,12 @@ public abstract class CommonShield extends AShipEquipment {
     private double chance;
     private int shieldLife;
     private Timeline hit;
+    private SimpleBooleanProperty isActive;
 
     public CommonShield( String name, int life, int energy, int cost, int shieldBonus, int chance) {
         super(life, name, 0, energy, cost, shieldBonus );
         this.chance = chance;
+        isActive = new SimpleBooleanProperty(true);
         createTimelineHit();
     }
 
@@ -28,6 +31,18 @@ public abstract class CommonShield extends AShipEquipment {
             getModel().setDefaultSkin();
         }));
         hit.setCycleCount(1);
+    }
+
+    public void setIsActive( boolean isActive) {
+        this.isActive.set(isActive);
+    }
+
+    public boolean isActive() {
+        return isActive.get();
+    }
+
+    public SimpleBooleanProperty isActiveProperty() {
+        return isActive;
     }
 
     public double getChance() {

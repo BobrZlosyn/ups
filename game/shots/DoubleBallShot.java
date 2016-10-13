@@ -39,7 +39,6 @@ public class DoubleBallShot extends CommonShot{
 
     @Override
     public boolean pocitatTrasu(){
-
         double [] coordinates = rovnicePrimka(x1,y1,target.getCenterX(),target.getCenterY());
 
         x1 = coordinates[0];

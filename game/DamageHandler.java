@@ -92,8 +92,6 @@ public class DamageHandler {
         String positions [];
 
         try {
-
-
             for(int i = 0; i < attackInformation.length; i++){
                 positions = attackInformation[i].split(",");
 
@@ -141,7 +139,6 @@ public class DamageHandler {
             return -4;
         }
 
-
         return 0;
     }
 
@@ -161,6 +158,7 @@ public class DamageHandler {
             if(simpleBallShot1.pocitatTrasu()){
                 simpleBallShot1.removeShot(gameArea);
                 simpleBallShot1.getTarget().takeDamage(simpleBallShot1.getDamage());
+                simpleBallShot1.getAttacker().getPlacement().getShip().damageToShield(simpleBallShot1.getDamage());
                 if(simpleBallShot1.getTarget().getActualLife() == 0){
                     simpleBallShot1.getTarget().cancelTarget();
                     ((CommonWeapon)simpleBallShot1.getAttacker()).setTarget(null);

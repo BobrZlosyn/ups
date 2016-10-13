@@ -180,6 +180,11 @@ public class BattleShip extends CommonShip{
     }
 
     @Override
+    public Pane getPane() {
+        return (Pane) ship.getParent();
+    }
+
+    @Override
     public Placement getPlacement() {
         return new Placement(ship.getCenterX(), ship.getCenterY(), ship.getRadius(), this, -1, -1);
     }

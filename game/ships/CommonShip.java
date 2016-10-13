@@ -1,5 +1,6 @@
 package game.ships;
 
+import game.shields.CommonShield;
 import game.static_classes.GlobalVariables;
 import game.construction.CommonDraggableObject;
 import game.construction.IShipEquipment;
@@ -9,6 +10,10 @@ import game.weapons.CommonWeapon;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Arc;
+import javafx.scene.shape.ArcType;
+
+import java.util.ArrayList;
 
 /**
  * Created by BobrZlosyn on 25.09.2016.
@@ -22,14 +27,17 @@ public abstract class CommonShip extends CommonConstruction {
     private boolean isEnemy;
     private Placement [][] placements;
     private int shieldMaxLife;
+    private int shieldMaxLifeOrigin;
     private int shieldActualLife;
     private SimpleDoubleProperty shieldActualLifeBinding;
     private SimpleIntegerProperty availablePoints;
     private SimpleDoubleProperty actualEnergy;
+    private ArrayList <CommonShield> shields;
     private double shieldRadiusX;
     private double shieldAddX;
     private double shieldAddY;
     private double shieldRadiusY;
+    private Arc shieldFieldArc;
 
     public CommonShip (String name, int life, int energy,int armor, int speed, int shield, int pointsForEquipment, boolean isEnemy) {
         super(life, name);
@@ -50,6 +58,8 @@ public abstract class CommonShip extends CommonConstruction {
         availablePoints = new SimpleIntegerProperty(pointsForEquipment);
         shieldActualLife = shield;
         setShieldConstants();
+        shields = new ArrayList();
+        shieldMaxLifeOrigin = shield;
     }
 
     public void setActualEnergy(int cost) {
@@ -76,6 +86,18 @@ public abstract class CommonShip extends CommonConstruction {
 
     public void setArmorMaxValue(int armorMaxValue) {
         this.armorMaxValue = armorMaxValue;
+    }
+
+    public void addShieldBonus(CommonShield shield){
+        shields.add(shield);
+        setShieldMaxLife(shield.getShieldBonus());
+        shield.isActiveProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue.booleanValue()){
+                setShieldActualLife(getShieldActualLife() + shield.getShieldBonus());
+            }else{
+                setShieldActualLife(getShieldActualLife() - shield.getShieldBonus());
+            }
+        });
     }
 
     public void setEnergyActualValue(int energyActualValue) {
@@ -195,12 +217,31 @@ public abstract class CommonShip extends CommonConstruction {
         int newShieldLife = shieldActualLife - damage;
         if(newShieldLife > 0){
             shieldActualLife = newShieldLife;
-            shieldActualLifeBinding.set(shieldActualLife/shieldMaxLife);
+            shieldActualLifeBinding.set(((double)shieldActualLife)/shieldMaxLife);
+            if(shields.size() > 0){
+                for(int i = shields.size(); i < 0; i--){
+                    if(!shields.get(i).isActive()){
+                        continue;
+                    }
+
+                    int shieldBonus = shields.get(i).getShieldBonus();
+                    if(shieldBonus < damage){
+                        damage -=shieldBonus;
+                        shields.remove(i);
+                        continue;
+                    }
+
+                    shields.get(i).setShieldBonus(shieldBonus - damage);
+                    if(damage == shieldBonus){
+                        shields.remove(i);
+                        break;
+                    }
+                }
+            }
         }else {
             shieldActualLife = 0;
             shieldActualLifeBinding.set(shieldActualLife);
         }
-
     }
 
     public void fillShipWithEquipment(CommonShip ship, Placement [][] oldShipPlacements, boolean isFirstCreation){
@@ -253,6 +294,8 @@ public abstract class CommonShip extends CommonConstruction {
 
     public abstract double getHeight();
 
+    public abstract Pane getPane();
+
     public Placement [][] getPlacementPositions(){
         return placements;
     }
@@ -261,6 +304,54 @@ public abstract class CommonShip extends CommonConstruction {
     public void restartValues(){
         setEnergyActualValue(getEnergyMaxValue());
         setActualLife(getTotalLife().get());
-        setShieldActualLife(getShieldMaxLife());
+        shieldMaxLife = shieldMaxLifeOrigin;
+        shieldActualLife = shieldMaxLifeOrigin;
+        shieldActualLifeBinding.set(((double) shieldActualLife) / shieldMaxLife);
+        actualEnergy.set(1);
+    }
+
+    public void createShield(){
+        createShieldField();
+        showShield(getShieldActualLife());
+        showShieldBinding();
+    }
+
+    private void showShieldBinding(){
+        getShieldActualLifeBinding().addListener((observable, oldValue, newValue) -> {
+            showShield(newValue.doubleValue());
+        });
+    }
+
+    private void showShield(double shieldLife){
+        if(shieldLife == 0){
+            if(getPane().getChildren().contains(shieldFieldArc)){
+                getPane().getChildren().remove(shieldFieldArc);
+            }
+        }else {
+            if(!getPane().getChildren().contains(shieldFieldArc)){
+                getPane().getChildren().add(shieldFieldArc);
+            }
+        }
+    }
+
+    private void createShieldField(){
+        shieldFieldArc = new Arc();
+
+        shieldFieldArc.setCenterX(getCenterX() + getShieldAddX());
+        shieldFieldArc.setCenterY(getCenterY() + getShieldAddY());
+
+        if(isEnemy()){
+            shieldFieldArc.setStartAngle(90);
+            shieldFieldArc.setStyle("-fx-fill: linear-gradient(to right, rgba(0,0,255,0.8) 0%, rgba(0,0,255,0) 50%)");
+        }else {
+            shieldFieldArc.setStartAngle(270);
+            shieldFieldArc.setStyle("-fx-fill: linear-gradient(to right, rgba(0,0,255,0) 50%, rgba(0,0,255,0.8) 100%)");
+        }
+
+        shieldFieldArc.setLength(180.0);
+        shieldFieldArc.setRadiusX(getShieldRadiusX());
+        shieldFieldArc.setRadiusY(getShieldRadiusY());
+        shieldFieldArc.setType(ArcType.ROUND);
+
     }
 }

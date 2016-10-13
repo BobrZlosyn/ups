@@ -223,4 +223,9 @@ public class CruiserShip extends CommonShip{
     public String getConstructionType() {
         return ConstructionTypes.CRUISER_SHIP;
     }
+
+    @Override
+    public Pane getPane() {
+        return (Pane) ship.getParent();
+    }
 }

@@ -60,48 +60,9 @@ public class SimpleShield extends CommonShield {
         Pane gameArea = (Pane) place.getField().getParent();
         gameArea.getChildren().addAll(commonShieldModel.getParts());
 
-        if(isEnemy){
-            if(!GlobalVariables.isEnemyShieldUp()){
-                Arc arc = createShieldField(place);
-                gameArea.getChildren().add(arc);
-                GlobalVariables.setIsUsersShieldUp(true);
-            }
-        }else{
-            if(!GlobalVariables.isUsersShieldUp()){
-                Arc arc = createShieldField(place);
-                gameArea.getChildren().add(arc);
-                GlobalVariables.setIsUsersShieldUp(true);
-            }
-        }
-
-
-
         place.setIsEmpty(false);
 
-    }
-
-    private Arc createShieldField(Placement place){
-        CommonShip ship = place.getShip();
-        Arc arc = new Arc();
-
-        arc.setCenterX(ship.getCenterX() + ship.getShieldAddX());
-        arc.setCenterY(ship.getCenterY() + ship.getShieldAddY());
-
-        if(isEnemy()){
-            arc.setStartAngle(90);
-            arc.setStyle("-fx-fill: linear-gradient(to right, rgba(0,0,255,0.8) 0%, rgba(0,0,255,0) 50%)");
-        }else {
-            arc.setStartAngle(270);
-            arc.setStyle("-fx-fill: linear-gradient(to right, rgba(0,0,255,0) 50%, rgba(0,0,255,0.8) 100%)");
-        }
-
-        arc.setLength(180.0);
-        arc.setRadiusX(ship.getShieldRadiusX());
-        arc.setRadiusY(ship.getShieldRadiusY());
-        arc.setType(ArcType.ROUND);
-        ship.setShieldMaxLife(getShieldLife());
-
-        return arc;
+        place.getShip().addShieldBonus(this);
     }
 
     @Override
@@ -152,14 +113,19 @@ public class SimpleShield extends CommonShield {
 
     @Override
     public double getCenterX() {
-        double x = commonShieldModel.getShield().getX() - commonShieldModel.getShield().getWidth()/2;
+        double x = commonShieldModel.getShield().getX() + commonShieldModel.getShield().getWidth()/2;
         return x;
     }
 
     @Override
     public double getCenterY() {
-        double y = commonShieldModel.getShield().getY() - commonShieldModel.getShield().getHeight()/2;
+        double y = commonShieldModel.getShield().getY() + commonShieldModel.getShield().getHeight()/2;
         return y;
+    }
+
+    @Override
+    public boolean containsPosition(double x, double y){
+        return commonShieldModel.getShield().contains(x,y);
     }
 
     @Override

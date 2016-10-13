@@ -110,12 +110,13 @@ public class Controller implements Initializable{
         Placement[][] placements = GlobalVariables.choosenShip.getPlacementPositions();
         GlobalVariables.choosenShip.displayShip(gameAreaPane);
         GlobalVariables.choosenShip.fillShipWithEquipment(GlobalVariables.choosenShip, placements, isFirstCreated);
+        GlobalVariables.choosenShip.createShield();
 
         //vytvari nepratelskou lod
         ExportImportShip exportImportShip = new ExportImportShip();
         String exportMsg = exportImportShip.exportShip(GlobalVariables.choosenShip);
         CommonShip enemyShip = exportImportShip.importShip(exportMsg, gameAreaPane);
-
+        enemyShip.createShield();
         endWindowShowUp(GlobalVariables.choosenShip, enemyShip);
 
         //pozadi
