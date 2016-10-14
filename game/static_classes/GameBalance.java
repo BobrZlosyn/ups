@@ -39,7 +39,7 @@ public class GameBalance {
 
     public static final String BATTLE_SHIP_NAME = "Bitevní loď";
     public static final int BATTLE_SHIP_LIFE = 500;
-    public static final int BATTLE_SHIP_SHIELDS = 500;
+    public static final int BATTLE_SHIP_SHIELDS = 150;
     public static final int BATTLE_SHIP_ARMOR = 500;
     public static final int BATTLE_SHIP_SPEED = 500;
     public static final int BATTLE_SHIP_ENERGY = 500;
@@ -86,7 +86,7 @@ public class GameBalance {
     public static final String SHIELD_EQUIPMENT_NAME = "Jednoduchý štít";
     public static final int SHIELD_EQUIPMENT_LIFE = 200;
     public static final int SHIELD_EQUIPMENT_SHIELDS = 150;
-    public static final int SHIELD_EQUIPMENT_ENERGY_COST = 50;
+    public static final int SHIELD_EQUIPMENT_ENERGY_COST = 200;
     public static final int SHIELD_EQUIPMENT_STRENGTH = 0;
     public static final int SHIELD_EQUIPMENT_POINTS_COST = 2;
     public static final int SHIELD_EQUIPMENT_SUCCESS_CHANCE = 4;

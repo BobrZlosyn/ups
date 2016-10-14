@@ -12,8 +12,8 @@ public class SimpleBallShot extends CommonShot{
 
     private Circle shot;
 
-    public SimpleBallShot(CommonConstruction target, CommonConstruction attacker, int damage){
-        super(target, attacker, damage);
+    public SimpleBallShot(CommonConstruction target, CommonConstruction attacker, int damage, boolean intoShields){
+        super(target, attacker, damage, intoShields);
 
         shot = new Circle(x1, y1, 4, Color.GOLD);
         setXY();
@@ -45,6 +45,10 @@ public class SimpleBallShot extends CommonShot{
 
         shot.setCenterX(x1);
         shot.setCenterY(y1);
+
+        if(isIntoShields() && target.getPlacement().getShip().getShieldActualLife() != 0){
+            return target.getPlacement().getShip().isOnShield(x1, y1);
+        }
 
         return target.containsPosition(x1,y1);
     }

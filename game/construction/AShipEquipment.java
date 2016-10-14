@@ -9,7 +9,7 @@ public abstract class AShipEquipment extends CommonConstruction implements IShip
     private int energyCost;
     private int costOfEquipment;
     private int shieldBonus;
-
+    private int actualShieldBonus;
 
     public AShipEquipment(int totalLife, String name, int maxStrength, int energyCost, int costOfEquipment, int shieldBonus) {
         super(totalLife, name);
@@ -17,6 +17,11 @@ public abstract class AShipEquipment extends CommonConstruction implements IShip
         setMaxStrength(maxStrength);
         setEnergyCost(energyCost);
         setShieldBonus(shieldBonus);
+        setActualShieldBonus(shieldBonus);
+    }
+
+    public void setActualShieldBonus(int actualShieldBonus) {
+        this.actualShieldBonus = actualShieldBonus;
     }
 
     public void setShieldBonus(int shieldBonus) {
@@ -47,6 +52,10 @@ public abstract class AShipEquipment extends CommonConstruction implements IShip
 
     public int getShieldBonus() {
         return shieldBonus;
+    }
+
+    public int getActualShieldBonus() {
+        return actualShieldBonus;
     }
 
     public int getCostOfEquipment() {

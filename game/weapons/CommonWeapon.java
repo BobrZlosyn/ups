@@ -78,7 +78,7 @@ public abstract class CommonWeapon extends AShipEquipment {
         return target;
     }
 
-    public abstract CommonShot getShot(CommonConstruction target, int damage);
+    public abstract CommonShot getShot(CommonConstruction target, int damage, boolean intoShields);
 
     public boolean isWeapon(){
         return true;

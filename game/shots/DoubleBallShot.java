@@ -12,8 +12,8 @@ public class DoubleBallShot extends CommonShot{
     private Circle shot1;
     private Circle shot2;
 
-    public DoubleBallShot(CommonConstruction target, CommonConstruction attacker, int damage){
-        super(target, attacker, damage);
+    public DoubleBallShot(CommonConstruction target, CommonConstruction attacker, int damage, boolean isShields){
+        super(target, attacker, damage, isShields);
 
         shot1 = new Circle(x1, y1, 4, Color.GOLD);
         shot2 = new Circle(x1, y1, 4, Color.GOLD);
@@ -39,6 +39,7 @@ public class DoubleBallShot extends CommonShot{
 
     @Override
     public boolean pocitatTrasu(){
+
         double [] coordinates = rovnicePrimka(x1,y1,target.getCenterX(),target.getCenterY());
 
         x1 = coordinates[0];
@@ -49,6 +50,10 @@ public class DoubleBallShot extends CommonShot{
 
         shot2.setCenterX(x1 + 2);
         shot2.setCenterY(y1 + 5);
+
+        if(isIntoShields() && target.getPlacement().getShip().getShieldActualLife() != 0){
+            return target.getPlacement().getShip().isOnShield(x1, y1);
+        }
 
         return target.containsPosition(x1,y1);
     }

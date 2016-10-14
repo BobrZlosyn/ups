@@ -68,8 +68,9 @@ public abstract class CommonShip extends CommonConstruction {
     }
 
     public void setShieldActualLife(int shieldActualLife) {
-        this.shieldActualLifeBinding.set(((double) shieldActualLife) / shieldMaxLife);
         this.shieldActualLife = shieldActualLife;
+        this.shieldActualLifeBinding.set(((double) shieldActualLife) / shieldMaxLife);
+
     }
 
     public void setAvailablePoints(int costPoints) {
@@ -93,9 +94,9 @@ public abstract class CommonShip extends CommonConstruction {
         setShieldMaxLife(shield.getShieldBonus());
         shield.isActiveProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue.booleanValue()){
-                setShieldActualLife(getShieldActualLife() + shield.getShieldBonus());
+                setShieldActualLife(getShieldActualLife() + shield.getActualShieldBonus());
             }else{
-                setShieldActualLife(getShieldActualLife() - shield.getShieldBonus());
+                setShieldActualLife(getShieldActualLife() - shield.getActualShieldBonus());
             }
         });
     }
@@ -215,32 +216,37 @@ public abstract class CommonShip extends CommonConstruction {
 
     public void damageToShield(int damage){
         int newShieldLife = shieldActualLife - damage;
-        if(newShieldLife > 0){
-            shieldActualLife = newShieldLife;
-            shieldActualLifeBinding.set(((double)shieldActualLife)/shieldMaxLife);
-            if(shields.size() > 0){
-                for(int i = shields.size(); i < 0; i--){
-                    if(!shields.get(i).isActive()){
-                        continue;
-                    }
+        if(newShieldLife < 0) {
+            newShieldLife = 0;
+        }
 
-                    int shieldBonus = shields.get(i).getShieldBonus();
-                    if(shieldBonus < damage){
-                        damage -=shieldBonus;
-                        shields.remove(i);
-                        continue;
-                    }
+        shieldActualLife = newShieldLife;
+        shieldActualLifeBinding.set(((double)shieldActualLife)/shieldMaxLife);
 
-                    shields.get(i).setShieldBonus(shieldBonus - damage);
-                    if(damage == shieldBonus){
-                        shields.remove(i);
-                        break;
-                    }
+        if(shields.size() > 0){
+            for(int i = shields.size() - 1; i >= 0; i--){
+                if(!shields.get(i).isActive()){
+                    continue;
+                }
+
+                int shieldBonus = shields.get(i).getActualShieldBonus();
+                if(shieldBonus == 0){
+                    continue;
+                }
+
+                if(shieldBonus < damage){
+                    damage -=shieldBonus;
+                    shields.get(i).setActualShieldBonus(0);
+                    shields.remove(i);
+                    continue;
+                }
+
+                shields.get(i).setActualShieldBonus(shieldBonus - damage);
+                if(damage == shieldBonus){
+                    shields.remove(i);
+                    break;
                 }
             }
-        }else {
-            shieldActualLife = 0;
-            shieldActualLifeBinding.set(shieldActualLife);
         }
     }
 
@@ -332,6 +338,10 @@ public abstract class CommonShip extends CommonConstruction {
                 getPane().getChildren().add(shieldFieldArc);
             }
         }
+    }
+
+    public boolean isOnShield(double x, double y){
+        return shieldFieldArc.contains(x, y);
     }
 
     private void createShieldField(){

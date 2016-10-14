@@ -1,8 +1,11 @@
 package game;
 
+import game.construction.AShipEquipment;
 import game.construction.CommonConstruction;
 import game.construction.IMarkableObject;
+import game.shields.CommonShield;
 import game.ships.CommonShip;
+import game.static_classes.ConstructionTypes;
 import game.static_classes.GlobalVariables;
 import game.weapons.CommonWeapon;
 import javafx.geometry.HPos;
@@ -23,7 +26,7 @@ import javafx.scene.paint.Color;
  */
 public class BottomPanel {
 
-    private Button quit;
+    private Button quit, activateShield;
     private Button targeting, cancelTarget;
     private GridPane panel;
     private Label name, lifeLabel;
@@ -36,11 +39,13 @@ public class BottomPanel {
         createButtonQuit();
         createButtonSend(sendOrders);
         createName();
+        createActivationShield();
         createButtonTargeting();
         createLifeProgressBar();
         createCancelTargetButton();
         createPanel(sendOrders);
         createNamePane();
+
     }
 
     public Button getQuit() {
@@ -51,6 +56,52 @@ public class BottomPanel {
         sendOrders.setText("DÁT ROZKAZ K ÚTOKU");
         sendOrders.setMaxWidth(Double.MAX_VALUE);
         sendOrders.setMaxHeight(Double.MAX_VALUE);
+    }
+
+    private void createActivationShield(){
+        activateShield = new Button("Deaktivovat štít");
+        activateShield.setMaxWidth(Double.MAX_VALUE);
+        activateShield.setMaxHeight(Double.MAX_VALUE);
+        activateShield.setVisible(false);
+        GlobalVariables.isSelected.addListener((observable, oldValue, newValue) -> {
+            if(newValue.booleanValue()){
+                CommonConstruction construction = GlobalVariables.getMarkedObject();
+                if(construction.isEnemy() ||  ConstructionTypes.isShip(construction.getConstructionType()) ){
+                    return;
+                }
+
+                AShipEquipment equipment = (AShipEquipment) construction;
+                if(equipment.isShield()){
+                    activateShield.setVisible(newValue.booleanValue());
+                    if(((CommonShield) equipment).isActive()){
+                        activateShield.setText("Deaktivovat štít");
+                        activateShield.setDisable(false);
+                    }else{
+                        activateShield.setText("Aktivovat štít");
+                        notEnoughEnergy(GlobalVariables.getMarkedObject(), activateShield, "Aktivovat štít");
+                    }
+                }else{
+                    activateShield.setVisible(!newValue.booleanValue());
+                }
+            }else {
+                activateShield.setVisible(newValue.booleanValue());
+            }
+        });
+
+        activateShield.setOnAction(event -> {
+            CommonShield shield = ((CommonShield)GlobalVariables.getMarkedObject());
+            if(shield.isActive()){
+                activateShield.setText("Aktivovat štít");
+                shield.getPlacement().getShip().setActualEnergy(-shield.getEnergyCost());
+                shield.setIsActive(!shield.isActive());
+            }else{
+                if(shield.getPlacement().getShip().getActualEnergyLevel() >= shield.getEnergyCost()){
+                    activateShield.setText("Deaktivovat štít");
+                    shield.getPlacement().getShip().setActualEnergy(shield.getEnergyCost());
+                    shield.setIsActive(!shield.isActive());
+                }
+            }
+        });
     }
 
     private void createCancelTargetButton(){
@@ -106,7 +157,7 @@ public class BottomPanel {
         targeting.visibleProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue.booleanValue()){
                 CommonWeapon weapon = (CommonWeapon) GlobalVariables.getMarkedObject();
-                notEnoughEnergy(GlobalVariables.getMarkedObject());
+                notEnoughEnergy(GlobalVariables.getMarkedObject(), targeting, "Zaměřit cíl");
 
                 if(GlobalVariables.isEmpty(weapon.getTarget())){ //zbran ma vybrany cil
                     cancelTarget.setVisible(false);
@@ -146,15 +197,15 @@ public class BottomPanel {
         targeting.setText("Potvrdit cíl");
     }
 
-    private void notEnoughEnergy(CommonConstruction commonConstruction){
+    private void notEnoughEnergy(CommonConstruction commonConstruction, Button button, String textIfFalse){
         int energy = commonConstruction.getPlacement().getShip().getActualEnergyLevel();
         int cost = commonConstruction.getEnergyCost();
         if(energy < cost){
-            targeting.setText("Nedostatek energie");
-            targeting.setDisable(true);
+            button.setText("Nedostatek energie");
+            button.setDisable(true);
         }else{
-            targeting.setText("Zaměřit cíl");
-            targeting.setDisable(false);
+            button.setText(textIfFalse);
+            button.setDisable(false);
         }
     }
 
@@ -240,6 +291,7 @@ public class BottomPanel {
         panel.add(sendOrders, 3, 0);
         panel.add(quit, 3, 1);
         panel.add(targeting, 2, 1);
+        panel.add(activateShield, 2, 1);
         panel.add(cancelTarget, 2, 0);
         panel.add(lifeProgress, 0, 0);
         panel.add(lifeLabel, 0, 0);
@@ -249,6 +301,7 @@ public class BottomPanel {
         panel.setMargin(quit, new Insets(10,10,10,10));
         panel.setMargin(targeting, new Insets(10,10,10,10));
         panel.setMargin(lifeProgress, new Insets(10,10,10,10));
+        panel.setMargin(activateShield, new Insets(10,10,10,10));
     }
 
     public void showPanel(GridPane window, Pane gameArea){

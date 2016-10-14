@@ -69,6 +69,7 @@ public class DamageHandler {
             shieldDmg = Integer.parseInt(msgFields[1]);
             shipDmg = Integer.parseInt(msgFields[2]);
         }catch (Exception e){
+            e.printStackTrace();
             return -2;
         }
 
@@ -83,8 +84,8 @@ public class DamageHandler {
             return 0;
         }
 
-        targetShip.damageToShield(shieldDmg);
-        targetShip.takeDamage(shipDmg);
+       // targetShip.damageToShield(shieldDmg);
+       // targetShip.takeDamage(shipDmg);
 
         Placement [][] targetPlacements = targetShip.getPlacementPositions();
         Placement [][] attackPlacements = attackShip.getPlacementPositions();
@@ -95,7 +96,7 @@ public class DamageHandler {
             for(int i = 0; i < attackInformation.length; i++){
                 positions = attackInformation[i].split(",");
 
-                if(positions.length != 5){
+                if(positions.length != 6){
                     return -3;
                 }
 
@@ -104,6 +105,7 @@ public class DamageHandler {
                 int iTarget = Integer.parseInt(positions[2]);
                 int jTarget = Integer.parseInt(positions[3]);
                 int damage = Integer.parseInt(positions[4]);
+                int intoShields = Integer.parseInt(positions[5]);
 
                 double x, y;
                 Placement placeAttacker = attackPlacements[iAtacker][jAtacker];
@@ -127,8 +129,12 @@ public class DamageHandler {
 
                 placeAttacker.getShipEquipment().rotateEquipment(x, y);
 
-
-                CommonShot commonShot = ((CommonWeapon)placeAttacker.getShipEquipment()).getShot(target, damage);
+                CommonShot commonShot;
+                if(intoShields == 1){
+                    commonShot = ((CommonWeapon)placeAttacker.getShipEquipment()).getShot(target, damage, true);
+                }else {
+                    commonShot = ((CommonWeapon)placeAttacker.getShipEquipment()).getShot(target, damage, false);
+                }
                 commonShot.addShot(gameArea);
                 shots.add(commonShot);
             }
@@ -136,6 +142,7 @@ public class DamageHandler {
             createTimeLineShot();
 
         }catch (Exception e){
+            e.printStackTrace();
             return -4;
         }
 
@@ -154,11 +161,15 @@ public class DamageHandler {
 
     private void shooting(){
         shots.forEach(simpleBallShot1 -> {
-
             if(simpleBallShot1.pocitatTrasu()){
                 simpleBallShot1.removeShot(gameArea);
-                simpleBallShot1.getTarget().takeDamage(simpleBallShot1.getDamage());
-                simpleBallShot1.getAttacker().getPlacement().getShip().damageToShield(simpleBallShot1.getDamage());
+
+                if(simpleBallShot1.isIntoShields()){
+                    simpleBallShot1.getAttacker().getPlacement().getShip().damageToShield(simpleBallShot1.getDamage());
+                }else {
+                    simpleBallShot1.getTarget().takeDamage(simpleBallShot1.getDamage());
+                }
+
                 if(simpleBallShot1.getTarget().getActualLife() == 0){
                     simpleBallShot1.getTarget().cancelTarget();
                     ((CommonWeapon)simpleBallShot1.getAttacker()).setTarget(null);
@@ -197,6 +208,7 @@ public class DamageHandler {
                 shooting.append(i + "," + j + ","); // pridani souradnic utocnika
                 shooting.append(target.getRow() + "," + target.getColumn()); //pridani cile
                 shooting.append(",120");
+                shooting.append(",1");
                 shooting.append(";"); //ukonceni zbrane
             }
         }

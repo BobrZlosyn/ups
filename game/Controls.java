@@ -40,41 +40,23 @@ public class Controls {
 
     public Controls(CommonShip userShip, CommonShip enemyShip, Button sendOrders){
         createProgress(userShip);
+        createPowerProgress(userShip);
+        createShieldProgress(userShip);
         createSettingsButton();
         createTimeRemaining(sendOrders);
     }
 
-    private void createProgress(CommonShip userShip){
-
-        shipIntegrityProgress = new ProgressBar(0.5);
-        shipIntegrityProgress.progressProperty().bind(userShip.getActualLifeBinding());
-
+    private void createPowerProgress(CommonShip userShip){
         shipPowerProgress = new ProgressBar(0.5);
         shipPowerProgress.progressProperty().bind(userShip.getActualEnergy());
-
         power = new Label();
-        life = new Label();
 
-        shipIntegrityProgress.widthProperty().addListener((observable1, oldValue1, newValue1) -> {
-            life.setMinWidth(newValue1.intValue());
-        });
         shipPowerProgress.widthProperty().addListener((observable1, oldValue1, newValue1) -> {
             power.setMinWidth(newValue1.intValue());
         });
 
         power.setAlignment(Pos.CENTER);
-        life.setAlignment(Pos.CENTER);
-
-        life.setText((int)userShip.getTotalLife().get() + "/" + (int)userShip.getTotalLife().get());
-        power.setText(userShip.getEnergyMaxValue() + "/" + userShip.getEnergyMaxValue());
-
-        shipIntegrityProgress.progressProperty().addListener((observable, oldValue, newValue) -> {
-            StringBuilder text = new StringBuilder();
-            text.append((int)userShip.getActualLife());
-            text.append("/");
-            text.append((int)userShip.getTotalLife().get());
-            life.setText(text.toString());
-        });
+        power.setText(userShip.getActualEnergyLevel() + "/" + userShip.getEnergyMaxValue());
 
         shipPowerProgress.progressProperty().addListener((observable, oldValue, newValue) -> {
             StringBuilder text = new StringBuilder();
@@ -84,30 +66,57 @@ public class Controls {
             power.setText(text.toString());
         });
 
-        if(userShip.getShieldMaxLife() != 0){
-            shipShieldProgress = new ProgressBar(0.5);
-            shipShieldProgress.progressProperty().bind(userShip.getShieldActualLifeBinding());
+    }
 
-            shield = new Label();
-            shield.setAlignment(Pos.CENTER);
-            shipShieldProgress.widthProperty().addListener((observable1, oldValue1, newValue1) -> {
-                shield.setMinWidth(newValue1.doubleValue());
-            });
+    private void createShieldProgress(CommonShip userShip){
 
-            shield.setText(userShip.getShieldMaxLife() + "/" + userShip.getShieldMaxLife());
-            shipShieldProgress.progressProperty().addListener((observable, oldValue, newValue) -> {
-                StringBuilder text = new StringBuilder();
-                text.append(userShip.getShieldActualLife());
-                text.append("/");
-                text.append(userShip.getShieldMaxLife());
-                shield.setText(text.toString());
-            });
-
-
+        if(userShip.getShieldMaxLife() == 0) {
+            return;
         }
 
-        //userShip.setActualEnergy(150);
-        //userShip.takeDamage(250);
+        shipShieldProgress = new ProgressBar(0.5);
+        shipShieldProgress.progressProperty().bind(userShip.getShieldActualLifeBinding());
+
+        shield = new Label();
+        shield.setAlignment(Pos.CENTER);
+        shipShieldProgress.widthProperty().addListener((observable1, oldValue1, newValue1) -> {
+            shield.setMinWidth(newValue1.doubleValue());
+        });
+
+        shield.setText(userShip.getShieldActualLife() + "/" + userShip.getShieldMaxLife());
+        shipShieldProgress.progressProperty().addListener((observable, oldValue, newValue) -> {
+            StringBuilder text = new StringBuilder();
+            text.append(userShip.getShieldActualLife());
+            text.append("/");
+            text.append(userShip.getShieldMaxLife());
+            shield.setText(text.toString());
+        });
+    }
+
+    private void createProgress(CommonShip userShip){
+
+        shipIntegrityProgress = new ProgressBar(0.5);
+        shipIntegrityProgress.progressProperty().bind(userShip.getActualLifeBinding());
+
+
+        life = new Label();
+
+        shipIntegrityProgress.widthProperty().addListener((observable1, oldValue1, newValue1) -> {
+            life.setMinWidth(newValue1.intValue());
+        });
+
+        life.setAlignment(Pos.CENTER);
+
+        life.setText((int)userShip.getTotalLife().get() + "/" + (int)userShip.getTotalLife().get());
+
+        shipIntegrityProgress.progressProperty().addListener((observable, oldValue, newValue) -> {
+            StringBuilder text = new StringBuilder();
+            text.append((int)userShip.getActualLife());
+            text.append("/");
+            text.append((int)userShip.getTotalLife().get());
+            life.setText(text.toString());
+        });
+
     }
 
     private void createSettingsButton(){

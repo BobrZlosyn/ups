@@ -175,8 +175,8 @@ public class DoubleCannonWeapon extends CommonWeapon{
     }
 
     @Override
-    public CommonShot getShot(CommonConstruction target, int damage) {
-        return new DoubleBallShot(target, this, damage);
+    public CommonShot getShot(CommonConstruction target, int damage, boolean intoShields) {
+        return new DoubleBallShot(target, this, damage, intoShields);
     }
 
     @Override

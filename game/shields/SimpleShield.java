@@ -60,9 +60,8 @@ public class SimpleShield extends CommonShield {
         Pane gameArea = (Pane) place.getField().getParent();
         gameArea.getChildren().addAll(commonShieldModel.getParts());
 
-        place.setIsEmpty(false);
+        super.displayEquipment(place, isEnemy);
 
-        place.getShip().addShieldBonus(this);
     }
 
     @Override

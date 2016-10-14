@@ -40,4 +40,8 @@ public interface IShipEquipment {
         return false;
     }
 
+    default boolean isShield(){
+        return false;
+    }
+
 }

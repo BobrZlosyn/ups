@@ -41,4 +41,13 @@ public class ConstructionTypes {
         }
         return null;
     }
+
+    public static boolean isEquipment(String type){
+        return !isShip(type);
+    }
+
+    public static boolean isShip(String type){
+        return type.startsWith(SHIP);
+    }
+
 }

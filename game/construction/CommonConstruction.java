@@ -120,4 +120,5 @@ public abstract class CommonConstruction implements IMarkableObject{
     }
 
     public abstract String getConstructionType();
+
 }

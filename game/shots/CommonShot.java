@@ -12,13 +12,19 @@ public abstract class CommonShot {
     protected CommonConstruction target, attacker;
     protected double x1, y1;
     private int damage;
+    private boolean intoShields;
 
-    public CommonShot (CommonConstruction target, CommonConstruction attacker, int damage){
+    public CommonShot (CommonConstruction target, CommonConstruction attacker, int damage, boolean intoShields){
         this.target = target;
         this.attacker = attacker;
         x1 = attacker.getCenterX();
         y1 = attacker.getCenterY();
         this.damage = damage;
+        this.intoShields = intoShields;
+    }
+
+    public boolean isIntoShields() {
+        return intoShields;
     }
 
     public int getDamage() {

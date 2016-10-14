@@ -1,9 +1,6 @@
 package game.shields;
 
-import game.construction.AShipEquipment;
-import game.construction.CommonConstruction;
-import game.construction.CommonModel;
-import game.construction.IShipEquipment;
+import game.construction.*;
 import game.static_classes.GlobalVariables;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -15,7 +12,6 @@ import javafx.scene.paint.Color;
  */
 public abstract class CommonShield extends AShipEquipment {
     private double chance;
-    private int shieldLife;
     private Timeline hit;
     private SimpleBooleanProperty isActive;
 
@@ -49,16 +45,30 @@ public abstract class CommonShield extends AShipEquipment {
         return chance;
     }
 
-    public int getShieldLife() {
-        return shieldLife;
-    }
-
     public abstract CommonModel getModel();
+
+    @Override
+    public void displayEquipment(Placement place, boolean isEnemy) {
+        place.setIsEmpty(false);
+
+        place.getShip().addShieldBonus(this);
+        if(place.getShip().getActualEnergyLevel() >= getEnergyCost()){
+            place.getShip().setActualEnergy(getEnergyCost());
+            setIsActive(true);
+        }else {
+            setIsActive(false);
+        }
+    }
 
     @Override
     public void destroy() {
 
     }
+
+    public boolean isShield(){
+        return true;
+    }
+
 
     @Override
     public void damageHit() {
