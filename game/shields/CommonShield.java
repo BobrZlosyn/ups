@@ -47,8 +47,7 @@ public abstract class CommonShield extends AShipEquipment {
 
     public abstract CommonModel getModel();
 
-    @Override
-    public void displayEquipment(Placement place, boolean isEnemy) {
+    protected void displayEquipmentExtension(Placement place) {
         place.setIsEmpty(false);
 
         place.getShip().addShieldBonus(this);

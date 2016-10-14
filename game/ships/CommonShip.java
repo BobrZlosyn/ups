@@ -1,11 +1,8 @@
 package game.ships;
 
+import game.construction.*;
 import game.shields.CommonShield;
 import game.static_classes.GlobalVariables;
-import game.construction.CommonDraggableObject;
-import game.construction.IShipEquipment;
-import game.construction.Placement;
-import game.construction.CommonConstruction;
 import game.weapons.CommonWeapon;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -90,6 +87,7 @@ public abstract class CommonShip extends CommonConstruction {
     }
 
     public void addShieldBonus(CommonShield shield){
+
         shields.add(shield);
         setShieldMaxLife(shield.getShieldBonus());
         shield.isActiveProperty().addListener((observable, oldValue, newValue) -> {
@@ -215,6 +213,7 @@ public abstract class CommonShip extends CommonConstruction {
     }
 
     public void damageToShield(int damage){
+
         int newShieldLife = shieldActualLife - damage;
         if(newShieldLife < 0) {
             newShieldLife = 0;
@@ -276,6 +275,7 @@ public abstract class CommonShip extends CommonConstruction {
                     placements[i][j].setShipEquipment(shipEquipment);
                     ((CommonConstruction) shipEquipment).setPlacement(placements[i][j]);
                     ((CommonConstruction) shipEquipment).setActualLife(((CommonConstruction) shipEquipment).getTotalLife().get());
+                    ((AShipEquipment) shipEquipment).setActualShieldBonus(((AShipEquipment) shipEquipment).getActualShieldBonus());
                     ((CommonConstruction) shipEquipment).unmarkObject();
                     ((CommonConstruction) shipEquipment).cancelTarget();
 
@@ -314,6 +314,7 @@ public abstract class CommonShip extends CommonConstruction {
         shieldActualLife = shieldMaxLifeOrigin;
         shieldActualLifeBinding.set(((double) shieldActualLife) / shieldMaxLife);
         actualEnergy.set(1);
+        shields.clear();
     }
 
     public void createShield(){
