@@ -9,6 +9,7 @@ import game.construction.Placement;
 import game.shots.CommonShot;
 import game.shots.DoubleBallShot;
 import game.weapons.modelsWeapon.ModelDoubleCannon;
+import game.weapons.wrecksWeapons.CannonWreck;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
@@ -182,5 +183,18 @@ public class DoubleCannonWeapon extends CommonWeapon{
     @Override
     public CommonModel getModel() {
         return modelDoubleCannon;
+    }
+
+    @Override
+    public void destroy() {
+        double x = getPlacement().getX();
+        double y = getPlacement().getY();
+
+        Pane gameArea = getModel().getParent();
+        gameArea.getChildren().removeAll(getModel().getParts());
+
+        CannonWreck wrecks = new CannonWreck(getCenterX(), getCenterY(), Color.RED);
+        gameArea.getChildren().add(wrecks.getFlashCircle());
+        wrecks.explosion(x, y, 45, 5, getModel());
     }
 }

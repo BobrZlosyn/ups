@@ -1,25 +1,28 @@
 package game.ships;
 
+import game.construction.AShipEquipment;
+import game.construction.CommonConstruction;
+import game.ships.shipModels.BattleshipModel;
 import game.static_classes.ConstructionTypes;
 import game.static_classes.GameBalance;
 import game.static_classes.GlobalVariables;
 import game.construction.Placement;
-import game.wrecks.BattleShipWreck;
+import game.ships.wrecksShips.BattleShipWreck;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 
-import java.time.Duration;
+import java.util.ArrayList;
 
 /**
  * Created by Kanto on 26.09.2016.
  */
 public class BattleShip extends CommonShip{
-    private Circle ship;
+    private BattleshipModel model;
     private Timeline hit;
 
     public BattleShip (boolean isEnemy){
@@ -39,14 +42,11 @@ public class BattleShip extends CommonShip{
     }
 
     private void createShip(){
-        ship = new Circle(150);
-        ship.setStyle("-fx-background-color: red;");
+        model = new BattleshipModel();
 
-
-        ship.setOnMouseClicked(event -> {
+        model.getShip().setOnMouseClicked(event -> {
             markingHandle(isMarked(), this);
         });
-
     }
 
     @Override
@@ -76,18 +76,17 @@ public class BattleShip extends CommonShip{
     }
 
     public void positionOfShip(double x, double y, Pane gameArea){
-        gameArea.getChildren().add(ship);
-        ship.setCenterX(x);
-        ship.setCenterY(y);
+        gameArea.getChildren().add(model.getShip());
+        model.setModelXY(x, y);
         createMapOfShip();
     }
 
     public void createMapOfShip(){
         int size = 50;
-        int countOfPlaces = (int)(ship.getRadius()*2 - 50 )/50 -1;
+        int countOfPlaces = (int)(model.getShip().getRadius()*2 - 50 )/50 -1;
         Placement[][] shipMapping = new Placement[countOfPlaces][4];
 
-        double radius = ship.getRadius();
+        double radius = model.getShip().getRadius();
         for ( int i = 0; i < countOfPlaces; i++ ){
 
             for ( int j = 0; j < 4; j++ ){
@@ -101,7 +100,7 @@ public class BattleShip extends CommonShip{
 
                 Rectangle place = new Rectangle(size, size);
                 place.setFill(Color.WHITE);
-                Pane parent = ((Pane)ship.getParent());
+                Pane parent = model.getParent();
                 parent.getChildren().add(place);
 
                 place.setY(countY(radius, size, j));
@@ -115,11 +114,11 @@ public class BattleShip extends CommonShip{
     }
 
     private double countX(double radius, double size, int i){
-        return ship.getCenterX() - radius + size*i + 15*i + 30;
+        return model.getShip().getCenterX() - radius + size*i + 15*i + 30;
     }
 
     private double countY(double radius, double size, int j){
-        return ship.getCenterY() - radius + size*j + 10*j + 35;
+        return model.getShip().getCenterY() - radius + size*j + 10*j + 35;
     }
 
     public Placement getPosition(int row, int column){
@@ -128,8 +127,8 @@ public class BattleShip extends CommonShip{
 
     @Override
     public void markObject() {
-        ship.setStroke(Color.BLUE);
-        ship.setStrokeWidth(1.5);
+        model.getShip().setStroke(Color.BLUE);
+        model.getShip().setStrokeWidth(1.5);
         GlobalVariables.setMarkedObject(this);
         GlobalVariables.setName(getName());
         setIsMarked(true);
@@ -137,7 +136,7 @@ public class BattleShip extends CommonShip{
 
     @Override
     public void unmarkObject() {
-        ship.setStroke(Color.TRANSPARENT);
+        model.getShip().setStroke(Color.TRANSPARENT);
         GlobalVariables.setMarkedObject(null);
         GlobalVariables.setName("");
         setIsMarked(false);
@@ -150,29 +149,29 @@ public class BattleShip extends CommonShip{
             return;
         }
 
-        ship.setStroke(Color.RED);
-        ship.setStrokeWidth(1.5);
+        model.getShip().setStroke(Color.RED);
+        model.getShip().setStrokeWidth(1.5);
         GlobalVariables.setTargetObject(this);
     }
 
     @Override
     public void cancelTarget() {
-        ship.setStroke(Color.TRANSPARENT);
+        model.getShip().setStroke(Color.TRANSPARENT);
     }
 
     @Override
     public double getX() {
-        return ship.getCenterX();
+        return model.getShip().getCenterX();
     }
 
     @Override
     public double getY() {
-        return ship.getCenterY();
+        return model.getShip().getCenterY();
     }
 
     @Override
     public double getWidth() {
-        return ship.getRadius()*2;
+        return model.getWidth();
     }
 
     @Override
@@ -182,12 +181,12 @@ public class BattleShip extends CommonShip{
 
     @Override
     public Pane getPane() {
-        return (Pane) ship.getParent();
+        return model.getParent();
     }
 
     @Override
     public Placement getPlacement() {
-        return new Placement(ship.getCenterX(), ship.getCenterY(), ship.getRadius(), this, -1, -1);
+        return new Placement(model.getShip().getCenterX(), model.getShip().getCenterY(), model.getShip().getRadius(), this, -1, -1);
     }
 
     @Override
@@ -197,22 +196,40 @@ public class BattleShip extends CommonShip{
 
     @Override
     public void destroy() {
-        Pane gameArea = (Pane)ship.getParent();
-        BattleShipWreck wreck = new BattleShipWreck(ship.getCenterX(), ship.getCenterY());
+        Pane gameArea = model.getParent();
+        BattleShipWreck wreck = new BattleShipWreck(model.getShip().getCenterX(),model.getShip().getCenterY(), Color.WHITE);
         gameArea.getChildren().add(wreck.getFlashCircle());
-        wreck.flash();
+        wreck.explosion(getPlacement().getX(), getPlacement().getY(), 1050, 25, model);
+
+        Placement [][] placements = getPlacementPositions();
+        for (int i = 0; i < placements.length; i++){
+            for (int j = 0; j < placements[i].length; j++){
+                if(GlobalVariables.isEmpty(placements[i][j])){
+                    continue;
+                }
+
+                if(!placements[i][j].isEmpty()){
+                    ((AShipEquipment) placements[i][j].getShipEquipment()).getModel().removeModel();
+                }
+
+                gameArea.getChildren().removeAll(placements[i][j].getField());
+            }
+        }
+
+
+
     }
 
     private void createTimelineHit(){
         hit = new Timeline(new KeyFrame(javafx.util.Duration.seconds(GlobalVariables.damageHitDuration),event -> {
-            ship.setFill(Color.BLACK);
+            model.getShip().setFill(Color.BLACK);
         }));
         hit.setCycleCount(1);
     }
 
     @Override
     public void damageHit() {
-        ship.setFill(GlobalVariables.damageHit);
+        model.getShip().setFill(GlobalVariables.damageHit);
         hit.playFromStart();
     }
 
@@ -221,8 +238,7 @@ public class BattleShip extends CommonShip{
 
         double centerX = (widthEnd - widthStart)/2 + widthStart;
         double centerY = (heightEnd - heightStart)/2 + heightStart;
-        ship.setCenterX(centerX);
-        ship.setCenterY(centerY);
+        model.setModelXY(centerX, centerY);
         Placement placements [][] = getPlacementPositions();
 
         for(int i = 0; i < placements.length; i++){
@@ -232,7 +248,7 @@ public class BattleShip extends CommonShip{
                     continue;
                 }
 
-                placement.resize(countX(ship.getRadius(), placement.getSize(), i), countY(ship.getRadius(), placement.getSize(), j));
+                placement.resize(countX(model.getShip().getRadius(), placement.getSize(), i), countY(model.getShip().getRadius(), placement.getSize(), j));
 
             }
         }
@@ -240,16 +256,16 @@ public class BattleShip extends CommonShip{
 
     @Override
     public boolean containsPosition(double x, double y){
-        return ship.contains(x,y);
+        return model.getShip().contains(x, y);
     }
 
     @Override
     public double getCenterX(){
-        return ship.getCenterX();
+        return model.getShip().getCenterX();
     }
 
     @Override
     public double getCenterY(){
-        return ship.getCenterY();
+        return model.getShip().getCenterY();
     }
 }

@@ -84,13 +84,6 @@ public abstract class CommonWeapon extends AShipEquipment {
         return true;
     }
 
-    public abstract CommonModel getModel();
-
-    @Override
-    public void destroy() {
-
-    }
-
     @Override
     public void damageHit() {
         getModel().getParts().forEach(shape -> shape.setFill(GlobalVariables.damageHit));

@@ -1,5 +1,6 @@
 package game.ships;
 
+import game.ships.shipModels.CruisershipModel;
 import game.static_classes.ConstructionTypes;
 import game.static_classes.GameBalance;
 import game.static_classes.GlobalVariables;
@@ -16,7 +17,7 @@ import javafx.scene.shape.Rectangle;
  */
 public class CruiserShip extends CommonShip{
 
-    private Rectangle ship;
+    private CruisershipModel model;
     private Timeline hit;
 
     public CruiserShip(boolean isEnemy) {
@@ -37,9 +38,8 @@ public class CruiserShip extends CommonShip{
 
 
     private void createShip(){
-        ship = new Rectangle(200, 400);
-        ship.setStyle("-fx-background-color: red;");
-        ship.setOnMouseClicked(event -> {
+        model = new CruisershipModel();
+        model.getShip().setOnMouseClicked(event -> {
             markingHandle(isMarked(), this);
         });
     }
@@ -65,30 +65,29 @@ public class CruiserShip extends CommonShip{
 
         double width = ((GridPane)gameArea.getParent()).getWidth() / 2;
         if(isEnemy()){
-            positionOfShip(width + width/2 - ship.getWidth()/2, 80, gameArea);
+            positionOfShip(width + width/2 - model.getShip().getWidth()/2, 80, gameArea);
         }else {
-            positionOfShip(width - width/2 - ship.getWidth()/2, 80, gameArea);
+            positionOfShip(width - width/2 - model.getShip().getWidth()/2, 80, gameArea);
         }
     }
 
     public void positionOfShip(double x, double y, Pane gameArea){
-        gameArea.getChildren().add(ship);
-        ship.setX(x);
-        ship.setY(y);
+        gameArea.getChildren().add(model.getShip());
+        model.setModelXY(x, y);
         createMapOfShip();
     }
 
     private void createMapOfShip(){
         int size = 50;
-        int countOfPlaces = (int)(ship.getWidth()-50)/50;
-        int countOfPlacesHeight = (int)(ship.getHeight()-30)/50 -1;
+        int countOfPlaces = (int)(model.getWidth()-50)/50;
+        int countOfPlacesHeight = (int)(model.getShip().getHeight()-30)/50 -1;
         Placement[][] shipMapping = new Placement[countOfPlaces][countOfPlacesHeight];
 
         for( int i = 0; i < countOfPlaces; i++ ){
             for( int j = 0; j < countOfPlacesHeight; j++) {
                 Rectangle place = new Rectangle(size, size);
                 place.setFill(Color.WHITE);
-                Pane parent = ((Pane)ship.getParent());
+                Pane parent = model.getParent();
                 parent.getChildren().add(place);
 
                 place.setY(countY(size, j));
@@ -101,11 +100,11 @@ public class CruiserShip extends CommonShip{
     }
 
     private double countX(double size, int i){
-        return ship.getX() + size*i + 10*i + 15;
+        return model.getShip().getX() + size*i + 10*i + 15;
     }
 
     private double countY(double size, int j){
-        return ship.getY() + size*j + 10*j + 25;
+        return model.getShip().getY() + size*j + 10*j + 25;
     }
 
     public Placement getPosition(int row, int column){
@@ -115,8 +114,8 @@ public class CruiserShip extends CommonShip{
 
     @Override
     public void markObject() {
-        ship.setStroke(Color.BLUE);
-        ship.setStrokeWidth(1.5);
+        model.getShip().setStroke(Color.BLUE);
+        model.getShip().setStrokeWidth(1.5);
         GlobalVariables.setMarkedObject(this);
         GlobalVariables.setName(getName());
         setIsMarked(true);
@@ -124,7 +123,7 @@ public class CruiserShip extends CommonShip{
 
     @Override
     public void unmarkObject() {
-        ship.setStroke(Color.TRANSPARENT);
+        model.getShip().setStroke(Color.TRANSPARENT);
         GlobalVariables.setMarkedObject(null);
         GlobalVariables.setName("");
         setIsMarked(false);
@@ -137,24 +136,24 @@ public class CruiserShip extends CommonShip{
             return;
         }
 
-        ship.setStroke(Color.RED);
-        ship.setStrokeWidth(1.5);
+        model.getShip().setStroke(Color.RED);
+        model.getShip().setStrokeWidth(1.5);
         GlobalVariables.setTargetObject(this);
     }
 
     @Override
     public void cancelTarget() {
-        ship.setStroke(Color.TRANSPARENT);
+        model.getShip().setStroke(Color.TRANSPARENT);
     }
 
     @Override
     public double getWidth() {
-        return ship.getWidth();
+        return model.getWidth();
     }
 
     @Override
     public double getHeight() {
-        return ship.getHeight();
+        return model.getShip().getHeight();
     }
 
     @Override
@@ -164,24 +163,24 @@ public class CruiserShip extends CommonShip{
 
     private void createTimelineHit(){
         hit = new Timeline(new KeyFrame(javafx.util.Duration.seconds(GlobalVariables.damageHitDuration),event -> {
-            ship.setFill(Color.BLACK);
+            model.getShip().setFill(Color.BLACK);
         }));
         hit.setCycleCount(1);
     }
 
     @Override
     public void damageHit() {
-        ship.setFill(GlobalVariables.damageHit);
+        model.getShip().setFill(GlobalVariables.damageHit);
         hit.playFromStart();
     }
 
     @Override
     public void resize(double widthStart, double widthEnd, double heightStart, double heightEnd){
 
-        double centerX = (widthEnd - widthStart)/2 + widthStart - ship.getWidth()/2;
-        double centerY = (heightEnd - heightStart)/2 + heightStart - ship.getHeight()/2;
-        ship.setX(centerX);
-        ship.setY(centerY);
+        double centerX = (widthEnd - widthStart)/2 + widthStart - model.getWidth()/2;
+        double centerY = (heightEnd - heightStart)/2 + heightStart - model.getShip().getHeight()/2;
+        model.setModelXY(centerX, centerY);
+
         Placement placements [][] = getPlacementPositions();
 
         for(int i = 0; i < placements.length; i++){
@@ -199,24 +198,24 @@ public class CruiserShip extends CommonShip{
 
     @Override
     public boolean containsPosition(double x, double y){
-        return ship.contains(x,y);
+        return model.getShip().contains(x, y);
     }
 
     @Override
     public double getCenterX(){
-        double middleX = ship.getX()+ ship.getHeight()/2;
+        double middleX = model.getShip().getX()+ model.getShip().getHeight()/2;
         return middleX ;
     }
 
     @Override
     public double getCenterY(){
-        double middleY = ship.getY()+ ship.getWidth()/2;
+        double middleY = model.getShip().getY()+ model.getShip().getWidth()/2;
         return middleY;
     }
 
     @Override
     public Placement getPlacement() {
-        return new Placement(getCenterX(), getCenterY(), ship.getWidth(), this, -1, -1);
+        return new Placement(getCenterX(), getCenterY(), model.getWidth(), this, -1, -1);
     }
 
     @Override
@@ -226,6 +225,6 @@ public class CruiserShip extends CommonShip{
 
     @Override
     public Pane getPane() {
-        return (Pane) ship.getParent();
+        return model.getParent();
     }
 }

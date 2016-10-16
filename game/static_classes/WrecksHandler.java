@@ -1,7 +1,7 @@
 package game.static_classes;
 
 
-import game.wrecks.CommonWreck;
+import game.construction.CommonWreck;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 /**
  * Created by BobrZlosyn on 16.10.2016.
  */
-public class Wrecks_Handler {
+public class WrecksHandler {
     private static Timeline wrecksAnimation;
     private static ArrayList<CommonWreck> wrecks = new ArrayList<>();
 

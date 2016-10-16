@@ -1,5 +1,6 @@
 package game.construction;
 
+import game.static_classes.GlobalVariables;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Shape;
 
@@ -14,12 +15,17 @@ public abstract class CommonModel {
 
     public abstract Pane getParent();
 
+    public void removeModel(){
+        Pane pane = getParent();
+        if(!GlobalVariables.isEmpty(pane)){
+            pane.getChildren().removeAll(getParts());
+        }
+    }
+
     public abstract void setModelXY(double x, double y);
 
     public abstract double getWidth();
 
     public abstract void setDefaultSkin();
-
-    public abstract void destructionAnimation();
 
 }

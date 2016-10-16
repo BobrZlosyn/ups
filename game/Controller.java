@@ -8,12 +8,15 @@ import game.background.GeneratRandomBackground;
 import game.construction.Placement;
 import game.ships.CommonShip;
 import game.static_classes.GlobalVariables;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -132,7 +135,7 @@ public class Controller implements Initializable{
         BottomPanel bottomPanel = new BottomPanel(sendDataButton);
         bottomPanel.showPanel(window, gameAreaPane);
         bottomPanel.getQuit().setOnAction(event1 -> {
-            GlobalVariables.choosenShip.setActualLifeBinding(0);
+            GlobalVariables.choosenShip.takeDamage((int)GlobalVariables.choosenShip.getActualLife());
         });
 
         DamageHandler damageHandler = new DamageHandler(GlobalVariables.choosenShip, enemyShip, gameAreaPane);
@@ -164,6 +167,7 @@ public class Controller implements Initializable{
      * @param enemyShip
      */
     private void endWindowShowUp(CommonShip usersShip, CommonShip enemyShip){
+
         usersShip.getActualLifeBinding().addListener((observable, oldValue, newValue) -> {
 
             if(newValue.doubleValue() <= 0){
@@ -186,22 +190,26 @@ public class Controller implements Initializable{
      * @param endOfGame
      */
     private void endWindowSetting(EndOfGameMenu endOfGame){
-        endOfGame.setupWindow(window);
-        controls.stopAnimations();
+        Timeline delay = new Timeline(new KeyFrame(Duration.seconds(4), event1 -> {
+            endOfGame.setupWindow(window);
+            controls.stopAnimations();
 
-        endOfGame.getBackToMenu().setOnAction(event -> {
-            window.getChildren().clear();
-            CreateMenu createMenu = new CreateMenu();
-            window.add(createMenu.getMenu(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
-            setupPickShipMenu(createMenu);
-            grb.showSpacePort(window);
-        });
+            endOfGame.getBackToMenu().setOnAction(event -> {
+                window.getChildren().clear();
+                CreateMenu createMenu = new CreateMenu();
+                window.add(createMenu.getMenu(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
+                setupPickShipMenu(createMenu);
+                grb.showSpacePort(window);
+            });
 
-        endOfGame.getNewGame().setOnAction(event -> {
-            window.getChildren().clear();
-            GlobalVariables.choosenShip.restartValues();
-            GlobalVariables.choosenShip.unmarkObject();
-            startGame(false);
-        });
+            endOfGame.getNewGame().setOnAction(event -> {
+                window.getChildren().clear();
+                GlobalVariables.choosenShip.restartValues();
+                GlobalVariables.choosenShip.unmarkObject();
+                startGame(false);
+            });
+        }));
+        delay.setCycleCount(1);
+        delay.playFromStart();
     }
 }

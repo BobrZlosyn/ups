@@ -50,11 +50,6 @@ public class ModelCannon extends CommonModel{
         cannon.setFill(Color.RED);
     }
 
-    @Override
-    public void destructionAnimation() {
-
-    }
-
     public Rectangle getCannon() {
         return cannon;
     }

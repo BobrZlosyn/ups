@@ -162,19 +162,30 @@ public class DamageHandler {
     private void shooting(){
         shots.forEach(simpleBallShot1 -> {
             if(simpleBallShot1.pocitatTrasu()){
-                simpleBallShot1.removeShot(gameArea);
-
                 if(simpleBallShot1.isIntoShields()){
                     simpleBallShot1.getTarget().getPlacement().getShip().damageToShield(simpleBallShot1.getDamage());
+                    simpleBallShot1.getWreck();
                 }else {
                     if(simpleBallShot1.getTarget().getActualLife()>0){
                         simpleBallShot1.getTarget().takeDamage(simpleBallShot1.getDamage());
                     }
                 }
 
-                if(simpleBallShot1.getTarget().getActualLife() == 0){
+                simpleBallShot1.removeShot(gameArea);
+
+                if(simpleBallShot1.getTarget().getActualLife() == 0 && !GlobalVariables.isEmpty(((CommonWeapon)simpleBallShot1.getAttacker()).getTarget())){
                     simpleBallShot1.getTarget().cancelTarget();
                     ((CommonWeapon)simpleBallShot1.getAttacker()).setTarget(null);
+                    ((CommonWeapon)simpleBallShot1.getAttacker()).rotateToDefaultPosition();
+
+                    int cost = simpleBallShot1.getAttacker().getEnergyCost();
+                    simpleBallShot1.getAttacker().getPlacement().getShip().setActualEnergy(-cost);
+
+                    //obnoveni informacich na vybranem objektu
+                    if(GlobalVariables.canTarget.get()){
+                        GlobalVariables.setCanTarget(false);
+                        GlobalVariables.setCanTarget(true);
+                    }
                 }
 
                 removeShots.add(simpleBallShot1);

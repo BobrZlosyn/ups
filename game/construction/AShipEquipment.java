@@ -70,4 +70,6 @@ public abstract class AShipEquipment extends CommonConstruction implements IShip
     public SimpleDoubleProperty shieldProgressProperty() {
         return shieldProgressProperty;
     }
+
+    public abstract CommonModel getModel();
 }

@@ -56,8 +56,4 @@ public class SimpleShieldModel extends CommonModel {
         shield.setFill(Color.ORANGE);
     }
 
-    @Override
-    public void destructionAnimation() {
-
-    }
 }

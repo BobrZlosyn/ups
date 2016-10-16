@@ -1,5 +1,7 @@
 package game.construction;
 
+import game.static_classes.ConstructionTypes;
+import game.static_classes.GlobalVariables;
 import javafx.beans.property.SimpleDoubleProperty;
 
 /**
@@ -96,6 +98,18 @@ public abstract class CommonConstruction implements IMarkableObject{
 
         if (getActualLife() <= 0){
             destroy();
+
+            if(ConstructionTypes.isEquipment(getConstructionType())){
+                getPlacement().getShip().takeDamage(50);
+            }
+
+            if(!GlobalVariables.isEmpty(GlobalVariables.getMarkedObject()) && GlobalVariables.getMarkedObject().equals(this)){
+                GlobalVariables.setMarkedObject(null);
+            }
+
+            if(!GlobalVariables.isEmpty(GlobalVariables.getTargetObject()) && GlobalVariables.getTargetObject().equals(this)){
+                GlobalVariables.setTargetObject(this);
+            }
         }
     }
 

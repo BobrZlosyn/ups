@@ -1,6 +1,7 @@
 package game.shots;
 
 import game.construction.CommonConstruction;
+import game.shots.wrecksShot.SimpleShotWreck;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -53,6 +54,13 @@ public class SimpleBallShot extends CommonShot{
         }
 
         return target.containsPosition(x1,y1);
+    }
+
+    @Override
+    public SimpleShotWreck getWreck() {
+        SimpleShotWreck shotWreck = new SimpleShotWreck();
+        shotWreck.addWrecksToPane((Pane)shot.getParent(), x1, y1);
+        return shotWreck;
     }
 
 }

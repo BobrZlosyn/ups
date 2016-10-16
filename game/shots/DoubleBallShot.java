@@ -1,6 +1,8 @@
 package game.shots;
 
 import game.construction.CommonConstruction;
+import game.shots.wrecksShot.DoubleShotWreck;
+import game.shots.wrecksShot.SimpleShotWreck;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -58,5 +60,13 @@ public class DoubleBallShot extends CommonShot{
         }
 
         return target.containsPosition(x1,y1);
+    }
+
+    @Override
+    public DoubleShotWreck getWreck() {
+
+        DoubleShotWreck shotWreck = new DoubleShotWreck(x1, y1 -5, x1 + 2, y1 + 5);
+        shotWreck.addWrecksToPane((Pane)shot1.getParent(), x1, y1);
+        return shotWreck;
     }
 }

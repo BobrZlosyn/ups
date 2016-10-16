@@ -66,6 +66,7 @@ public class ModelDoubleCannon extends CommonModel{
         return (Pane) room.getParent();
     }
 
+
     @Override
     public void setModelXY(double x, double y) {
         room.setCenterX(x);
@@ -92,26 +93,5 @@ public class ModelDoubleCannon extends CommonModel{
         head.setFill(Color.YELLOW);
         cannonTop.setFill(Color.RED);
         cannonBottom.setFill(Color.GREEN);
-    }
-
-    protected int countCycle;
-    @Override
-    public void destructionAnimation() {
-        double centerX = getRoom().getCenterX();
-        double centerY = getRoom().getCenterY();
-
-        Pane pane = getParent();
-        pane.getChildren().removeAll(getParts());
-
-        countCycle = 0;
-        Timeline destructionAnimation = new Timeline(new KeyFrame(Duration.seconds(0.3), event -> {
-            if(countCycle > 98){
-
-            }
-
-            countCycle++;
-        }));
-        destructionAnimation.setCycleCount(100);
-        destructionAnimation.playFromStart();
     }
 }

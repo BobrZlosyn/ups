@@ -45,7 +45,6 @@ public abstract class CommonShield extends AShipEquipment {
         return chance;
     }
 
-    public abstract CommonModel getModel();
 
     protected void displayEquipmentExtension(Placement place) {
         place.setIsEmpty(false);

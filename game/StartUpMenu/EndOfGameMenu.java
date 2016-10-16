@@ -51,7 +51,7 @@ public class EndOfGameMenu {
             text = new Label(getRandomTextToWinner());
             text.setTextFill(Color.GREEN);
         }else{
-            text = new Label("Jste ostudou naší flotily.");
+            text = new Label(getRandomTextToLoser());
             text.setTextFill(Color.RED);
         }
 
@@ -124,8 +124,10 @@ public class EndOfGameMenu {
         ArrayList <String> texts = new ArrayList();
         texts.add("Blahopřejeme kapitáne, zničil jste nepřátele s ledovým klidem.");
         texts.add("Rebelové byli rozprášeni do všech koutů vesmíru jen díky vám.");
+        texts.add("Krasný večerní program zakončený ohňostrojem, přesně jak má býti.");
 
-        return texts.get(1);
+        int random = (int) (Math.random() * texts.size());
+        return texts.get(random);
 
     }
 
@@ -133,7 +135,12 @@ public class EndOfGameMenu {
     private String getRandomTextToLoser(){
         ArrayList <String> texts = new ArrayList();
         texts.add("Jste ostudou naší flotily.");
-        return texts.get(0);
+        texts.add("Snad budete lepším velitelem v příštím životě.");
+        texts.add("Pokuste se moc nedýchat, pomoc je již na cestě.");
+        texts.add("Když jste padli vy, další na řadě je země.");
+
+        int random = (int) (Math.random() * texts.size());
+        return texts.get(random);
     }
 
     public void clean(){

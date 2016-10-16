@@ -1,6 +1,8 @@
 package game.shots;
 
 import game.construction.CommonConstruction;
+import game.construction.CommonWreck;
+import game.shots.wrecksShot.SimpleShotWreck;
 import javafx.scene.layout.Pane;
 
 /**
@@ -80,4 +82,6 @@ public abstract class CommonShot {
     public abstract void removeShot(Pane gameArea);
 
     public abstract boolean pocitatTrasu();
+
+    public abstract CommonWreck getWreck();
 }

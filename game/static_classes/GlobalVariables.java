@@ -19,6 +19,8 @@ public class GlobalVariables {
     public static SimpleBooleanProperty isSelected = new SimpleBooleanProperty(false);
     private static boolean isUsersShieldUp = false;
     private static boolean isEnemyShieldUp = false;
+    public static SimpleBooleanProperty gameIsFinished = new SimpleBooleanProperty(false);
+    private static boolean userLost = false;
     public static CommonShip choosenShip;
     public static Color damageHit = Color.RED;
     public static double damageHitDuration = 0.2;
@@ -107,5 +109,21 @@ public class GlobalVariables {
 
     public static boolean isUsersShieldUp() {
         return isUsersShieldUp;
+    }
+
+    public static boolean isUserLost() {
+        return userLost;
+    }
+
+    public static void setUserLost(boolean userLost) {
+        GlobalVariables.userLost = userLost;
+    }
+
+    public static void setGameIsFinished(boolean gameIsFinished) {
+        GlobalVariables.gameIsFinished.set(gameIsFinished);
+    }
+
+    public static SimpleBooleanProperty gameIsFinishedProperty() {
+        return gameIsFinished;
     }
 }

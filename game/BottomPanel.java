@@ -263,7 +263,6 @@ public class BottomPanel {
             if(newValue.booleanValue()){
                 CommonWeapon weapon = (CommonWeapon) GlobalVariables.getMarkedObject();
                 notEnoughEnergy(GlobalVariables.getMarkedObject(), targeting, "Zaměřit cíl");
-
                 if(GlobalVariables.isEmpty(weapon.getTarget())){ //zbran ma vybrany cil
                     cancelTarget.setVisible(false);
                     return;
@@ -367,6 +366,7 @@ public class BottomPanel {
     private void createName(){
         name = new Label("Název kliknutého objektu");
         name.textProperty().bind(GlobalVariables.name);
+        name.visibleProperty().bind(GlobalVariables.isSelected);
         name.getStyleClass().add("statusLabel");
     }
 
