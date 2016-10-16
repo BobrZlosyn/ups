@@ -93,6 +93,10 @@ public abstract class CommonConstruction implements IMarkableObject{
         if(damage != 0){
             damageHit();
         }
+
+        if (getActualLife() <= 0){
+            destroy();
+        }
     }
 
     public abstract void destroy();

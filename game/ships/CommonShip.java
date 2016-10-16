@@ -6,6 +6,7 @@ import game.static_classes.GlobalVariables;
 import game.weapons.CommonWeapon;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
@@ -35,6 +36,8 @@ public abstract class CommonShip extends CommonConstruction {
     private double shieldAddY;
     private double shieldRadiusY;
     private Arc shieldFieldArc;
+    private ChangeListener<String> damageToShieldListener;
+
 
     public CommonShip (String name, int life, int energy,int armor, int speed, int shield, int pointsForEquipment, boolean isEnemy) {
         super(life, name);
@@ -65,9 +68,16 @@ public abstract class CommonShip extends CommonConstruction {
     }
 
     public void setShieldActualLife(int shieldActualLife) {
+        if(shieldActualLife > shieldMaxLife){
+            shieldActualLife = shieldMaxLife;
+        }
+
+        if(shieldActualLife < 0){
+            shieldActualLife = 0;
+        }
+
         this.shieldActualLife = shieldActualLife;
         this.shieldActualLifeBinding.set(((double) shieldActualLife) / shieldMaxLife);
-
     }
 
     public void setAvailablePoints(int costPoints) {
@@ -88,15 +98,24 @@ public abstract class CommonShip extends CommonConstruction {
 
     public void addShieldBonus(CommonShield shield){
 
-        shields.add(shield);
+
         setShieldMaxLife(shield.getShieldBonus());
+
+        //nechceme pridavat listenera tam kde uz pridan je
+        if(shields.contains(shield)){
+            shield.setActualShieldBonus(shield.getShieldBonus());
+            return;
+        }
+
+        shields.add(shield);
         shield.isActiveProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue.booleanValue()){
+            if (newValue.booleanValue()) {
                 setShieldActualLife(getShieldActualLife() + shield.getActualShieldBonus());
-            }else{
+            } else {
                 setShieldActualLife(getShieldActualLife() - shield.getActualShieldBonus());
             }
         });
+
     }
 
     public void setEnergyActualValue(int energyActualValue) {
@@ -236,13 +255,11 @@ public abstract class CommonShip extends CommonConstruction {
                 if(shieldBonus < damage){
                     damage -=shieldBonus;
                     shields.get(i).setActualShieldBonus(0);
-                    shields.remove(i);
                     continue;
                 }
 
                 shields.get(i).setActualShieldBonus(shieldBonus - damage);
-                if(damage == shieldBonus){
-                    shields.remove(i);
+                if(damage <= shieldBonus){
                     break;
                 }
             }
@@ -314,7 +331,6 @@ public abstract class CommonShip extends CommonConstruction {
         shieldActualLife = shieldMaxLifeOrigin;
         shieldActualLifeBinding.set(((double) shieldActualLife) / shieldMaxLife);
         actualEnergy.set(1);
-        shields.clear();
     }
 
     public void createShield(){

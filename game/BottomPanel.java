@@ -29,10 +29,12 @@ public class BottomPanel {
     private Button quit, activateShield;
     private Button targeting, cancelTarget;
     private GridPane panel;
-    private Label name, lifeLabel;
+    private Label name, lifeLabel, shieldLabel, energyCostLabel, strenghtLabel;
     private boolean setTarget;
     private ProgressBar lifeProgress;
     private String background;
+
+    private ProgressBar avaibleShieldProgress;
 
 
     public BottomPanel(Button sendOrders){
@@ -43,6 +45,8 @@ public class BottomPanel {
         createButtonTargeting();
         createLifeProgressBar();
         createCancelTargetButton();
+        createEnergyCostLabel();
+        createStrengthLabel();
         createPanel(sendOrders);
         createNamePane();
 
@@ -50,6 +54,39 @@ public class BottomPanel {
 
     public Button getQuit() {
         return quit;
+    }
+
+    private void createEnergyCostLabel(){
+        energyCostLabel = new Label();
+        energyCostLabel.getStyleClass().add("statusLabel");
+        energyCostLabel.setMaxWidth(Double.MAX_VALUE);
+        energyCostLabel.setMaxHeight(Double.MAX_VALUE);
+        energyCostLabel.setAlignment(Pos.CENTER);
+        energyCostLabel.setStyle("-fx-background-color: purple;");
+        energyCostLabel.visibleProperty().bind(lifeProgress.visibleProperty());
+        energyCostLabel.visibleProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue.booleanValue()){
+                energyCostLabel.setText(GlobalVariables.markedObject.getEnergyCost() + "");
+            }
+        });
+
+    }
+
+    private void createStrengthLabel(){
+        strenghtLabel = new Label();
+        strenghtLabel.getStyleClass().add("statusLabel");
+        strenghtLabel.setVisible(false);
+        strenghtLabel.setMaxWidth(Double.MAX_VALUE);
+        strenghtLabel.setMaxHeight(Double.MAX_VALUE);
+        strenghtLabel.setAlignment(Pos.CENTER);
+        strenghtLabel.setStyle("-fx-background-color: red;");
+        strenghtLabel.visibleProperty().bind((shieldLabel.visibleProperty().not()).and(lifeProgress.visibleProperty()));
+        strenghtLabel.visibleProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue.booleanValue() && ConstructionTypes.isEquipment(GlobalVariables.markedObject.getConstructionType())){
+                strenghtLabel.setText(((AShipEquipment)GlobalVariables.markedObject).getMaxStrength() + "");
+            }
+        });
+
     }
 
     private void createButtonSend(Button sendOrders){
@@ -64,38 +101,49 @@ public class BottomPanel {
         activateShield.setMaxHeight(Double.MAX_VALUE);
         activateShield.setVisible(false);
         GlobalVariables.isSelected.addListener((observable, oldValue, newValue) -> {
-            if(newValue.booleanValue()){
+            avaibleShieldProgress.progressProperty().unbind();
+
+            if (newValue.booleanValue()) {
                 CommonConstruction construction = GlobalVariables.getMarkedObject();
-                if(construction.isEnemy() ||  ConstructionTypes.isShip(construction.getConstructionType()) ){
+                // test zda je vybaveni
+                if (construction.isEnemy() || ConstructionTypes.isShip(construction.getConstructionType())) {
                     return;
                 }
 
                 AShipEquipment equipment = (AShipEquipment) construction;
-                if(equipment.isShield()){
+                if (equipment.isShield()) { // zda je stit
                     activateShield.setVisible(newValue.booleanValue());
-                    if(((CommonShield) equipment).isActive()){
+                    if (((CommonShield) equipment).isActive()) { // pokud je aktivni
                         activateShield.setText("Deaktivovat štít");
                         activateShield.setDisable(false);
-                    }else{
+                    } else { // pokud neni aktivni
                         activateShield.setText("Aktivovat štít");
                         notEnoughEnergy(GlobalVariables.getMarkedObject(), activateShield, "Aktivovat štít");
                     }
-                }else{
+
+                    avaibleShieldProgress.progressProperty().bind(equipment.shieldProgressProperty());
+                } else { // pokud neni stit
                     activateShield.setVisible(!newValue.booleanValue());
+
                 }
-            }else {
+            } else { // neni vybrano nic
                 activateShield.setVisible(newValue.booleanValue());
             }
         });
 
+        activateShieldOnActionEvent();
+        availibleShieldProgress();
+    }
+
+    private void activateShieldOnActionEvent(){
         activateShield.setOnAction(event -> {
-            CommonShield shield = ((CommonShield)GlobalVariables.getMarkedObject());
-            if(shield.isActive()){
+            CommonShield shield = ((CommonShield) GlobalVariables.getMarkedObject());
+            if (shield.isActive()) {
                 activateShield.setText("Aktivovat štít");
                 shield.getPlacement().getShip().setActualEnergy(-shield.getEnergyCost());
                 shield.setIsActive(!shield.isActive());
-            }else{
-                if(shield.getPlacement().getShip().getActualEnergyLevel() >= shield.getEnergyCost()){
+            } else {
+                if (shield.getPlacement().getShip().getActualEnergyLevel() >= shield.getEnergyCost()) {
                     activateShield.setText("Deaktivovat štít");
                     shield.getPlacement().getShip().setActualEnergy(shield.getEnergyCost());
                     shield.setIsActive(!shield.isActive());
@@ -103,6 +151,61 @@ public class BottomPanel {
             }
         });
     }
+
+    private void availibleShieldProgress(){
+        avaibleShieldProgress = new ProgressBar(1);
+        avaibleShieldProgress.setVisible(false);
+        GlobalVariables.isSelected.addListener((observable, oldValue, newValue) -> {
+            avaibleShieldProgress.setVisible(false);
+            if(newValue.booleanValue()){
+                if(ConstructionTypes.isEquipment(GlobalVariables.getMarkedObject().getConstructionType())){
+                    if(((AShipEquipment)GlobalVariables.getMarkedObject()).isWeapon()){
+                        return;
+                    }
+                }
+                avaibleShieldProgress.setVisible(true);
+            }
+        });
+
+        avaibleShieldProgress.getStyleClass().add("shieldStatus");
+        avaibleShieldProgress.setMaxWidth(Double.MAX_VALUE);
+        avaibleShieldProgress.setMaxHeight(Double.MAX_VALUE);
+        shieldLabel = new Label();
+        shieldLabel.visibleProperty().bind(avaibleShieldProgress.visibleProperty());
+        shieldLabel.getStyleClass().add("statusLabel");
+        shieldLabel.setMaxWidth(Double.MAX_VALUE);
+        shieldLabel.setAlignment(Pos.CENTER);
+
+        avaibleShieldProgress.visibleProperty().addListener((observable, oldValue, newValue) -> {
+            avaibleShieldProgress.progressProperty().unbind();
+            if (newValue.booleanValue()) {
+                CommonConstruction construction = GlobalVariables.getMarkedObject();
+
+                if(ConstructionTypes.isShip(construction.getConstructionType())){
+                    CommonShip ship = (CommonShip) construction;
+                    shieldLabel.setText(ship.getShieldActualLife() + "/" + ship.getShieldMaxLife());
+                    avaibleShieldProgress.progressProperty().bind(ship.getShieldActualLifeBinding());
+                    avaibleShieldProgress.progressProperty().addListener((observable1, oldValue1, newValue1) -> {
+                        if(ConstructionTypes.isShip(GlobalVariables.getMarkedObject().getConstructionType())){
+                            int actualShield = (int) (newValue1.doubleValue() * ship.getShieldMaxLife());
+                            shieldLabel.setText(actualShield + "/" + ship.getShieldMaxLife());
+                        }
+                    });
+                }else {
+                    AShipEquipment equipment = (AShipEquipment) construction;
+                    shieldLabel.setText(equipment.getActualShieldBonus() + "/" + equipment.getShieldBonus());
+                    avaibleShieldProgress.progressProperty().bind(equipment.shieldProgressProperty());
+                    avaibleShieldProgress.progressProperty().addListener((observable1, oldValue1, newValue1) -> {
+                        if(ConstructionTypes.isEquipment(GlobalVariables.getMarkedObject().getConstructionType())){
+                            int actualShield = (int) (newValue1.doubleValue() * equipment.getShieldBonus());
+                            shieldLabel.setText(actualShield + "/" + equipment.getShieldBonus());
+                        }
+                    });
+                }
+            }
+        });
+    }
+
 
     private void createCancelTargetButton(){
         cancelTarget = new Button("Zrušit cíl");
@@ -125,6 +228,7 @@ public class BottomPanel {
         lifeProgress.setMaxWidth(Double.MAX_VALUE);
         lifeProgress.setMaxHeight(Double.MAX_VALUE);
         lifeProgress.getStyleClass().add("lifeStatus");
+        lifeProgress.setVisible(false);
 
         lifeLabel = new Label("život konstrukce");
         lifeLabel.getStyleClass().add("statusLabel");
@@ -144,6 +248,7 @@ public class BottomPanel {
                     int actualLife = (int) (newValue1.doubleValue() * construction.getTotalLife().get());
                     lifeLabel.setText(actualLife + "/" + (int) construction.getTotalLife().get());
                 });
+
             }else {
                 lifeProgress.progressProperty().unbind();
             }
@@ -276,32 +381,43 @@ public class BottomPanel {
         ColumnConstraints columnConstraints = new ColumnConstraints();
         columnConstraints.setPercentWidth(20);
         ColumnConstraints columnConstraints1 = new ColumnConstraints();
-        columnConstraints1.setPercentWidth(40);
+        columnConstraints1.setPercentWidth(20);
         columnConstraints1.setHalignment(HPos.CENTER);
         ColumnConstraints columnConstraints2 = new ColumnConstraints();
         columnConstraints2.setPercentWidth(20);
         ColumnConstraints columnConstraints3 = new ColumnConstraints();
         columnConstraints3.setPercentWidth(20);
         columnConstraints3.setHalignment(HPos.RIGHT);
+        ColumnConstraints columnConstraints4 = new ColumnConstraints();
+        columnConstraints4.setPercentWidth(20);
 
 
-        panel.getColumnConstraints().addAll(columnConstraints, columnConstraints1, columnConstraints2, columnConstraints3);
+        panel.getColumnConstraints().addAll(columnConstraints, columnConstraints1, columnConstraints2, columnConstraints3, columnConstraints4);
         panel.getRowConstraints().addAll(rowConstraints1, rowConstraints2);
 
-        panel.add(sendOrders, 3, 0);
-        panel.add(quit, 3, 1);
-        panel.add(targeting, 2, 1);
-        panel.add(activateShield, 2, 1);
-        panel.add(cancelTarget, 2, 0);
+        panel.add(sendOrders, 4, 0);
+        panel.add(quit, 4, 1);
+        panel.add(targeting, 3, 1);
+        panel.add(activateShield, 3, 1);
+        panel.add(cancelTarget, 3, 0);
         panel.add(lifeProgress, 0, 0);
+        panel.add(avaibleShieldProgress, 0, 1);
+        panel.add(shieldLabel, 0, 1);
         panel.add(lifeLabel, 0, 0);
+        panel.add(energyCostLabel, 1,1);
+        panel.add(strenghtLabel, 0,1);
 
-        panel.setMargin(sendOrders, new Insets(15,10,5,10));
+        panel.setMargin(sendOrders, new Insets(15, 10, 5, 10));
         panel.setMargin(cancelTarget, new Insets(15,10,5,10));
         panel.setMargin(quit, new Insets(10,10,10,10));
         panel.setMargin(targeting, new Insets(10,10,10,10));
         panel.setMargin(lifeProgress, new Insets(10,10,10,10));
         panel.setMargin(activateShield, new Insets(10,10,10,10));
+
+        panel.setMargin(avaibleShieldProgress, new Insets(10,10,10,10));
+        panel.setMargin(energyCostLabel, new Insets(15,10,15,10));
+
+        panel.setMargin(strenghtLabel, new Insets(15,10,15,10));
     }
 
     public void showPanel(GridPane window, Pane gameArea){

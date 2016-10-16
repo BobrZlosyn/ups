@@ -129,6 +129,7 @@ public class CannonWeapon extends CommonWeapon{
 
     @Override
     public void rotateEquipment(double x, double y) {
+        rotateToDefaultPosition();
         Rotate rotation = calculationForRotation(x, y, getCenterX(), getCenterY(), isEnemy());
         double angleNew = rotation.getAngle() - getAngle();
         rotation.setAngle(angleNew);

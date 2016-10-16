@@ -23,6 +23,10 @@ public abstract class CommonShot {
         this.intoShields = intoShields;
     }
 
+    public void setIntoShields(boolean intoShields) {
+        this.intoShields = intoShields;
+    }
+
     public boolean isIntoShields() {
         return intoShields;
     }

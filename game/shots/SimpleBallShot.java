@@ -48,6 +48,8 @@ public class SimpleBallShot extends CommonShot{
 
         if(isIntoShields() && target.getPlacement().getShip().getShieldActualLife() != 0){
             return target.getPlacement().getShip().isOnShield(x1, y1);
+        }else {
+            setIntoShields(false);
         }
 
         return target.containsPosition(x1,y1);

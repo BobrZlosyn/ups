@@ -29,8 +29,8 @@ public class Controls {
 
     private double shipIntegrity;
     private double shipPower;
-    private ProgressBar shipIntegrityProgress, shipPowerProgress, shipShieldProgress;
-    private Label life, power, shield;
+    private ProgressBar shipIntegrityProgress, shipPowerProgress, shipShieldProgress, enemyshipShieldProgress, enemyshipIntegrityProgress;
+    private Label life, power, shield, enemyShield, enemyLife;
     private Button settings;
     private Circle circle;
     private Label time;
@@ -40,8 +40,10 @@ public class Controls {
 
     public Controls(CommonShip userShip, CommonShip enemyShip, Button sendOrders){
         createProgress(userShip);
+        createEnemyIntegrityProgress(enemyShip);
         createPowerProgress(userShip);
         createShieldProgress(userShip);
+        createEnemyShieldProgress(enemyShip);
         createSettingsButton();
         createTimeRemaining(sendOrders);
     }
@@ -111,7 +113,7 @@ public class Controls {
 
         shipIntegrityProgress.progressProperty().addListener((observable, oldValue, newValue) -> {
             StringBuilder text = new StringBuilder();
-            text.append((int)userShip.getActualLife());
+            text.append((int)(newValue.doubleValue() * userShip.getTotalLife().get()));
             text.append("/");
             text.append((int)userShip.getTotalLife().get());
             life.setText(text.toString());
@@ -119,37 +121,96 @@ public class Controls {
 
     }
 
+    private void createEnemyIntegrityProgress(CommonShip enemyShip){
+
+        enemyshipIntegrityProgress = new ProgressBar(0.5);
+        enemyshipIntegrityProgress.progressProperty().bind(enemyShip.getActualLifeBinding());
+
+
+        enemyLife = new Label();
+
+        enemyshipIntegrityProgress.widthProperty().addListener((observable1, oldValue1, newValue1) -> {
+            enemyLife.setMinWidth(newValue1.intValue());
+        });
+
+        enemyLife.setAlignment(Pos.CENTER);
+
+        enemyLife.setText((int)enemyShip.getActualLife() + "/" + (int) enemyShip.getTotalLife().get());
+
+        enemyshipIntegrityProgress.progressProperty().addListener((observable, oldValue, newValue) -> {
+            StringBuilder text = new StringBuilder();
+            text.append((int)(newValue.doubleValue() * enemyShip.getTotalLife().get()));
+            text.append("/");
+            text.append((int) enemyShip.getTotalLife().get());
+            enemyLife.setText(text.toString());
+        });
+
+    }
+
+    private void createEnemyShieldProgress(CommonShip enemyShip){
+
+        if(enemyShip.getShieldMaxLife() == 0) {
+            return;
+        }
+
+        enemyshipShieldProgress = new ProgressBar(0.5);
+        enemyshipShieldProgress.progressProperty().bind(enemyShip.getShieldActualLifeBinding());
+
+        enemyShield = new Label();
+        enemyShield.setAlignment(Pos.CENTER);
+        enemyshipShieldProgress.widthProperty().addListener((observable1, oldValue1, newValue1) -> {
+            enemyShield.setMinWidth(newValue1.doubleValue());
+        });
+
+        enemyShield.setText(enemyShip.getShieldActualLife() + "/" + enemyShip.getShieldMaxLife());
+        enemyshipShieldProgress.progressProperty().addListener((observable, oldValue, newValue) -> {
+            StringBuilder text = new StringBuilder();
+            text.append(enemyShip.getShieldActualLife());
+            text.append("/");
+            text.append(enemyShip.getShieldMaxLife());
+            enemyShield.setText(text.toString());
+        });
+    }
+
     private void createSettingsButton(){
         settings = new Button("Nastavení");
     }
 
+    private void setProgressBarSize(ProgressBar progress, String classStyle){
+
+        progress.setMinHeight(30);
+        progress.setMinWidth(150);
+        progress.setMaxWidth(150);
+        progress.getStyleClass().add(classStyle);
+    }
+
     public void showStatusBars(Pane gameArea){
-        gameArea.getChildren().addAll(shipIntegrityProgress, shipPowerProgress, life, power);
+        gameArea.getChildren().addAll(shipIntegrityProgress, shipPowerProgress, life, power, enemyshipIntegrityProgress, enemyLife);
         life.setLayoutX(15);
         life.setLayoutY(17);
         life.getStyleClass().add("statusLabel");
+
+        enemyLife.setLayoutY(17);
+        enemyLife.getStyleClass().add("statusLabel");
+
         power.setLayoutX(15);
         power.setLayoutY(52);
         power.getStyleClass().add("statusLabel");
 
         shipIntegrityProgress.setLayoutX(15);
         shipIntegrityProgress.setLayoutY(10);
-        shipIntegrityProgress.setMinHeight(30);
-        shipIntegrityProgress.setMinWidth(150);
-        shipIntegrityProgress.setMaxWidth(150);
-        shipIntegrityProgress.getStyleClass().add("lifeStatus");
+        enemyshipIntegrityProgress.setLayoutY(10);
+        setProgressBarSize(shipIntegrityProgress, "lifeStatus");
+        setProgressBarSize(enemyshipIntegrityProgress, "lifeStatus");
 
         shipPowerProgress.setLayoutX(15);
         shipPowerProgress.setLayoutY(45);
-        shipPowerProgress.setMinHeight(30);
-        shipPowerProgress.setMinWidth(150);
-        shipPowerProgress.setMaxWidth(150);
-        shipPowerProgress.getStyleClass().add("energyStatus");
+        setProgressBarSize(shipPowerProgress, "energyStatus");
 
-        ((GridPane)gameArea.getParent()).add(settings, 1, 0);
+        /*((GridPane)gameArea.getParent()).add(settings, 1, 0);
         ((GridPane)gameArea.getParent()).getColumnConstraints().get(1).setHalignment(HPos.RIGHT);
         ((GridPane)gameArea.getParent()).getRowConstraints().get(0).setValignment(VPos.TOP);
-        ((GridPane)gameArea.getParent()).setMargin(settings, new Insets(10,10,10,10));
+        ((GridPane)gameArea.getParent()).setMargin(settings, new Insets(10,10,10,10));*/
 
 
         if(!GlobalVariables.isEmpty(shipShieldProgress)){
@@ -161,13 +222,20 @@ public class Controls {
 
             shipShieldProgress.setLayoutX(170);
             shipShieldProgress.setLayoutY(10);
-            shipShieldProgress.setMinHeight(30);
-            shipShieldProgress.setMinWidth(110);
-            shipShieldProgress.setMaxWidth(110);
-            shipShieldProgress.getStyleClass().add("shieldStatus");
+            setProgressBarSize(shipShieldProgress, "shieldStatus");
+        }
+
+        if(!GlobalVariables.isEmpty(enemyshipShieldProgress)){
+            gameArea.getChildren().addAll(enemyshipShieldProgress, enemyShield);
+            enemyShield.setLayoutY(17);
+            enemyShield.getStyleClass().add("statusLabel");
+
+            enemyshipShieldProgress.setLayoutY(10);
+            setProgressBarSize(enemyshipShieldProgress,"shieldStatus");
         }
 
         setTimeRemaining(gameArea);
+        resize(gameArea);
     }
 
     public void setShipIntegrity(double shipIntegrity) {
@@ -253,4 +321,15 @@ public class Controls {
     }
 
 
+    private void resize(Pane gameArea){
+        gameArea.widthProperty().addListener((observable, oldValue, newValue) -> {
+            enemyshipIntegrityProgress.setLayoutX(newValue.doubleValue() - 15 - 150);
+            enemyLife.setLayoutX(newValue.doubleValue() - 15 - 150);
+
+            if(!GlobalVariables.isEmpty(enemyshipShieldProgress)){
+                enemyshipShieldProgress.setLayoutX(newValue.doubleValue() - 20 - 150*2);
+                enemyShield.setLayoutX(newValue.doubleValue() - 20 - 150*2);
+            }
+        });
+    }
 }

@@ -165,9 +165,11 @@ public class DamageHandler {
                 simpleBallShot1.removeShot(gameArea);
 
                 if(simpleBallShot1.isIntoShields()){
-                    simpleBallShot1.getAttacker().getPlacement().getShip().damageToShield(simpleBallShot1.getDamage());
+                    simpleBallShot1.getTarget().getPlacement().getShip().damageToShield(simpleBallShot1.getDamage());
                 }else {
-                    simpleBallShot1.getTarget().takeDamage(simpleBallShot1.getDamage());
+                    if(simpleBallShot1.getTarget().getActualLife()>0){
+                        simpleBallShot1.getTarget().takeDamage(simpleBallShot1.getDamage());
+                    }
                 }
 
                 if(simpleBallShot1.getTarget().getActualLife() == 0){

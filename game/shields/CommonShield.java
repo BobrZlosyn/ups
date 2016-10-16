@@ -59,10 +59,7 @@ public abstract class CommonShield extends AShipEquipment {
         }
     }
 
-    @Override
-    public void destroy() {
 
-    }
 
     public boolean isShield(){
         return true;

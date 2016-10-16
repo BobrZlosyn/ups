@@ -7,6 +7,7 @@ import game.static_classes.GlobalVariables;
 import game.construction.Placement;
 import game.shields.shieldModels.SimpleShieldModel;
 import game.ships.CommonShip;
+import game.wrecks.SimpleShieldWrecks;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
@@ -134,5 +135,17 @@ public class SimpleShield extends CommonShield {
     @Override
     public CommonModel getModel() {
         return commonShieldModel;
+    }
+
+    @Override
+    public void destroy() {
+        double x = getPlacement().getX();
+        double y = getPlacement().getY();
+
+        Pane gameArea = getModel().getParent();
+        gameArea.getChildren().removeAll(getModel().getParts());
+
+        SimpleShieldWrecks wrecks = new SimpleShieldWrecks();
+        wrecks.addWrecksToPane(gameArea, x, y);
     }
 }

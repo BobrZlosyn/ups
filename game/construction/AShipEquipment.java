@@ -1,5 +1,7 @@
 package game.construction;
 
+import javafx.beans.property.SimpleDoubleProperty;
+
 /**
  * Created by Kanto on 07.10.2016.
  */
@@ -10,9 +12,11 @@ public abstract class AShipEquipment extends CommonConstruction implements IShip
     private int costOfEquipment;
     private int shieldBonus;
     private int actualShieldBonus;
+    private SimpleDoubleProperty shieldProgressProperty;
 
     public AShipEquipment(int totalLife, String name, int maxStrength, int energyCost, int costOfEquipment, int shieldBonus) {
         super(totalLife, name);
+        shieldProgressProperty = new SimpleDoubleProperty(1);
         setCostOfEquipment(costOfEquipment);
         setMaxStrength(maxStrength);
         setEnergyCost(energyCost);
@@ -22,6 +26,7 @@ public abstract class AShipEquipment extends CommonConstruction implements IShip
 
     public void setActualShieldBonus(int actualShieldBonus) {
         this.actualShieldBonus = actualShieldBonus;
+        shieldProgressProperty.set(actualShieldBonus / (double) shieldBonus);
     }
 
     public void setShieldBonus(int shieldBonus) {
@@ -60,5 +65,9 @@ public abstract class AShipEquipment extends CommonConstruction implements IShip
 
     public int getCostOfEquipment() {
         return costOfEquipment;
+    }
+
+    public SimpleDoubleProperty shieldProgressProperty() {
+        return shieldProgressProperty;
     }
 }

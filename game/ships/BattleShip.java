@@ -4,6 +4,7 @@ import game.static_classes.ConstructionTypes;
 import game.static_classes.GameBalance;
 import game.static_classes.GlobalVariables;
 import game.construction.Placement;
+import game.wrecks.BattleShipWreck;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.layout.GridPane;
@@ -196,7 +197,10 @@ public class BattleShip extends CommonShip{
 
     @Override
     public void destroy() {
-
+        Pane gameArea = (Pane)ship.getParent();
+        BattleShipWreck wreck = new BattleShipWreck(ship.getCenterX(), ship.getCenterY());
+        gameArea.getChildren().add(wreck.getFlashCircle());
+        wreck.flash();
     }
 
     private void createTimelineHit(){
