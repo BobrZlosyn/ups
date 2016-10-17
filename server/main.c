@@ -4,6 +4,10 @@
 #include <stdio.h>          /* Needed for printf()*/
 #include <string.h>         /* Needed for memcpy() and strcpy()*/
 #include <stdlib.h>         /* Needed for exit()*/
+#include "players.h"
+#include "Room.h"
+#include "player.h"
+
 #ifdef WIN
   #include <windows.h>      /* Needed for all Winsock stuff*/
 #endif
@@ -20,43 +24,7 @@
 #define  PORT_NUM   1234    /* Arbitrary port number for the server*/
 
 
-int addConnectionToArray(int connection, int * connections, int length ){
-	int i = 0;
-	for(i = 0; i < length; i++){
-		
-		/* pripojeni nalezeno - nepridava se */
-		if(connections[i] == connection){
-			return 1;
-		}
-		
-		/* pole je prazdne a proto se muze priradit */
-		if(connections[i] == -1){
-			connections[i] = connection;
-			return 0;
-		}
-		
-	}
-	
-	/* pole je plne */
-	return 2;
-}
-
-int clearConnectionArray(int * connections, int length){
-	int i;
-	for (i = 0; i < length; i++){
-		connections[i] = -1;
-	}
-	return 0;
-}
-
-int printArray(int * array, int length){
-	int i;
-	for (i = 0; i < length; i++){
-		printf("%d \n",array[i]);
-	}
-	return 0;
-}
-
+PLAYERS *first = NULL;
 
 int closeSockets(int welcome_s, int connect_s){
 	int retcode;
@@ -97,18 +65,35 @@ int closeSockets(int welcome_s, int connect_s){
 	return 0;
 }
 
-int sendMessage(char * receivedMessage, int connect_s){
-	char out_buf[4096];   /* Output buffer for data*/
-	int retcode = 0;
+
+char *doActionByMessage(char *msg){
+	char in_buf[100] = "";
+	int index = 0;
 	
-	if (strncmp(receivedMessage, "connect", strlen("connect")) == 0){
-		strcpy(out_buf, "success");
-		retcode = send(connect_s, out_buf, (strlen(out_buf) + 1), 0);
-	} else{
-		strcpy(out_buf, "fail");
-		retcode = send(connect_s, out_buf, (strlen(out_buf) + 1), 0);
+	switch(msg[1]){
+		case 'C':{
+			printf("pripojeni \n");
+			first = add_player(first);
+			index = strchr(msg,'>') - msg;
+			set_shipInfo(first->player, msg, index, 3);			
+			sprintf(in_buf, "ID;%d", first->player->playerID);
+		} break;
+		
+		case 'Q':printf("ukonceni \n"); break;
+		case 'A':printf("attack \n"); break;
+		case 'S':printf("status \n"); break;
+		default :printf("nenalezeno \n");
 	}
 	
+	return in_buf;
+}
+
+int sendMessage(char * receivedMessage, int connect_s){
+	char out_buf[4096] = "";   /* Output buffer for data*/
+	int retcode = 0;
+	
+	strcpy (out_buf, doActionByMessage(receivedMessage));	
+	retcode = send(connect_s, out_buf, (strlen(out_buf) + 1), 0);
 	
 	if (retcode < 0) {
 	    printf("*** ERROR - send() failed \n");
@@ -137,9 +122,9 @@ int initializeWelcomeSocket(struct sockaddr_in server_addr){
 
 
 
+
 /*===== Main program ==========================================================*/
-int main()
-{
+int main() {
 	
 #ifdef WIN
   WORD wVersionRequested = MAKEWORD(1,1);       /*Stuff for WSA functions*/
@@ -154,7 +139,6 @@ int main()
   
   char                 in_buf[4096];    /* Input buffer for data*/
   int                  retcode;         /* Return code*/
-  int 				   connections[10];
 #ifdef WIN
   /* This stuff initializes winsock*/
   
@@ -167,9 +151,6 @@ server_addr.sin_family = AF_INET;                 /* Address family to use*/
 server_addr.sin_port = htons(PORT_NUM);           /* Port number to use*/
 server_addr.sin_addr.s_addr = htonl(INADDR_ANY);  /* Listen on any IP address*/
 
-clearConnectionArray(connections, 10);
-printArray(connections, 10);
-
  /* >>> Step #1 <<<
    Create a welcome socket
      - AF_INET is Address Family Internet and SOCK_STREAM is streams*/
@@ -179,39 +160,39 @@ printArray(connections, 10);
 		welcome_s = initializeWelcomeSocket(server_addr);	
  		listen(welcome_s, 5);
  		
-			  /* >>> Step #4 <<<*/
-			  /* Accept a connection.  The accept() will block and then return with*/
-			  /* connect_s assigned and client_addr filled-in.*/
-			  printf("Waiting for accept() to complete... \n");
-			  addr_len = sizeof(client_addr);
-			  connect_s = accept(welcome_s, (struct sockaddr *)&client_addr, &addr_len);
-			  printf("stred %d \n", connect_s);
-			  if (connect_s < 0) {
-			    printf("*** ERROR - accept() failed \n");
-			    exit(-1);
-			  }
-			
-			  /* Copy the four-byte client IP address into an IP address structure*/
-			  memcpy(&client_ip_addr, &client_addr.sin_addr.s_addr, 4);
-			
-			  /* Print an informational message that accept completed*/
-			  printf("Accept completed (IP address of client = %s  port = %d) \n",
-			    inet_ntoa(client_ip_addr), ntohs(client_addr.sin_port));
-			
-			  /* >>> Step #6 <<<*/
-			  /* Receive from the client using the connect socket*/
-			  retcode = recv(connect_s, in_buf, sizeof(in_buf), 0);
-			  if (retcode < 0)
-			  {
-			    printf("*** ERROR - recv() failed \n");
-			    exit(-1);
-			  }
-			  printf("Received from client: %s \n", in_buf);			  
-			  
-			  sendMessage(in_buf, connect_s);		  		
-			  closeSockets(welcome_s, connect_s);
-			  
+		/* >>> Step #4 <<<*/
+		/* Accept a connection.  The accept() will block and then return with*/
+		/* connect_s assigned and client_addr filled-in.*/
+		printf("Waiting for accept() to complete... \n");
+		addr_len = sizeof(client_addr);
+		connect_s = accept(welcome_s, (struct sockaddr *)&client_addr, &addr_len);
+		printf("stred %d \n", connect_s);
+		if (connect_s < 0) {
+		printf("*** ERROR - accept() failed \n");
+		exit(-1);
 		}
+		
+		/* Copy the four-byte client IP address into an IP address structure*/
+		memcpy(&client_ip_addr, &client_addr.sin_addr.s_addr, 4);
+		
+		/* Print an informational message that accept completed*/
+		printf("Accept completed (IP address of client = %s  port = %d) \n",
+		inet_ntoa(client_ip_addr), ntohs(client_addr.sin_port));
+		
+		/* >>> Step #6 <<<*/
+		/* Receive from the client using the connect socket*/
+		retcode = recv(connect_s, in_buf, sizeof(in_buf), 0);
+		if (retcode < 0) {
+			printf("*** ERROR - recv() failed \n");
+			exit(-1);
+		}
+		printf("Received from client: %s \n", in_buf);		  
+		
+		
+		sendMessage(in_buf, connect_s);		  		
+		closeSockets(welcome_s, connect_s);
+			  
+	}
 				
 		#ifdef WIN
 		  /* Clean-up winsock*/

@@ -423,6 +423,8 @@ public class BottomPanel {
     public void showPanel(GridPane window, Pane gameArea){
         window.add(panel,0,1,GridPane.REMAINING,GridPane.REMAINING);
         gameArea.getChildren().addAll(name);
+        name.setLayoutX(gameArea.getWidth()/2 - 200/2);
+        name.setLayoutY(gameArea.getHeight() - 35);
 
         gameArea.widthProperty().addListener((observable, oldValue, newValue) -> {
             name.setLayoutX(newValue.doubleValue()/2 - 200/2);

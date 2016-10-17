@@ -1,38 +1,42 @@
 package client;
+import game.static_classes.GlobalVariables;
+import javafx.application.Platform;
+
 import java.io.*;
 import java.net.*;
 
 
-public class TcpClient implements NetworkInterface {
+public class TcpClient implements NetworkInterface{
 
-    Socket s;
-    BufferedReader reader;
-    PrintWriter writer;
-    int port;
-    String host;
+    private Socket s;
+    private BufferedReader reader;
+    private PrintWriter writer;
+    private int port;
+    private String host;
 
-    public TcpClient ( ) {
+
+    public TcpClient ( String host, int port ) {
+        this.host = host;
+        this.port = port;
     }
 
-    public TcpClient( String host, int port ) {
-        open(host, port);
-    }
+    public boolean open() {
 
-    public void open( String ihost, int iport ) {
-        host = ihost;
-        port = iport;
         // create a socket to communicate to the specified host and port
         try {
             s = new Socket( host, port);
         }
         catch (IOException e) {
-             System.out.println("Connection to " + host + ":" + port + " refused");
+            System.out.println("Connection to " + host + ":" + port + " refused");
+            return false;
          }
         catch (IllegalArgumentException e){
             System.out.println("Illegal port - not in allowed range 0 - 65535");
+            return false;
         }
         catch (NullPointerException e){
             System.out.println("Hostname not supplied");
+            return false;
         }
 
         try {
@@ -43,15 +47,23 @@ public class TcpClient implements NetworkInterface {
             System.out.println("Connected to " + s.getInetAddress() +
                     ":" + s.getPort());
         }
-        // pouze java 1.7 funkcni
-        //catch( NullPointerException | IOException e ) { }
-        catch (Exception e) {}
+        catch (Exception e) {
+            return false;
+        }
+
+        return true;
+
     }
 
     public void close(  ) {
         try {
-            reader.close();
-            writer.close();
+            if(!GlobalVariables.isEmpty(reader)){
+                reader.close();
+            }
+
+            if(!GlobalVariables.isEmpty(writer)){
+                writer.close();
+            }
         }
         // pouze java 1.7 funkcni
         //catch (IOException | NullPointerException e) {

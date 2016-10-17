@@ -1,6 +1,7 @@
 package game.StartUpMenu;
 
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -164,4 +165,17 @@ public class CreateMenu {
         ((GridPane) menu.getParent()).getChildren().remove(menu);
     }
 
+    public void setConnectionBinding(SimpleBooleanProperty connectionStatus) {
+        connectionStatus.addListener((observable, oldValue, newValue) -> {
+            if(newValue.booleanValue()){
+                connection.setText("Připojeno");
+                connection.setTextFill(Color.GREEN);
+                indicator.setFill(Color.GREEN);
+            }else{
+                connection.setText("Nepřipojeno");
+                connection.setTextFill(Color.RED);
+                indicator.setFill(Color.RED);
+            }
+        });
+    }
 }

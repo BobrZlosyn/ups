@@ -79,7 +79,7 @@ public class EndOfGameMenu {
         endWindow.getRowConstraints().addAll(generateRows(5));
         endWindow.setMaxWidth(Double.MAX_VALUE);
         endWindow.setMaxHeight(Double.MAX_VALUE);
-
+System.out.println("ahojkz" + this);
 
         pane = new Pane();
         pane.setStyle("-fx-background-color: rgba(0, 0, 0, 0.9);");

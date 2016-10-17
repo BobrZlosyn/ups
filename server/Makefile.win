@@ -4,8 +4,8 @@
 CPP      = g++.exe -D__DEBUG__
 CC       = gcc.exe -D__DEBUG__
 WINDRES  = windres.exe
-OBJ      = main.o pokus.o
-LINKOBJ  = main.o pokus.o
+OBJ      = main.o players.o player.o
+LINKOBJ  = main.o players.o player.o
 LIBS     = -L"D:/program files/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib32" -static-libgcc -lws2_32 -m32 -g3
 INCS     = -I"D:/program files/Dev-Cpp/MinGW64/include" -I"D:/program files/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"D:/program files/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
 CXXINCS  = -I"D:/program files/Dev-Cpp/MinGW64/include" -I"D:/program files/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"D:/program files/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"D:/program files/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
@@ -27,5 +27,8 @@ $(BIN): $(OBJ)
 main.o: main.c
 	$(CC) -c main.c -o main.o $(CFLAGS)
 
-pokus.o: pokus.c
-	$(CC) -c pokus.c -o pokus.o $(CFLAGS)
+players.o: players.c
+	$(CC) -c players.c -o players.o $(CFLAGS)
+
+player.o: player.c
+	$(CC) -c player.c -o player.o $(CFLAGS)

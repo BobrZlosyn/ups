@@ -1,8 +1,8 @@
 package client;
 
 public interface NetworkInterface {
-	public void open( String ihost, int iport );
-	public void close(  );
-	public void putMessage( TcpMessage msg );
-	public TcpMessage getMessage(  );
+	boolean open();
+	void close();
+	void putMessage(TcpMessage msg);
+	TcpMessage getMessage();
 }

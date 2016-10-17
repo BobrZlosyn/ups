@@ -1,16 +1,16 @@
 package game;
 
-import game.StartUpMenu.CreateMenu;
-import game.StartUpMenu.EndOfGameMenu;
-import game.StartUpMenu.GunsToShipMenu;
-import game.StartUpMenu.PickShipMenu;
+import client.TcpApplication;
+import game.StartUpMenu.*;
 import game.background.GeneratRandomBackground;
 import game.construction.Placement;
 import game.ships.CommonShip;
 import game.static_classes.GlobalVariables;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -37,15 +37,42 @@ public class Controller implements Initializable{
     private Controls controls;
     private ChangeListener <Number> userLost;
     private ChangeListener <Number> userWin;
+    private TcpApplication tcpConnection;
+    private Task findGame;
+    private final int WAITING_FOR_OPONNENT = 3000;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        tcpConnection = new TcpApplication();
         CreateMenu createMenu = new CreateMenu();
+        createMenu.setConnectionBinding(tcpConnection.isConnectedProperty());
         window.add(createMenu.getMenu(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
         setupPickShipMenu(createMenu);
         windowResize();
         grb = new GeneratRandomBackground();
         grb.showSpacePort(window);
+        tcpConnection.setupConnection();
+
+
+    }
+
+    public void clearApplication(){
+        if (GlobalVariables.isEmpty(tcpConnection)) {
+            return;
+        }
+
+        tcpConnection.endConnection();
+
+
+        if(GlobalVariables.isEmpty(findGame)){
+            return;
+        }else{
+            if(findGame.isRunning()){
+                findGame.cancel();
+            }
+            findGame = null;
+        }
     }
 
     /**
@@ -104,11 +131,12 @@ public class Controller implements Initializable{
         gunsToShipMenu.getNextButton().setOnAction(event -> {
 
             gunsToShipMenu.clean();
-            startGame(true);
+            prepareGame(true);
         });
     }
 
-    private void startGame(boolean isFirstCreated){
+
+    private void prepareGame(boolean isFirstCreated){
 
         gameAreaPane = new Pane();
         window.add(gameAreaPane, 0, 0, GridPane.REMAINING, 1);
@@ -121,6 +149,57 @@ public class Controller implements Initializable{
         //vytvari nepratelskou lod
         ExportImportShip exportImportShip = new ExportImportShip();
         String exportMsg = exportImportShip.exportShip(GlobalVariables.choosenShip);
+
+
+        WaitingForOponnent waitingForOponnent = new WaitingForOponnent(window);
+        waitingForOponnent.getCancel().setOnAction(event -> {
+
+            waitingForOponnent.removePane();
+            createMainPage();
+
+            if(GlobalVariables.isEmpty(findGame) && findGame.isRunning()){
+                findGame.cancel();
+                findGame = null;
+            }
+        });
+
+        SimpleBooleanProperty isConnected = new SimpleBooleanProperty(false);
+        findGame = new Task<Void>() {
+            @Override public Void call() {
+                while(true) {
+
+                    if (isCancelled()) {
+                        break;
+                    }
+
+                    if(tcpConnection.prepareGame(exportMsg)){
+                        break;
+                    }
+
+                    try {
+                        Thread.sleep(WAITING_FOR_OPONNENT);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                }
+                return null;
+            }
+        };
+        isConnected.bind(findGame.runningProperty().not());
+        new Thread(findGame).start();
+
+        isConnected.addListener((observable, oldValue, newValue) -> {
+            if(newValue.booleanValue()){
+                startGame(exportImportShip, exportMsg);
+                waitingForOponnent.removePane();
+            }
+        });
+
+    }
+
+
+    private void startGame(ExportImportShip exportImportShip, String exportMsg){
         CommonShip enemyShip = exportImportShip.importShip(exportMsg, gameAreaPane);
         enemyShip.createShield();
         endWindowShowUp(GlobalVariables.choosenShip, enemyShip);
@@ -150,13 +229,13 @@ public class Controller implements Initializable{
         });
     }
 
-
     /**
      * zobrazi obrazovku pro vyber lodi
      * @param createMenu
      */
     private void setupPickShipMenu(CreateMenu createMenu){
         createMenu.getStart().setOnAction(event -> {
+            tcpConnection.stopSetupConnection();
             createMenu.clean();
             PickShipMenu pickShipMenu = new PickShipMenu();
             window.add(pickShipMenu.getPickship(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
@@ -188,7 +267,6 @@ public class Controller implements Initializable{
         };
 
         usersShip.getActualLifeBinding().addListener(userLost);
-
         enemyShip.getActualLifeBinding().addListener(userWin);
     }
 
@@ -204,24 +282,28 @@ public class Controller implements Initializable{
             enemyShip.getActualLifeBinding().removeListener(userWin);
 
             endOfGame.getBackToMenu().setOnAction(event -> {
-                window.getChildren().clear();
-                CreateMenu createMenu = new CreateMenu();
-                window.add(createMenu.getMenu(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
-                setupPickShipMenu(createMenu);
-                grb.showSpacePort(window);
-                usersShip.getActualLifeBinding().addListener(userLost);
-
-                enemyShip.getActualLifeBinding().addListener(userWin);
+                createMainPage();
             });
 
             endOfGame.getNewGame().setOnAction(event -> {
                 window.getChildren().clear();
                 GlobalVariables.choosenShip.restartValues();
                 GlobalVariables.choosenShip.unmarkObject();
-                startGame(false);
+                prepareGame(false);
             });
         }));
         delay.setCycleCount(1);
         delay.playFromStart();
+    }
+
+
+
+    private void createMainPage(){
+        window.getChildren().clear();
+        CreateMenu createMenu = new CreateMenu();
+        window.add(createMenu.getMenu(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
+        tcpConnection.setupConnection();
+        setupPickShipMenu(createMenu);
+        grb.showSpacePort(window);
     }
 }

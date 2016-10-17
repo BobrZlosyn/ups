@@ -273,6 +273,10 @@ public class Controls {
 
     private void setTimeRemaining(Pane gameArea){
         gameArea.getChildren().addAll(progress, circle, time);
+        progress.setLayoutX(gameArea.getWidth()/2 - 50);
+        circle.setCenterX(gameArea.getWidth()/2);
+        time.setLayoutX(gameArea.getWidth()/2 - circle.getRadius());
+
         gameArea.widthProperty().addListener((observable, oldValue, newValue) -> {
             progress.setLayoutX(newValue.intValue()/2 - 50);
             circle.setCenterX(newValue.intValue()/2);
@@ -322,6 +326,15 @@ public class Controls {
 
 
     private void resize(Pane gameArea){
+        enemyshipIntegrityProgress.setLayoutX(gameArea.getWidth() - 15 - 150);
+        enemyLife.setLayoutX(gameArea.getWidth() - 15 - 150);
+
+        if(!GlobalVariables.isEmpty(enemyshipShieldProgress)){
+            enemyshipShieldProgress.setLayoutX(gameArea.getWidth() - 20 - 150*2);
+            enemyShield.setLayoutX(gameArea.getWidth() - 20 - 150*2);
+        }
+
+
         gameArea.widthProperty().addListener((observable, oldValue, newValue) -> {
             enemyshipIntegrityProgress.setLayoutX(newValue.doubleValue() - 15 - 150);
             enemyLife.setLayoutX(newValue.doubleValue() - 15 - 150);
