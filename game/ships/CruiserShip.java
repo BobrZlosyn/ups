@@ -1,6 +1,9 @@
 package game.ships;
 
+import game.construction.AShipEquipment;
 import game.ships.shipModels.CruisershipModel;
+import game.ships.wrecksShips.BattleShipWreck;
+import game.ships.wrecksShips.CruiserShipWreck;
 import game.static_classes.ConstructionTypes;
 import game.static_classes.GameBalance;
 import game.static_classes.GlobalVariables;
@@ -48,13 +51,13 @@ public class CruiserShip extends CommonShip{
     public void setShieldConstants() {
 
         if(isEnemy()){
-            setShieldAddX(-200);
-            setShieldAddY(100);
+            setShieldAddX(-100);
+            setShieldAddY(10);
             setShieldRadiusX(75);
             setShieldRadiusY(250);
         }else {
-            setShieldAddX(0);
-            setShieldAddY(100);
+            setShieldAddX(100);
+            setShieldAddY(10);
             setShieldRadiusX(75);
             setShieldRadiusY(250);
         }
@@ -158,7 +161,29 @@ public class CruiserShip extends CommonShip{
 
     @Override
     public void destroy() {
+        Pane gameArea = model.getParent();
+        if(GlobalVariables.isEmpty(gameArea)){
+            return;
+        }
 
+        CruiserShipWreck wreck = new CruiserShipWreck(getCenterX(), getCenterY(), Color.WHITE);
+        gameArea.getChildren().add(wreck.getFlashCircle());
+        wreck.explosion(getPlacement().getX(), getPlacement().getY(), 1050, 25, model);
+
+        Placement [][] placements = getPlacementPositions();
+        for (int i = 0; i < placements.length; i++){
+            for (int j = 0; j < placements[i].length; j++){
+                if(GlobalVariables.isEmpty(placements[i][j])){
+                    continue;
+                }
+
+                if(!placements[i][j].isEmpty()){
+                    ((AShipEquipment) placements[i][j].getShipEquipment()).getModel().removeModel();
+                }
+
+                gameArea.getChildren().removeAll(placements[i][j].getField());
+            }
+        }
     }
 
     private void createTimelineHit(){
@@ -203,13 +228,13 @@ public class CruiserShip extends CommonShip{
 
     @Override
     public double getCenterX(){
-        double middleX = model.getShip().getX()+ model.getShip().getHeight()/2;
+        double middleX = model.getShip().getX()+ model.getShip().getWidth()/2;
         return middleX ;
     }
 
     @Override
     public double getCenterY(){
-        double middleY = model.getShip().getY()+ model.getShip().getWidth()/2;
+        double middleY = model.getShip().getY()+ model.getShip().getHeight()/2;
         return middleY;
     }
 

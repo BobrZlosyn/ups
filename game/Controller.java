@@ -33,8 +33,10 @@ public class Controller implements Initializable{
 
     private Button sendDataButton;
     private Pane gameAreaPane;
-    GeneratRandomBackground grb;
-    Controls controls;
+    private GeneratRandomBackground grb;
+    private Controls controls;
+    private ChangeListener <Number> userLost;
+    private ChangeListener <Number> userWin;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -168,8 +170,6 @@ public class Controller implements Initializable{
      * @param usersShip
      * @param enemyShip
      */
-    private ChangeListener <Number> userLost;
-    private ChangeListener <Number> userWin;
     private void endWindowShowUp(CommonShip usersShip, CommonShip enemyShip){
         userLost = (observable, oldValue, newValue) -> {
 

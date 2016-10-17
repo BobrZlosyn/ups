@@ -219,9 +219,6 @@ public class BattleShip extends CommonShip{
                 gameArea.getChildren().removeAll(placements[i][j].getField());
             }
         }
-
-
-
     }
 
     private void createTimelineHit(){
