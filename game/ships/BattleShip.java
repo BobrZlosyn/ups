@@ -197,6 +197,10 @@ public class BattleShip extends CommonShip{
     @Override
     public void destroy() {
         Pane gameArea = model.getParent();
+        if(GlobalVariables.isEmpty(gameArea)){
+            return;
+        }
+
         BattleShipWreck wreck = new BattleShipWreck(model.getShip().getCenterX(),model.getShip().getCenterY(), Color.WHITE);
         gameArea.getChildren().add(wreck.getFlashCircle());
         wreck.explosion(getPlacement().getX(), getPlacement().getY(), 1050, 25, model);

@@ -143,7 +143,12 @@ public class EndOfGameMenu {
         return texts.get(random);
     }
 
-    public void clean(){
+    public void clean() {
+        ((GridPane)endWindow.getParent()).getChildren().remove(newGame);
+        ((GridPane)endWindow.getParent()).getChildren().remove(backToMenu);
+        ((GridPane)endWindow.getParent()).getChildren().remove(text);
+        ((GridPane)endWindow.getParent()).getChildren().remove(pane);
+        ((GridPane)endWindow.getParent()).getChildren().remove(result);
         ((GridPane)endWindow.getParent()).getChildren().remove(endWindow);
     }
 
@@ -154,5 +159,7 @@ public class EndOfGameMenu {
     public Button getNewGame() {
         return newGame;
     }
+
+
 
 }

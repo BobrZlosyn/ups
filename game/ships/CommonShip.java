@@ -351,6 +351,10 @@ public abstract class CommonShip extends CommonConstruction {
                 getPane().getChildren().remove(shieldFieldArc);
             }
         }else {
+            if(GlobalVariables.isEmpty(getPane())){
+                return;
+            }
+
             if(!getPane().getChildren().contains(shieldFieldArc)){
                 getPane().getChildren().add(shieldFieldArc);
             }

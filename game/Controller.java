@@ -10,6 +10,7 @@ import game.ships.CommonShip;
 import game.static_classes.GlobalVariables;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -136,6 +137,7 @@ public class Controller implements Initializable{
         bottomPanel.showPanel(window, gameAreaPane);
         bottomPanel.getQuit().setOnAction(event1 -> {
             GlobalVariables.choosenShip.takeDamage((int)GlobalVariables.choosenShip.getActualLife());
+            GlobalVariables.choosenShip.damageToShield(GlobalVariables.choosenShip.getShieldActualLife());
         });
 
         DamageHandler damageHandler = new DamageHandler(GlobalVariables.choosenShip, enemyShip, gameAreaPane);
@@ -166,33 +168,40 @@ public class Controller implements Initializable{
      * @param usersShip
      * @param enemyShip
      */
+    private ChangeListener <Number> userLost;
+    private ChangeListener <Number> userWin;
     private void endWindowShowUp(CommonShip usersShip, CommonShip enemyShip){
-
-        usersShip.getActualLifeBinding().addListener((observable, oldValue, newValue) -> {
+        userLost = (observable, oldValue, newValue) -> {
 
             if(newValue.doubleValue() <= 0){
                 EndOfGameMenu endOfGame = new EndOfGameMenu(false);
-                endWindowSetting(endOfGame);
+                endWindowSetting(endOfGame, usersShip, enemyShip);
             }
-        });
+        };
 
-        enemyShip.getActualLifeBinding().addListener((observable, oldValue, newValue) -> {
+        userWin = (observable, oldValue, newValue) -> {
 
             if (newValue.doubleValue() <= 0) {
                 EndOfGameMenu endOfGame = new EndOfGameMenu(true);
-                endWindowSetting(endOfGame);
+                endWindowSetting(endOfGame, usersShip, enemyShip);
             }
-        });
+        };
+
+        usersShip.getActualLifeBinding().addListener(userLost);
+
+        enemyShip.getActualLifeBinding().addListener(userWin);
     }
 
     /**
      * nastavuje tlacitka na obrazovce s ukoncenou hrou
      * @param endOfGame
      */
-    private void endWindowSetting(EndOfGameMenu endOfGame){
-        Timeline delay = new Timeline(new KeyFrame(Duration.seconds(4), event1 -> {
+    private void endWindowSetting(EndOfGameMenu endOfGame, CommonShip usersShip,CommonShip enemyShip){
+        Timeline delay = new Timeline(new KeyFrame(Duration.seconds(3.5), event1 -> {
             endOfGame.setupWindow(window);
             controls.stopAnimations();
+            usersShip.getActualLifeBinding().removeListener(userLost);
+            enemyShip.getActualLifeBinding().removeListener(userWin);
 
             endOfGame.getBackToMenu().setOnAction(event -> {
                 window.getChildren().clear();
@@ -200,6 +209,9 @@ public class Controller implements Initializable{
                 window.add(createMenu.getMenu(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
                 setupPickShipMenu(createMenu);
                 grb.showSpacePort(window);
+                usersShip.getActualLifeBinding().addListener(userLost);
+
+                enemyShip.getActualLifeBinding().addListener(userWin);
             });
 
             endOfGame.getNewGame().setOnAction(event -> {
