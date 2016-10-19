@@ -1,8 +1,6 @@
 package game;
 
-import game.construction.CommonConstruction;
-import game.construction.IShipEquipment;
-import game.construction.Placement;
+import game.construction.*;
 import game.ships.CommonShip;
 import game.static_classes.ConstructionTypes;
 import game.static_classes.GlobalVariables;
@@ -32,8 +30,8 @@ public class ExportImportShip {
 
                 int column = placements.length - i - 1;
                 shipInformation.append(column + "," + j + "," );
-                CommonConstruction construction = (CommonConstruction)placement.getShipEquipment();
-                shipInformation.append(construction.getConstructionType() + ";");
+                IShipEquipment construction = ((CommonDraggableObject)placement.getShipEquipment()).getObject();
+                shipInformation.append(((AShipEquipment)construction).getConstructionType() + ";");
             }
         }
 

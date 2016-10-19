@@ -130,7 +130,7 @@ public class Controller implements Initializable{
 
         gunsToShipMenu.getNextButton().setOnAction(event -> {
 
-            gunsToShipMenu.clean();
+            //gunsToShipMenu.clean();
             prepareGame(true);
         });
     }
@@ -138,48 +138,39 @@ public class Controller implements Initializable{
 
     private void prepareGame(boolean isFirstCreated){
 
-        gameAreaPane = new Pane();
-        window.add(gameAreaPane, 0, 0, GridPane.REMAINING, 1);
-
-        Placement[][] placements = GlobalVariables.choosenShip.getPlacementPositions();
-        GlobalVariables.choosenShip.displayShip(gameAreaPane);
-        GlobalVariables.choosenShip.fillShipWithEquipment(GlobalVariables.choosenShip, placements, isFirstCreated);
-        GlobalVariables.choosenShip.createShield();
-
         //vytvari nepratelskou lod
         ExportImportShip exportImportShip = new ExportImportShip();
         String exportMsg = exportImportShip.exportShip(GlobalVariables.choosenShip);
 
-
+        SimpleBooleanProperty isConnected = new SimpleBooleanProperty(false);
         WaitingForOponnent waitingForOponnent = new WaitingForOponnent(window);
         waitingForOponnent.getCancel().setOnAction(event -> {
 
             waitingForOponnent.removePane();
-            createMainPage();
 
-            if(GlobalVariables.isEmpty(findGame) && findGame.isRunning()){
+            if(!GlobalVariables.isEmpty(findGame) && findGame.isRunning()){
+                isConnected.unbind();
+                isConnected.set(false);
                 findGame.cancel();
                 findGame = null;
             }
         });
 
-        SimpleBooleanProperty isConnected = new SimpleBooleanProperty(false);
         findGame = new Task<Void>() {
             @Override public Void call() {
                 while(true) {
+                    try {
+                        Thread.sleep(WAITING_FOR_OPONNENT);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        break;
+                    }
 
                     if (isCancelled()) {
                         break;
                     }
 
                     if(tcpConnection.prepareGame(exportMsg)){
-                        break;
-                    }
-
-                    try {
-                        Thread.sleep(WAITING_FOR_OPONNENT);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                         break;
                     }
                 }
@@ -191,7 +182,7 @@ public class Controller implements Initializable{
 
         isConnected.addListener((observable, oldValue, newValue) -> {
             if(newValue.booleanValue()){
-                startGame(exportImportShip, exportMsg);
+                startGame(exportImportShip, exportMsg, isFirstCreated);
                 waitingForOponnent.removePane();
             }
         });
@@ -199,7 +190,18 @@ public class Controller implements Initializable{
     }
 
 
-    private void startGame(ExportImportShip exportImportShip, String exportMsg){
+    private void startGame(ExportImportShip exportImportShip, String exportMsg, boolean isFirstCreated){
+        window.getChildren().clear();
+        gameAreaPane = new Pane();
+        window.add(gameAreaPane, 0, 0, GridPane.REMAINING, 1);
+
+        Placement[][] placements = GlobalVariables.choosenShip.getPlacementPositions();
+        GlobalVariables.choosenShip.displayShip(gameAreaPane);
+        GlobalVariables.choosenShip.fillShipWithEquipment(GlobalVariables.choosenShip, placements, isFirstCreated);
+        GlobalVariables.choosenShip.createShield();
+
+
+
         CommonShip enemyShip = exportImportShip.importShip(exportMsg, gameAreaPane);
         enemyShip.createShield();
         endWindowShowUp(GlobalVariables.choosenShip, enemyShip);

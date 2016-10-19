@@ -1,5 +1,6 @@
 package game.StartUpMenu;
 
+import game.static_classes.GlobalVariables;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -79,6 +80,9 @@ public class WaitingForOponnent {
 
     public void removePane(){
         GridPane parent = (GridPane)waitingPane.getParent();
-        parent.getChildren().removeAll(waitingPane);
+        if(!GlobalVariables.isEmpty(parent)){
+            parent.getChildren().removeAll(waitingPane);
+        }
+
     }
 }
