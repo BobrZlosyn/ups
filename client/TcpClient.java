@@ -89,7 +89,7 @@ public class TcpClient implements NetworkInterface{
         }
     }
 
-    public TcpMessage getMessage(  ) {
+    public String getMessage(  ) {
         String line = "";
         // read the response (a line) from the server
         try {
@@ -97,7 +97,7 @@ public class TcpClient implements NetworkInterface{
                 line = reader.readLine();
             }
             // write the line to console
-            return new TcpMessage(line);
+            return line;
         }
         catch (IOException e) {
             System.err.println("Read error");

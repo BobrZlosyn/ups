@@ -5,11 +5,11 @@
 #include "room.h"
 #include "player.h"
 
-PLAYER *create_player(int playerID, unsigned int playerIP, char * playerName){
+PLAYER *create_player(int playerID, char *playerIP, char *playerName){
 	PLAYER *newPlayer = (PLAYER *)malloc(sizeof(PLAYER));
 	
 	newPlayer->playerID = playerID;
-	newPlayer->playerIP = playerIP;
+	strcpy(newPlayer->playerIP, playerIP);
 	strcpy(newPlayer->playerName, playerName);
 	
 	return newPlayer;	
@@ -17,6 +17,30 @@ PLAYER *create_player(int playerID, unsigned int playerIP, char * playerName){
 
 
 void set_shipInfo(struct player *player, char *shipInfo, int maxSize, int indexOfBeginning){	
-	memcpy( player->shipInfo, &shipInfo[indexOfBeginning], maxSize - indexOfBeginning );
-	player->shipInfo[maxSize - indexOfBeginning + 1] = '\0';
+	memcpy( player->shipInfo, &shipInfo[indexOfBeginning], maxSize - indexOfBeginning);
+	player->shipInfo[maxSize - indexOfBeginning] = '\0';
+}
+
+void print_player(struct player *player) {
+	printf("---- Player with id: %d ---- \n", player->playerID);
+	printf("---- Name: \t %s \n", player->playerName);
+	printf("---- Ship info: \t %s \n", player->shipInfo);
+	printf("---- IP adress: \t %s \n", player->playerIP);
+	printf("\n");
+}
+
+
+int decode_id_of_player(char *msg, int begin){
+	
+	char textID [3];
+	int end;
+	end = strchr(msg,';') - msg;
+	printf("end 1 = %d \n", end);
+	end = strchr(msg,';') - msg;
+	printf("end 2 = %d \n", end);
+	
+	memcpy( textID, &msg[begin], end - begin);
+	textID[end - begin] = '\0';
+	printf("id = %s \n", textID);
+	return 0;
 }

@@ -7,6 +7,7 @@
 #include "players.h"
 #include "Room.h"
 #include "player.h"
+#include "decodeMessage.h"
 
 #ifdef WIN
   #include <windows.h>      /* Needed for all Winsock stuff*/
@@ -66,20 +67,26 @@ int closeSockets(int welcome_s, int connect_s){
 }
 
 
-char *doActionByMessage(char *msg){
+char *doActionByMessage(char *msg, char *ip_client) {
 	char in_buf[100] = "";
 	int index = 0;
 	
 	switch(msg[1]){
 		case 'C':{
-			printf("pripojeni \n");
-			first = add_player(first);
+			first = add_player(first, ip_client);
 			index = strchr(msg,'>') - msg;
-			set_shipInfo(first->player, msg, index, 3);			
+			set_shipInfo(first->player, msg, index, 4);			
+			
+			/*tisknuti pripojeneho uzivatele*/
+			print_player(first->player);	
 			sprintf(in_buf, "ID;%d", first->player->playerID);
 		} break;
 		
-		case 'Q':printf("ukonceni \n"); break;
+		case 'Q':{
+			printf("ukonceni \n");
+			decode_id_of_player(msg, 3);
+			
+		} break;
 		case 'A':printf("attack \n"); break;
 		case 'S':printf("status \n"); break;
 		default :printf("nenalezeno \n");
@@ -88,12 +95,9 @@ char *doActionByMessage(char *msg){
 	return in_buf;
 }
 
-int sendMessage(char * receivedMessage, int connect_s){
-	char out_buf[4096] = "";   /* Output buffer for data*/
+int sendMessage(char *message_to_send, int connect_s){
 	int retcode = 0;
-	
-	strcpy (out_buf, doActionByMessage(receivedMessage));	
-	retcode = send(connect_s, out_buf, (strlen(out_buf) + 1), 0);
+	retcode = send(connect_s, message_to_send, (strlen(message_to_send) + 1), 0);
 	
 	if (retcode < 0) {
 	    printf("*** ERROR - send() failed \n");
@@ -138,7 +142,12 @@ int main() {
   int                  addr_len;        /* Internet address length*/
   
   char                 in_buf[4096];    /* Input buffer for data*/
+  char 				   out_buf[4096];   /* Output buffer for data*/
+
   int                  retcode;         /* Return code*/
+  
+  MESSAGE *message = (MESSAGE *)malloc(sizeof(MESSAGE));
+  
 #ifdef WIN
   /* This stuff initializes winsock*/
   
@@ -157,6 +166,7 @@ server_addr.sin_addr.s_addr = htonl(INADDR_ANY);  /* Listen on any IP address*/
   	  
 	while(1){
 		
+		print_players(first);
 		welcome_s = initializeWelcomeSocket(server_addr);	
  		listen(welcome_s, 5);
  		
@@ -186,10 +196,14 @@ server_addr.sin_addr.s_addr = htonl(INADDR_ANY);  /* Listen on any IP address*/
 			printf("*** ERROR - recv() failed \n");
 			exit(-1);
 		}
-		printf("Received from client: %s \n", in_buf);		  
 		
+		decode_message(in_buf, message, 4);
+		printf("id: %d \n", message->playerID);		  
+		printf("data: %s ahoj\n", message->data);		  
+		printf("action: %c \n", message->action);		  
 		
-		sendMessage(in_buf, connect_s);		  		
+		/*strcpy (out_buf, doActionByMessage(in_buf, inet_ntoa(client_ip_addr)));*/		
+		/*sendMessage(out_buf, connect_s);*/		  		
 		closeSockets(welcome_s, connect_s);
 			  
 	}

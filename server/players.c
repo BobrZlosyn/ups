@@ -7,14 +7,33 @@
 
 int maxNumberOfID = 10000;
 
+
+/*
+ * generuje nove id pro noveho hrace
+ */
+int generateRandomID (PLAYERS *first) {
+	int id;
+	while(1){
+		id = rand() % maxNumberOfID;
+		if(id == 0) id++;
+		
+		if (verifyGeneretedID(first, id) == 0){
+			break;	
+		}
+	}
+	return id;
+	
+}
+
 /*
  * vytvori noveho hrace a prida ho do seznamu hracu
  */	
-PLAYERS *add_player(struct players *first){
+PLAYERS *add_player(struct players *first, char *ip_adress){
+	int id;
 	PLAYERS *newPlayer = (PLAYERS *)malloc(sizeof(PLAYERS));
 	
-	int id = generateRandomID(first);
-	PLAYER *player = create_player(id, 100, "none"); 
+	id = generateRandomID(first);
+	PLAYER *player = create_player(id, ip_adress, "none"); 
 	
 	newPlayer->isFree = 1;
 	newPlayer->player = player;
@@ -58,13 +77,29 @@ PLAYERS *remove_player(struct players *first, int playerID){
 			free(pom->room);
 			free(pom);
 			
-			return pom->player;
+			break;
 		}
 		
 		pom = pom->next;
 	}
 	
 	return returnPom;	
+}
+
+
+void clear_players(struct players *first) {
+	if (first == NULL) {
+		return;
+	}
+
+	while (first != NULL) {
+		PLAYERS *pom = first;
+		free(pom->player);
+		free(pom->room);
+		
+		first = first->next;
+		free(pom);
+	}
 }
 
 /*
@@ -91,7 +126,6 @@ int verifyGeneretedID(struct players *first, int playerID) {
 /*
  * vyhleda hrace podle ID 
  */
-
 PLAYER *find_player(struct players * first, int playerID) {
 	if (first == NULL) {
 		return NULL;
@@ -157,23 +191,19 @@ PLAYERS *find_player_status(struct players * first, int playerID){
 		
 		pom = pom->next;
 	}
-	
 	return NULL;
 }
 
 
 
-/*
- * generuje nove id pro noveho hrace
- */
-int generateRandomID (PLAYERS *first) {
-	int id;
-	while(1){
-		id = rand() % maxNumberOfID;
-		if (verifyGeneretedID(first, id) == 0){
-			break;	
-		}
+void print_players(struct players * first){
+	if (first == NULL) {
+		return;
 	}
-	return id;
 	
+	PLAYERS *pom = first;
+	while (pom != NULL) {
+		print_player(pom->player);
+		pom = pom->next;
+	}	
 }

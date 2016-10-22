@@ -13,7 +13,7 @@ struct players{
 	struct players *previous;
 }PLAYERS;
 
-PLAYERS *add_player(struct players * first);
+PLAYERS *add_player(struct players * first, char *ip_adress);
 
 int verifyGeneretedID(struct players *first, int playerID);
 
@@ -24,5 +24,9 @@ ROOM *find_room(struct players * first, int playerID);
 PLAYERS *find_player_status(struct players * first, int playerID);
 
 PLAYERS *remove_player(struct players * first, int playerID);
+
+void clear_players(struct players * first);
+
+void print_players(struct players * first);
 
 #endif

@@ -187,6 +187,10 @@ public class CannonWeapon extends CommonWeapon{
         double y = getPlacement().getY();
 
         Pane gameArea = getModel().getParent();
+        if(GlobalVariables.isEmpty(gameArea)){
+            return;
+        }
+
         gameArea.getChildren().removeAll(getModel().getParts());
 
         CannonWreck wrecks = new CannonWreck(getCenterX(), getCenterY(), Color.RED);

@@ -237,6 +237,7 @@ public class Controller implements Initializable{
      */
     private void setupPickShipMenu(CreateMenu createMenu){
         createMenu.getStart().setOnAction(event -> {
+            createMenu.removeConnectionBinding(tcpConnection.isConnectedProperty());
             tcpConnection.stopSetupConnection();
             createMenu.clean();
             PickShipMenu pickShipMenu = new PickShipMenu();
@@ -284,6 +285,7 @@ public class Controller implements Initializable{
             enemyShip.getActualLifeBinding().removeListener(userWin);
 
             endOfGame.getBackToMenu().setOnAction(event -> {
+                tcpConnection.endConnection();
                 createMainPage();
             });
 
@@ -307,5 +309,7 @@ public class Controller implements Initializable{
         tcpConnection.setupConnection();
         setupPickShipMenu(createMenu);
         grb.showSpacePort(window);
+        createMenu.setConnectionBinding(tcpConnection.isConnectedProperty());
+
     }
 }

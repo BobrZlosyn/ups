@@ -2,6 +2,7 @@ package game.StartUpMenu;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -23,6 +24,7 @@ public class CreateMenu {
     private Button start, settings, about, exit;
     private Label connection;
     private Circle indicator;
+    ChangeListener <Boolean> connectionListener;
 
     public CreateMenu(){
         menu = createGridpane();
@@ -30,6 +32,7 @@ public class CreateMenu {
     }
 
     private void init(){
+
         createStartButton();
         createStartAbout();
         createStartExit();
@@ -37,6 +40,7 @@ public class CreateMenu {
         createConnectionIndicator();
         fillMenuPane();
         marginInMenuPane();
+        setConnectionListener();
     }
 
     private GridPane createGridpane(){
@@ -165,8 +169,8 @@ public class CreateMenu {
         ((GridPane) menu.getParent()).getChildren().remove(menu);
     }
 
-    public void setConnectionBinding(SimpleBooleanProperty connectionStatus) {
-        connectionStatus.addListener((observable, oldValue, newValue) -> {
+    private void setConnectionListener(){
+        connectionListener = (observable, oldValue, newValue) -> {
             if(newValue.booleanValue()){
                 connection.setText("Připojeno");
                 connection.setTextFill(Color.GREEN);
@@ -176,6 +180,15 @@ public class CreateMenu {
                 connection.setTextFill(Color.RED);
                 indicator.setFill(Color.RED);
             }
-        });
+        };
     }
+
+    public void setConnectionBinding(SimpleBooleanProperty connectionStatus) {
+        connectionStatus.addListener(connectionListener);
+    }
+
+    public void removeConnectionBinding(SimpleBooleanProperty connectionStatus) {
+        connectionStatus.removeListener(connectionListener);
+    }
+
 }

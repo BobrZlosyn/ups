@@ -13,6 +13,7 @@ public class TcpApplication
 
     private int userID;
     private TcpClient client;
+    private TcpMessage message;
     private int port, maxTryings;
     private String server;
     private Timeline setupConnection;
@@ -24,6 +25,7 @@ public class TcpApplication
         port = 1234;
         maxTryings = 5;
         isConnected = new SimpleBooleanProperty(false);
+        message = new TcpMessage();
     }
 
     public int getUserID() {
@@ -63,14 +65,12 @@ public class TcpApplication
     }
 
     public void endConnection(){
-        client = new TcpClient( server, port );
         boolean result = client.open();
 
         if(result){
-            TcpMessage msgSend = new TcpMessage("<Q;quit>");
-            client.putMessage( msgSend );
-            TcpMessage msgRecv = client.getMessage();
-            String msg = msgRecv.getMessage();
+            message.setMessage(message.QUIT,"quit");
+            client.putMessage(message);
+            message.decodeMessage(client.getMessage());
         }
 
         client.close();
@@ -84,14 +84,12 @@ public class TcpApplication
     }
 
     public boolean prepareGame(String shipInfo){
-
-        client = new TcpClient( server, port );
         boolean result = client.open();
         if(result){
-            TcpMessage msgSend = new TcpMessage("<C;"+ shipInfo + ">");
-            client.putMessage( msgSend );
-            TcpMessage msgRecv = client.getMessage();
-            retrieveID(msgRecv.getMessage());
+            message.setMessage(message.CONNECTION, shipInfo);
+            client.putMessage( message );
+            message.decodeMessage( client.getMessage());
+            retrieveID(message.getMessage());
         }
 
         client.close();
@@ -103,11 +101,9 @@ public class TcpApplication
             return;
         }
 
-        String [] parts = msg.split(";");
-        if(parts[0].equals("ID")){
-            try {
-                userID = Integer.parseInt(parts[1]);
-            }catch (Exception e){}
+        String [] parts = msg.split(message.SEPARATOR);
+        if(parts.length == 2 && parts[0].equals(message.IDENTITY)){
+            message.setId(parts[1]);
         }
     }
 
