@@ -18,7 +18,7 @@ public class TcpApplication
     private String server;
     private Timeline setupConnection;
     private SimpleBooleanProperty isConnected;
-
+    private boolean isWaiting;
 
     public TcpApplication(){
         server = "localhost";
@@ -26,6 +26,7 @@ public class TcpApplication
         maxTryings = 5;
         isConnected = new SimpleBooleanProperty(false);
         message = new TcpMessage();
+        isWaiting = false;
     }
 
     public int getUserID() {
@@ -71,6 +72,9 @@ public class TcpApplication
             message.setMessage(message.QUIT,"quit");
             client.putMessage(message);
             message.decodeMessage(client.getMessage());
+            if(message.getBytes() != 0){
+                message.setId("0");
+            }
         }
 
         client.close();
@@ -83,30 +87,73 @@ public class TcpApplication
         return result;
     }
 
+
+    public boolean sendAttackData(String attackMsg){
+        boolean result = client.open();
+        if(result){
+            message.setMessage(message.ATTACK, attackMsg);
+            client.putMessage( message );
+            message.decodeMessage(client.getMessage());
+        }
+
+        return true;
+    }
+
+    /**********************************************
+     * *************  START OF GAME  **************
+     **********************************************/
+
+    /**
+     *
+     * @param shipInfo
+     * @return
+     */
     public boolean prepareGame(String shipInfo){
+
         boolean result = client.open();
         if(result){
             message.setMessage(message.CONNECTION, shipInfo);
             client.putMessage( message );
-            message.decodeMessage( client.getMessage());
-            retrieveID(message.getMessage());
+            message.decodeMessage(client.getMessage());
+            result = retrieveID(message.getMessage());
+        }
+
+        if(result){
+            message.setMessage(message.GAME_START, "start the game please");
+            client.putMessage( message );
+            message.decodeMessage(client.getMessage());
+            result = runTheGame(message.getMessage());
         }
 
         client.close();
-        return true;
+        return result;
     }
 
-    private void retrieveID(String msg){
-        if(GlobalVariables.isEmpty(msg)){
-            return;
-        }
+    private boolean retrieveID(String msg){
 
         String [] parts = msg.split(message.SEPARATOR);
         if(parts.length == 2 && parts[0].equals(message.IDENTITY)){
             message.setId(parts[1]);
+            return  true;
         }
+
+        return false;
     }
 
+    private boolean runTheGame(String msg){
+
+        if(message.WAITING.equals(msg.charAt(0))){
+            isWaiting = true;
+            return false;
+        }
+
+        isWaiting = false;
+        return true;
+    }
+
+    public String getMessage(){
+        return message.getMessage().substring(2);
+    }
 
 
 }

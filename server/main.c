@@ -5,7 +5,7 @@
 #include <string.h>         /* Needed for memcpy() and strcpy()*/
 #include <stdlib.h>         /* Needed for exit()*/
 #include "players.h"
-#include "Room.h"
+#include "room.h"
 #include "player.h"
 #include "decodeMessage.h"
 
@@ -39,7 +39,6 @@ int closeSockets(int welcome_s, int connect_s){
 	  }
 	  retcode = closesocket(connect_s);
 	  
-	  printf("zacatek %d ", connect_s);
 	  if (retcode < 0)
 	  {
 	    printf("*** ERROR - closesocket() failed \n");
@@ -67,28 +66,38 @@ int closeSockets(int welcome_s, int connect_s){
 }
 
 
-char *doActionByMessage(char *msg, char *ip_client) {
+char *doActionByMessage(struct message *msg, char *ip_client) {
 	char in_buf[100] = "";
-	int index = 0;
 	
-	switch(msg[1]){
+	switch(msg->action){
 		case 'C':{
 			first = add_player(first, ip_client);
-			index = strchr(msg,'>') - msg;
-			set_shipInfo(first->player, msg, index, 4);			
+			strcpy(first->player->shipInfo, msg->data);	
+			sprintf(in_buf, "<I;%d>", first->player->playerID);
 			
-			/*tisknuti pripojeneho uzivatele*/
-			print_player(first->player);	
-			sprintf(in_buf, "ID;%d", first->player->playerID);
 		} break;
 		
 		case 'Q':{
-			printf("ukonceni \n");
-			decode_id_of_player(msg, 3);
+			printf("ukonceni \n");	
+			first = remove_player(first, msg->playerID);		
+			sprintf(in_buf, "<zruseno>");
+		} break;
+		
+		case 'G':{
+			printf("game \n");
+			ROOM *room = find_free_room(first, msg->playerID);
+			if (room == NULL) {
+				room = create_room(find_player(first, msg->playerID));
+				sprintf(in_buf, "<W>");
+			} else {
+				add_second_player(find_player(first, msg->playerID), room);
+				sprintf(in_buf, "<S;%s>", room->player1->player->shipInfo);
+			}
 			
 		} break;
 		case 'A':printf("attack \n"); break;
 		case 'S':printf("status \n"); break;
+		case 'L':printf("lost - surrrender \n"); break;
 		default :printf("nenalezeno \n");
 	}
 	
@@ -146,8 +155,6 @@ int main() {
 
   int                  retcode;         /* Return code*/
   
-  MESSAGE *message = (MESSAGE *)malloc(sizeof(MESSAGE));
-  
 #ifdef WIN
   /* This stuff initializes winsock*/
   
@@ -165,7 +172,9 @@ server_addr.sin_addr.s_addr = htonl(INADDR_ANY);  /* Listen on any IP address*/
      - AF_INET is Address Family Internet and SOCK_STREAM is streams*/
   	  
 	while(1){
+		MESSAGE *message = (MESSAGE *)malloc(sizeof(MESSAGE));
 		
+		/*tisknuti pridanych uzivatelu*/
 		print_players(first);
 		welcome_s = initializeWelcomeSocket(server_addr);	
  		listen(welcome_s, 5);
@@ -176,7 +185,6 @@ server_addr.sin_addr.s_addr = htonl(INADDR_ANY);  /* Listen on any IP address*/
 		printf("Waiting for accept() to complete... \n");
 		addr_len = sizeof(client_addr);
 		connect_s = accept(welcome_s, (struct sockaddr *)&client_addr, &addr_len);
-		printf("stred %d \n", connect_s);
 		if (connect_s < 0) {
 		printf("*** ERROR - accept() failed \n");
 		exit(-1);
@@ -197,15 +205,17 @@ server_addr.sin_addr.s_addr = htonl(INADDR_ANY);  /* Listen on any IP address*/
 			exit(-1);
 		}
 		
-		decode_message(in_buf, message, 4);
-		printf("id: %d \n", message->playerID);		  
-		printf("data: %s ahoj\n", message->data);		  
-		printf("action: %c \n", message->action);		  
+		retcode = decode_message(in_buf, message, 4);
+		if (retcode > 0) {
+			free(message);
+			closeSockets(welcome_s, connect_s);
+			continue;	
+		}	  
 		
-		/*strcpy (out_buf, doActionByMessage(in_buf, inet_ntoa(client_ip_addr)));*/		
-		/*sendMessage(out_buf, connect_s);*/		  		
+		strcpy (out_buf, doActionByMessage(message, inet_ntoa(client_ip_addr)));		
+		sendMessage(out_buf, connect_s);	  		
 		closeSockets(welcome_s, connect_s);
-			  
+		free(message);	  
 	}
 				
 		#ifdef WIN

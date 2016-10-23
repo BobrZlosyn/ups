@@ -56,7 +56,7 @@ PLAYERS *remove_player(struct players *first, int playerID){
 		return NULL;
 	}
 	
-	if(playerID >= maxNumberOfID || playerID < 0){
+	if(playerID >= maxNumberOfID || playerID < 1){
 		return first;
 	}
 	
@@ -65,10 +65,14 @@ PLAYERS *remove_player(struct players *first, int playerID){
 	
 	while (pom != NULL) {
 		if (pom->player->playerID == playerID){
+			if(pom->next != NULL) {
+				pom->next->previous = pom->previous;
+			}
 			
-			pom->next->previous = pom->previous; 
-			pom->previous->next = pom->next;
-			
+			if(pom->previous != NULL) {
+				pom->previous->next = pom->next;			
+			}
+			 
 			if(pom == first){
 				returnPom = first->next;
 			}
@@ -76,13 +80,11 @@ PLAYERS *remove_player(struct players *first, int playerID){
 			free(pom->player);
 			free(pom->room);
 			free(pom);
-			
 			break;
 		}
 		
 		pom = pom->next;
 	}
-	
 	return returnPom;	
 }
 
@@ -126,7 +128,7 @@ int verifyGeneretedID(struct players *first, int playerID) {
 /*
  * vyhleda hrace podle ID 
  */
-PLAYER *find_player(struct players * first, int playerID) {
+PLAYERS *find_player(struct players * first, int playerID) {
 	if (first == NULL) {
 		return NULL;
 	}
@@ -138,7 +140,7 @@ PLAYER *find_player(struct players * first, int playerID) {
 	PLAYERS *pom = first;
 	while (pom != NULL) {
 		if (pom->player->playerID == playerID){
-			return pom->player;
+			return pom;
 		}
 		
 		pom = pom->next;

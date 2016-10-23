@@ -91,18 +91,20 @@ public class TcpClient implements NetworkInterface{
 
     public String getMessage(  ) {
         String line = "";
+
         // read the response (a line) from the server
         try {
             if(reader != null){
                 line = reader.readLine();
             }
+
             // write the line to console
             return line;
         }
         catch (IOException e) {
             System.err.println("Read error");
         }
-        return null;
+        return line;
     }
     protected void finalize() { }
 }

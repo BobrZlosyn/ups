@@ -4,6 +4,7 @@
 #include "players.h"
 #include "room.h"
 #include "player.h"
+#include "decodeMessage.h"
 
 PLAYER *create_player(int playerID, char *playerIP, char *playerName){
 	PLAYER *newPlayer = (PLAYER *)malloc(sizeof(PLAYER));
@@ -16,10 +17,6 @@ PLAYER *create_player(int playerID, char *playerIP, char *playerName){
 }
 
 
-void set_shipInfo(struct player *player, char *shipInfo, int maxSize, int indexOfBeginning){	
-	memcpy( player->shipInfo, &shipInfo[indexOfBeginning], maxSize - indexOfBeginning);
-	player->shipInfo[maxSize - indexOfBeginning] = '\0';
-}
 
 void print_player(struct player *player) {
 	printf("---- Player with id: %d ---- \n", player->playerID);

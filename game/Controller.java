@@ -62,6 +62,7 @@ public class Controller implements Initializable{
             return;
         }
 
+        System.out.println("hooolla");
         tcpConnection.endConnection();
 
 

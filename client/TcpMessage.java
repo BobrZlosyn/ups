@@ -16,9 +16,11 @@ public class TcpMessage {
      *      MESSAGE TYPES
      */
     public static final String CONNECTION = "C";
+    public static final String GAME_START = "G";
     public static final String IDENTITY = "I";
     public static final String QUIT = "Q";
     public static final String ATTACK = "A";
+    public static final String WAITING = "W";
 
 
 
@@ -58,7 +60,9 @@ public class TcpMessage {
     }
 
     public void decodeMessage(String msg) {
-        if (GlobalVariables.isEmpty(msg)
+        msg = msg.trim();
+
+        if (msg.length() < 2
                 || msg.charAt(0) != START_MESSAGE
                 || msg.charAt(msg.length() - 1) != END_MESSAGE) {
             message = "";

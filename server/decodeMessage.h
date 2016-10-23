@@ -7,6 +7,7 @@ struct message{
 	int playerID;
 	char data [100];
 	char action;
+	int isEmpty;
 
 }MESSAGE;
 
