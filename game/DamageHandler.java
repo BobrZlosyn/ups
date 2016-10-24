@@ -84,9 +84,6 @@ public class DamageHandler {
             return 0;
         }
 
-       // targetShip.damageToShield(shieldDmg);
-       // targetShip.takeDamage(shipDmg);
-
         Placement [][] targetPlacements = targetShip.getPlacementPositions();
         Placement [][] attackPlacements = attackShip.getPlacementPositions();
 

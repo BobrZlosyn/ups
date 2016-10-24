@@ -6,6 +6,7 @@ import game.background.GeneratRandomBackground;
 import game.construction.Placement;
 import game.ships.CommonShip;
 import game.static_classes.GlobalVariables;
+import game.weapons.CannonWeapon;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -53,8 +54,6 @@ public class Controller implements Initializable{
         grb = new GeneratRandomBackground();
         grb.showSpacePort(window);
         tcpConnection.setupConnection();
-
-
     }
 
     public void clearApplication(){
@@ -62,9 +61,7 @@ public class Controller implements Initializable{
             return;
         }
 
-        System.out.println("hooolla");
         tcpConnection.endConnection();
-
 
         if(GlobalVariables.isEmpty(findGame)){
             return;
@@ -101,9 +98,7 @@ public class Controller implements Initializable{
         pickShipMenu.getPrevious().setOnAction(event1 -> {
             pickShipMenu.clean();
 
-            CreateMenu createMenu = new CreateMenu();
-            window.add(createMenu.getMenu(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
-            setupPickShipMenu(createMenu);
+            createMainPage();
         });
 
         pickShipMenu.getNextSetup().setOnAction(event -> {
@@ -141,12 +136,18 @@ public class Controller implements Initializable{
 
         //vytvari nepratelskou lod
         ExportImportShip exportImportShip = new ExportImportShip();
-        String exportMsg = exportImportShip.exportShip(GlobalVariables.choosenShip);
+        String exportMsg;
+        if(GlobalVariables.shipDefinition.equals("")){
+            exportMsg = exportImportShip.exportShip(GlobalVariables.choosenShip);
+            GlobalVariables.shipDefinition = exportMsg;
+        }else{
+            exportMsg = GlobalVariables.shipDefinition;
+        }
 
         SimpleBooleanProperty isConnected = new SimpleBooleanProperty(false);
         WaitingForOponnent waitingForOponnent = new WaitingForOponnent(window);
         waitingForOponnent.getCancel().setOnAction(event -> {
-
+            GlobalVariables.shipDefinition = "";
             waitingForOponnent.removePane();
 
             if(!GlobalVariables.isEmpty(findGame) && findGame.isRunning()){
@@ -160,18 +161,20 @@ public class Controller implements Initializable{
         findGame = new Task<Void>() {
             @Override public Void call() {
                 while(true) {
-                    try {
-                        Thread.sleep(WAITING_FOR_OPONNENT);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        break;
-                    }
 
                     if (isCancelled()) {
+                        tcpConnection.closeConnection();
                         break;
                     }
 
                     if(tcpConnection.prepareGame(exportMsg)){
+                        break;
+                    }
+
+                    try {
+                        Thread.sleep(WAITING_FOR_OPONNENT);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                         break;
                     }
                 }
@@ -201,8 +204,6 @@ public class Controller implements Initializable{
         GlobalVariables.choosenShip.fillShipWithEquipment(GlobalVariables.choosenShip, placements, isFirstCreated);
         GlobalVariables.choosenShip.createShield();
 
-
-
         CommonShip enemyShip = exportImportShip.importShip(exportMsg, gameAreaPane);
         enemyShip.createShield();
         endWindowShowUp(GlobalVariables.choosenShip, enemyShip);
@@ -220,6 +221,8 @@ public class Controller implements Initializable{
         BottomPanel bottomPanel = new BottomPanel(sendDataButton);
         bottomPanel.showPanel(window, gameAreaPane);
         bottomPanel.getQuit().setOnAction(event1 -> {
+            tcpConnection.sendLostData();
+            ((Button)event1.getSource()).setDisable(true);
             GlobalVariables.choosenShip.takeDamage((int)GlobalVariables.choosenShip.getActualLife());
             GlobalVariables.choosenShip.damageToShield(GlobalVariables.choosenShip.getShieldActualLife());
         });
@@ -227,6 +230,7 @@ public class Controller implements Initializable{
         DamageHandler damageHandler = new DamageHandler(GlobalVariables.choosenShip, enemyShip, gameAreaPane);
         sendDataButton.setOnAction(event1 -> {
             String actions = damageHandler.exportShooting(GlobalVariables.choosenShip.getPlacementPositions());
+            tcpConnection.sendAttackData(actions);
             damageHandler.doDamage(actions);
             controls.resetAnimation();
         });
@@ -287,6 +291,7 @@ public class Controller implements Initializable{
 
             endOfGame.getBackToMenu().setOnAction(event -> {
                 tcpConnection.endConnection();
+                GlobalVariables.shipDefinition = "";
                 createMainPage();
             });
 
@@ -307,10 +312,10 @@ public class Controller implements Initializable{
         window.getChildren().clear();
         CreateMenu createMenu = new CreateMenu();
         window.add(createMenu.getMenu(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
+        createMenu.setConnectionBinding(tcpConnection.isConnectedProperty());
         tcpConnection.setupConnection();
         setupPickShipMenu(createMenu);
         grb.showSpacePort(window);
-        createMenu.setConnectionBinding(tcpConnection.isConnectedProperty());
 
     }
 }

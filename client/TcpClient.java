@@ -20,6 +20,7 @@ public class TcpClient implements NetworkInterface{
         this.port = port;
     }
 
+    @Override
     public boolean open() {
 
         // create a socket to communicate to the specified host and port
@@ -48,6 +49,7 @@ public class TcpClient implements NetworkInterface{
                     ":" + s.getPort());
         }
         catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
 
@@ -55,6 +57,7 @@ public class TcpClient implements NetworkInterface{
 
     }
 
+    @Override
     public void close(  ) {
         try {
             if(!GlobalVariables.isEmpty(reader)){
@@ -75,20 +78,24 @@ public class TcpClient implements NetworkInterface{
             try {
                 if (s != null) s.close();
             }
-            catch (IOException e) { }
+            catch (IOException e) { e.printStackTrace(); }
         }
     }
 
+    @Override
     public void putMessage( TcpMessage msg) {
         try {
     	    writer.println(msg.getMessage());
             writer.flush();
+            System.out.println(msg.getMessage());
+            msg.clearMessage();
         }
         catch (Exception e) {
             System.err.println("Write error");
         }
     }
 
+    @Override
     public String getMessage(  ) {
         String line = "";
 
@@ -106,5 +113,7 @@ public class TcpClient implements NetworkInterface{
         }
         return line;
     }
+
+    @Override
     protected void finalize() { }
 }

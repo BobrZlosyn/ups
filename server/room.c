@@ -20,6 +20,8 @@ ROOM *create_room(struct players *player1){
 	
 	player1->room = room;
 	player1->isFree = 0;
+	
+	return room;
 }
 
 ROOM *find_free_room(struct players *first, int playerID) { 
@@ -53,3 +55,19 @@ void add_second_player(struct players *player2, struct room *room){
 	player2->isFree = 0;
 }
 
+
+void print_room(struct room *room){
+	if(room != NULL){
+		return;
+	}
+	
+	printf("Room with ID %d \n", room->roomID);
+}
+
+void clear_room(struct room *room){
+	if(room != NULL){
+		return;
+	}
+	
+	free(room);
+}

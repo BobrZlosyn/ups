@@ -45,6 +45,8 @@ public class TcpApplication
         if(sendConnectionMessage()){
             isConnected.setValue(true);
             return;
+        }else{
+            isConnected.setValue(false);
         }
 
         setupConnection = new Timeline(new KeyFrame(Duration.seconds(10), event -> {
@@ -52,6 +54,8 @@ public class TcpApplication
                 setupConnection.stop();
                 setupConnection = null;
                 isConnected.setValue(true);
+            }else{
+                isConnected.set(false);
             }
         }));
         setupConnection.setCycleCount(Animation.INDEFINITE);
@@ -67,7 +71,7 @@ public class TcpApplication
 
     public void endConnection(){
         boolean result = client.open();
-
+        System.out.println("ahoj "+ result);
         if(result){
             message.setMessage(message.QUIT,"quit");
             client.putMessage(message);
@@ -87,7 +91,26 @@ public class TcpApplication
         return result;
     }
 
+    /**
+     * when user surrender in the game
+     * @return
+     */
+    public boolean sendLostData(){
+        boolean result = client.open();
+        if(result){
+            message.setMessage(message.LOST, "vzdavam se");
+            client.putMessage( message );
+            message.decodeMessage(client.getMessage());
+        }
+        client.close();
+        return true;
+    }
 
+    /**
+     * when user do a attack
+     * @param attackMsg
+     * @return
+     */
     public boolean sendAttackData(String attackMsg){
         boolean result = client.open();
         if(result){
@@ -95,12 +118,12 @@ public class TcpApplication
             client.putMessage( message );
             message.decodeMessage(client.getMessage());
         }
-
+        client.close();
         return true;
     }
 
     /**********************************************
-     * *************  START OF GAME  **************
+     ***************  START OF GAME  **************
      **********************************************/
 
     /**
@@ -111,13 +134,15 @@ public class TcpApplication
     public boolean prepareGame(String shipInfo){
 
         boolean result = client.open();
-        if(result){
+        System.out.println(result);
+        if(result && !message.hasId()){
             message.setMessage(message.CONNECTION, shipInfo);
             client.putMessage( message );
             message.decodeMessage(client.getMessage());
             result = retrieveID(message.getMessage());
         }
 
+        System.out.println(result);
         if(result){
             message.setMessage(message.GAME_START, "start the game please");
             client.putMessage( message );
@@ -125,8 +150,18 @@ public class TcpApplication
             result = runTheGame(message.getMessage());
         }
 
+        System.out.println(result);
         client.close();
         return result;
+    }
+
+    /**
+     * method for method purpose
+     */
+    public void closeConnection(){
+        if(!GlobalVariables.isEmpty(client)){
+            client.close();
+        }
     }
 
     private boolean retrieveID(String msg){

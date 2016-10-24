@@ -24,6 +24,7 @@ public class GlobalVariables {
     public static CommonShip choosenShip;
     public static Color damageHit = Color.RED;
     public static double damageHitDuration = 0.2;
+    public static String shipDefinition = "";
 
     public static void setMarkedObject(CommonConstruction markedObject) {
         if(!isEmpty(markedObject) && !isEmpty(GlobalVariables.markedObject)){

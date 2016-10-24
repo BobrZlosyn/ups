@@ -13,6 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
+import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -71,6 +72,7 @@ public abstract class CommonWreck {
             wrecks.get(i).setLayoutX(wrecks.get(i).getLayoutX() + moveAddPoint[i][xIndex]);
             wrecks.get(i).setLayoutY(wrecks.get(i).getLayoutY() + moveAddPoint[i][yIndex]);
             wrecks.get(i).setOpacity(wrecks.get(i).getOpacity() - 1.3/maxCountOfMovements);
+            wrecks.get(i).getTransforms().add(new Rotate(2));
         }
         countOfMovements ++;
 

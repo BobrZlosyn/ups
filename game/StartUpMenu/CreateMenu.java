@@ -171,19 +171,32 @@ public class CreateMenu {
 
     private void setConnectionListener(){
         connectionListener = (observable, oldValue, newValue) -> {
+            System.out.println("listener "+ newValue);
             if(newValue.booleanValue()){
-                connection.setText("Připojeno");
-                connection.setTextFill(Color.GREEN);
-                indicator.setFill(Color.GREEN);
+                setSuccesfulConnection();
             }else{
-                connection.setText("Nepřipojeno");
-                connection.setTextFill(Color.RED);
-                indicator.setFill(Color.RED);
+                setFailedConnection();
             }
         };
     }
 
+    private void setSuccesfulConnection(){
+        connection.setText("Připojeno");
+        connection.setTextFill(Color.GREEN);
+        indicator.setFill(Color.GREEN);
+    }
+
+    private void setFailedConnection(){
+        connection.setText("Nepřipojeno");
+        connection.setTextFill(Color.RED);
+        indicator.setFill(Color.RED);
+    }
+
     public void setConnectionBinding(SimpleBooleanProperty connectionStatus) {
+        if(connectionStatus.get()){
+            setSuccesfulConnection();
+        }
+
         connectionStatus.addListener(connectionListener);
     }
 

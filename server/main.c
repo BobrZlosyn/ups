@@ -6,6 +6,7 @@
 #include <stdlib.h>         /* Needed for exit()*/
 #include "players.h"
 #include "room.h"
+#include "rooms.h"
 #include "player.h"
 #include "decodeMessage.h"
 
@@ -66,8 +67,8 @@ int closeSockets(int welcome_s, int connect_s){
 }
 
 
-char *doActionByMessage(struct message *msg, char *ip_client) {
-	char in_buf[100] = "";
+char *doActionByMessage(struct message *msg, char *ip_client, char *sendMessage) {
+	char in_buf[100] = "empty";
 	
 	switch(msg->action){
 		case 'C':{
@@ -98,10 +99,16 @@ char *doActionByMessage(struct message *msg, char *ip_client) {
 		case 'A':printf("attack \n"); break;
 		case 'S':printf("status \n"); break;
 		case 'L':printf("lost - surrrender \n"); break;
-		default :printf("nenalezeno \n");
+		default :{
+			printf("nenalezeno \n");
+			sprintf(in_buf, "<E;action not found>");
+			break;
+		}
 	}
 	
-	return in_buf;
+	strcpy(sendMessage, in_buf);
+	
+	return sendMessage;
 }
 
 int sendMessage(char *message_to_send, int connect_s){
@@ -186,9 +193,10 @@ server_addr.sin_addr.s_addr = htonl(INADDR_ANY);  /* Listen on any IP address*/
 		addr_len = sizeof(client_addr);
 		connect_s = accept(welcome_s, (struct sockaddr *)&client_addr, &addr_len);
 		if (connect_s < 0) {
-		printf("*** ERROR - accept() failed \n");
-		exit(-1);
+			printf("*** ERROR - accept() failed \n");
+			exit(-1);
 		}
+		printf("konec acceptu \n");
 		
 		/* Copy the four-byte client IP address into an IP address structure*/
 		memcpy(&client_ip_addr, &client_addr.sin_addr.s_addr, 4);
@@ -212,7 +220,7 @@ server_addr.sin_addr.s_addr = htonl(INADDR_ANY);  /* Listen on any IP address*/
 			continue;	
 		}	  
 		
-		strcpy (out_buf, doActionByMessage(message, inet_ntoa(client_ip_addr)));		
+		strcpy (out_buf, doActionByMessage(message, inet_ntoa(client_ip_addr), out_buf));		
 		sendMessage(out_buf, connect_s);	  		
 		closeSockets(welcome_s, connect_s);
 		free(message);	  

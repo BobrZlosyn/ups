@@ -1,8 +1,5 @@
 package client;
 
-
-import game.static_classes.GlobalVariables;
-
 public class TcpMessage {
 
     private String  message;
@@ -21,6 +18,7 @@ public class TcpMessage {
     public static final String QUIT = "Q";
     public static final String ATTACK = "A";
     public static final String WAITING = "W";
+    public static final String LOST = "L";
 
 
 
@@ -38,6 +36,13 @@ public class TcpMessage {
         return bytes;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public boolean hasId(){
+        return !id.equals("0");
+    }
     public void setId(String id) {
         this.id = id;
     }
@@ -55,7 +60,6 @@ public class TcpMessage {
         msgBuild.append(END_MESSAGE);
 
         message = msgBuild.toString();
-        System.out.println(message);
         bytes = msg.length();
     }
 
@@ -72,5 +76,10 @@ public class TcpMessage {
 
         message = msg.substring(1, msg.length() - 1);
         bytes = message.length();
+    }
+
+    public void clearMessage(){
+        message = "";
+        bytes = 0;
     }
 }

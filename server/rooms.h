@@ -1,22 +1,26 @@
 #ifndef ROOMS_H
 #define ROOMS_H
 
+#include "room.h"
+
 typedef
 struct rooms{
-
-	int playerID;
-	char playerIP [15];
-	char playerName [20];
-	char shipInfo [100];
-
+	int roomID;
+	struct room *room;
+	struct rooms *next;
+	struct rooms *previous;
 }ROOMS;
 
-PLAYER *create_player(int playerID, char *playerIP, char *playerName);
+ROOMS *create_new_room(struct rooms *firstRoom);
 
-void set_shipInfo(struct player *player, char *shipInfo, int maxSize, int indexOfBeginning);
+void clear_rooms(struct rooms *firstRoom);
 
-void print_player(struct player *player);
+ROOMS *remove_from_rooms(struct rooms *firstRoom, int roomID);
 
-int decode_id_of_player(char *msg, int begin);
+void print_rooms(struct rooms *firstRoom);
+
+int verify_genereted_ID_for_room(struct rooms *first, int roomID);
+
+int generate_random_ID_for_room(struct rooms *first);
 
 #endif
