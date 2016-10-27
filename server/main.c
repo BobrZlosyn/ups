@@ -4,6 +4,10 @@
 #include <stdio.h>          /* Needed for printf()*/
 #include <string.h>         /* Needed for memcpy() and strcpy()*/
 #include <stdlib.h>         /* Needed for exit()*/
+#include <errno.h>
+#include <pthread.h>
+#include <unistd.h>
+
 #include "players.h"
 #include "room.h"
 #include "rooms.h"
@@ -27,19 +31,19 @@
 
 
 PLAYERS *first = NULL;
+ROOMS *firstRoom = NULL;
+struct data_for_thread {
+	int 				 connect_s;
+	struct sockaddr_in   client_addr;     
+	struct in_addr       client_ip_addr;  
+};
 
-int closeSockets(int welcome_s, int connect_s){
+
+int close_welcome_socket(int welcome_s){
 	int retcode;
 	
 	#ifdef WIN
 	  retcode = closesocket(welcome_s);
-	  if (retcode < 0)
-	  {
-	    printf("*** ERROR - closesocket() failed \n");
-	    exit(-1);
-	  }
-	  retcode = closesocket(connect_s);
-	  
 	  if (retcode < 0)
 	  {
 	    printf("*** ERROR - closesocket() failed \n");
@@ -55,6 +59,25 @@ int closeSockets(int welcome_s, int connect_s){
 	    printf("*** ERROR - close() failed \n");
 	    exit(-1);
 	  }
+	#endif
+	
+	return 0;
+}
+
+int close_connect_socket(int connect_s){
+	int retcode;
+	
+	#ifdef WIN
+	  retcode = closesocket(connect_s);
+	  
+	  if (retcode < 0)
+	  {
+	    printf("*** ERROR - closesocket() failed \n");
+	    exit(-1);
+	  }
+	#endif
+	
+	#ifdef BSD
 	  retcode = close(connect_s);
 	  if (retcode < 0)
 	  {
@@ -66,49 +89,18 @@ int closeSockets(int welcome_s, int connect_s){
 	return 0;
 }
 
-
-char *doActionByMessage(struct message *msg, char *ip_client, char *sendMessage) {
-	char in_buf[100] = "empty";
+void completeAttackAction(int playingID, int playerID, char *message) {
 	
-	switch(msg->action){
-		case 'C':{
-			first = add_player(first, ip_client);
-			strcpy(first->player->shipInfo, msg->data);	
-			sprintf(in_buf, "<I;%d>", first->player->playerID);
-			
-		} break;
-		
-		case 'Q':{
-			printf("ukonceni \n");	
-			first = remove_player(first, msg->playerID);		
-			sprintf(in_buf, "<zruseno>");
-		} break;
-		
-		case 'G':{
-			printf("game \n");
-			ROOM *room = find_free_room(first, msg->playerID);
-			if (room == NULL) {
-				room = create_room(find_player(first, msg->playerID));
-				sprintf(in_buf, "<W>");
-			} else {
-				add_second_player(find_player(first, msg->playerID), room);
-				sprintf(in_buf, "<S;%s>", room->player1->player->shipInfo);
-			}
-			
-		} break;
-		case 'A':printf("attack \n"); break;
-		case 'S':printf("status \n"); break;
-		case 'L':printf("lost - surrrender \n"); break;
-		default :{
-			printf("nenalezeno \n");
-			sprintf(in_buf, "<E;action not found>");
-			break;
-		}
+	if(playingID == playerID){
+		char newPokus [sizeof(message)] = "1;;";
+		strcpy(newPokus + 3, message);
+		strcpy(message, newPokus);	
+	}else{
+		char newPokus [sizeof(message)] = "0;;";
+		strcpy(newPokus + 3, message);
+		strcpy(message, newPokus);
 	}
 	
-	strcpy(sendMessage, in_buf);
-	
-	return sendMessage;
 }
 
 int sendMessage(char *message_to_send, int connect_s){
@@ -122,6 +114,58 @@ int sendMessage(char *message_to_send, int connect_s){
 	
 	return 0;
 }
+
+int doActionByMessage(struct message *msg, char *ip_client, char *sendMsg, int socket) {
+
+	switch(msg->action){
+		case 'C':{
+			first = add_player(first, ip_client, socket);
+			strcpy(first->player->shipInfo, msg->data);	
+			sprintf(sendMsg, "<I;%d>\n", first->player->playerID);
+			
+		} break;
+		
+		case 'Q':{
+			printf("ukonceni \n");	
+			first = remove_player(first, msg->playerID);		
+			sprintf(sendMsg, "<zruseno>\n");
+			return -1;
+		} break;
+		
+		case 'G':{
+			printf("game \n");
+			ROOM *room = find_free_room(first, msg->playerID);
+			if (room == NULL) {
+				room = create_room(find_player(first, msg->playerID));
+				sprintf(sendMsg, "<W>\n");
+			} else {
+				add_second_player(find_player(first, msg->playerID), room);
+				sprintf(sendMsg, "<S;%s>\n", room->player1->player->shipInfo);
+				
+				sendMessage(sendMsg, room->player1->player->socket);
+			}
+			
+		} break;
+		
+		case 'A':{
+			printf("attack \n");
+			PLAYERS *players = find_player(first, msg->playerID);
+		/*	completeAttackAction(players->room->isPlayingID, players->player->playerID, msg->data);
+		*/			
+		} break;
+		case 'S':printf("status \n"); break;
+		case 'L':printf("lost - surrrender \n"); break;
+		default :{
+			printf("nenalezeno \n");
+			sprintf(sendMsg, "<E;action not found>\n");
+			return -1;
+			break;
+		}
+	}
+
+	return 0;	
+}
+
 
 int initializeWelcomeSocket(struct sockaddr_in server_addr){
 	int welcome_s, retcode;
@@ -140,53 +184,85 @@ int initializeWelcomeSocket(struct sockaddr_in server_addr){
 	return welcome_s;
 }
 
-
+void *user_thread(void *t_param){
+	char                 in_buf[100];    /* Input buffer for data*/
+	char 				 out_buf[100];   /* Output buffer for data*/
+	struct data_for_thread *param = (struct data_for_thread *)t_param;	
+	int retcode;
+	printf("ahojky");
+	int 				 socket = param->connect_s;
+	
+	while(1){
+		MESSAGE *message = (MESSAGE *)malloc(sizeof(MESSAGE));
+		
+		/* Receive from the client using the connect socket*/
+		retcode = recv(socket, in_buf, sizeof(in_buf), 0);
+		if (retcode < 0) {
+			printf("*** ERROR - recv() failed \n");
+			exit(-1);
+		}
+		printf("received %s \n", in_buf);
+		retcode = decode_message(in_buf, message, 4);
+		if (retcode > 0) {
+			free(message);
+			continue;	
+		}	  
+		
+		retcode = doActionByMessage(message, inet_ntoa(param->client_ip_addr), out_buf, socket);
+		printf("send %s \n", out_buf);
+		sendMessage(out_buf, socket);
+		free(message);
+		
+		if(retcode < 0){
+			break;
+		}	  	
+	}
+		  	
+	printf("zaviram %d \n",socket);
+	close_connect_socket(socket);
+	return NULL;
+}
 
 
 /*===== Main program ==========================================================*/
 int main() {
 	
-#ifdef WIN
-  WORD wVersionRequested = MAKEWORD(1,1);       /*Stuff for WSA functions*/
-  WSADATA wsaData;                              /* Stuff for WSA functions*/
-#endif
-  int                  welcome_s;       /* Welcome socket descriptor*/
-  struct sockaddr_in   server_addr;     /* Server Internet address*/
-  int                  connect_s;       /* Connection socket descriptor*/
-  struct sockaddr_in   client_addr;     /* Client Internet address*/
-  struct in_addr       client_ip_addr;  /* Client IP address*/
-  int                  addr_len;        /* Internet address length*/
-  
-  char                 in_buf[4096];    /* Input buffer for data*/
-  char 				   out_buf[4096];   /* Output buffer for data*/
-
-  int                  retcode;         /* Return code*/
-  
-#ifdef WIN
-  /* This stuff initializes winsock*/
-  
-  WSAStartup(wVersionRequested, &wsaData);
-#endif
-
- /* >>> Step #2 <<<
-   Fill-in server (my) address information and bind the welcome socket*/
-server_addr.sin_family = AF_INET;                 /* Address family to use*/
-server_addr.sin_port = htons(PORT_NUM);           /* Port number to use*/
-server_addr.sin_addr.s_addr = htonl(INADDR_ANY);  /* Listen on any IP address*/
-
- /* >>> Step #1 <<<
-   Create a welcome socket
-     - AF_INET is Address Family Internet and SOCK_STREAM is streams*/
-  	  
-	while(1){
-		MESSAGE *message = (MESSAGE *)malloc(sizeof(MESSAGE));
+	#ifdef WIN
+		WORD wVersionRequested = MAKEWORD(1,1);       /*Stuff for WSA functions*/
+		WSADATA wsaData;                              /* Stuff for WSA functions*/
+	#endif
+		int                  welcome_s;       /* Welcome socket descriptor*/
+		struct sockaddr_in   server_addr;     /* Server Internet address*/
+		int                  connect_s;       /* Connection socket descriptor*/
+		int                  addr_len;        /* Internet address length*/
+		pthread_t 			 thread;
+		struct data_for_thread	data;
+		struct sockaddr_in   client_addr;     /* Client Internet address*/
+		struct in_addr       client_ip_addr;  /* Client IP address*/
+		
+	#ifdef WIN
+		/* This stuff initializes winsock*/
+		
+		WSAStartup(wVersionRequested, &wsaData);
+	#endif
+	
+	/* >>> Step #2 <<<
+	Fill-in server (my) address information and bind the welcome socket*/
+	server_addr.sin_family = AF_INET;                 /* Address family to use*/
+	server_addr.sin_port = htons(PORT_NUM);           /* Port number to use*/
+	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);  /* Listen on any IP address*/
+		
+	/* >>> Step #1 <<<
+	Create a welcome socket
+ 	- AF_INET is Address Family Internet and SOCK_STREAM is streams*/
+	  
+	while (1) {
 		
 		/*tisknuti pridanych uzivatelu*/
 		print_players(first);
 		welcome_s = initializeWelcomeSocket(server_addr);	
- 		listen(welcome_s, 5);
- 		
-		/* >>> Step #4 <<<*/
+		listen(welcome_s, 5);
+		
 		/* Accept a connection.  The accept() will block and then return with*/
 		/* connect_s assigned and client_addr filled-in.*/
 		printf("Waiting for accept() to complete... \n");
@@ -196,43 +272,23 @@ server_addr.sin_addr.s_addr = htonl(INADDR_ANY);  /* Listen on any IP address*/
 			printf("*** ERROR - accept() failed \n");
 			exit(-1);
 		}
-		printf("konec acceptu \n");
-		
 		/* Copy the four-byte client IP address into an IP address structure*/
-		memcpy(&client_ip_addr, &client_addr.sin_addr.s_addr, 4);
+		memcpy(&data.client_ip_addr, &client_addr.sin_addr.s_addr, 4);
+		data.client_addr = client_addr;
+		data.connect_s = connect_s;
 		
-		/* Print an informational message that accept completed*/
-		printf("Accept completed (IP address of client = %s  port = %d) \n",
-		inet_ntoa(client_ip_addr), ntohs(client_addr.sin_port));
+		pthread_create(&thread,NULL,user_thread,&data);
 		
-		/* >>> Step #6 <<<*/
-		/* Receive from the client using the connect socket*/
-		retcode = recv(connect_s, in_buf, sizeof(in_buf), 0);
-		if (retcode < 0) {
-			printf("*** ERROR - recv() failed \n");
-			exit(-1);
-		}
-		
-		retcode = decode_message(in_buf, message, 4);
-		if (retcode > 0) {
-			free(message);
-			closeSockets(welcome_s, connect_s);
-			continue;	
-		}	  
-		
-		strcpy (out_buf, doActionByMessage(message, inet_ntoa(client_ip_addr), out_buf));		
-		sendMessage(out_buf, connect_s);	  		
-		closeSockets(welcome_s, connect_s);
-		free(message);	  
+		close_welcome_socket(welcome_s);	  
 	}
 				
-		#ifdef WIN
-		  /* Clean-up winsock*/
-		  WSACleanup();
-		#endif
-
-  /* Return zero and terminate*/
-  return(0);
+	#ifdef WIN
+	  /* Clean-up winsock*/
+	  WSACleanup();
+	#endif
+	
+	/* Return zero and terminate*/
+	return(0);
 }
 
 

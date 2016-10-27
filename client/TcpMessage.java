@@ -14,6 +14,7 @@ public class TcpMessage {
      */
     public static final String CONNECTION = "C";
     public static final String GAME_START = "G";
+    public static final String END_WAITING = "S";
     public static final String IDENTITY = "I";
     public static final String QUIT = "Q";
     public static final String ATTACK = "A";
@@ -81,5 +82,13 @@ public class TcpMessage {
     public void clearMessage(){
         message = "";
         bytes = 0;
+    }
+
+    public boolean isWantedMessage(String typeOfMessage){
+         if(message.isEmpty()){
+            return false;
+        }
+
+        return typeOfMessage.equals("" +message.charAt(0));
     }
 }

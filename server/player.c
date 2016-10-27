@@ -6,10 +6,11 @@
 #include "player.h"
 #include "decodeMessage.h"
 
-PLAYER *create_player(int playerID, char *playerIP, char *playerName){
+PLAYER *create_player(int playerID, char *playerIP, char *playerName, int socket){
 	PLAYER *newPlayer = (PLAYER *)malloc(sizeof(PLAYER));
 	
 	newPlayer->playerID = playerID;
+	newPlayer->socket = socket;
 	strcpy(newPlayer->playerIP, playerIP);
 	strcpy(newPlayer->playerName, playerName);
 	
@@ -21,6 +22,7 @@ PLAYER *create_player(int playerID, char *playerIP, char *playerName){
 void print_player(struct player *player) {
 	printf("---- Player with id: %d ---- \n", player->playerID);
 	printf("---- Name: \t %s \n", player->playerName);
+	printf("---- Socket: \t %d \n", player->socket);
 	printf("---- Ship info: \t %s \n", player->shipInfo);
 	printf("---- IP adress: \t %s \n", player->playerIP);
 	printf("\n");

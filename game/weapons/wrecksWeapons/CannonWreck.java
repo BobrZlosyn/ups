@@ -15,7 +15,7 @@ public class CannonWreck extends CommonWreck {
 
 
     public CannonWreck(double x, double y, Color color) {
-        super(x, y, color, 100);
+        super(x, y, color, 100, true);
         createWrecks();
         createMovementPoints();
     }

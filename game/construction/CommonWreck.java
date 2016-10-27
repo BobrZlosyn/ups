@@ -25,24 +25,27 @@ public abstract class CommonWreck {
 
     private Timeline flashAnimation;
     private Circle flashCircle;
-    private boolean wrecksAdd;
+    private boolean wrecksAdd, rotation;
     protected int xIndex, yIndex;
     protected int countOfMovements, maxCountOfMovements;
     protected ArrayList<Shape> wrecks;
     protected double moveAddPoint [][];
     private int countOfShakes, maxCountOfShakes, marginOfShake;
 
-    public CommonWreck(int maxCountOfMovements) {
+
+    public CommonWreck(int maxCountOfMovements, boolean allowRotation) {
         this.maxCountOfMovements = maxCountOfMovements;
         init();
+        rotation = allowRotation;
     }
 
-    public CommonWreck(double x, double y, Color color, int maxCountOfMovements){
+    public CommonWreck(double x, double y, Color color, int maxCountOfMovements, boolean allowRotation){
 
         this.maxCountOfMovements = maxCountOfMovements;
         flashCircle = new Circle(1, color);
         flashCircle.setCenterX(x);
         flashCircle.setCenterY(y);
+        rotation = allowRotation;
         init();
     }
 
@@ -72,7 +75,10 @@ public abstract class CommonWreck {
             wrecks.get(i).setLayoutX(wrecks.get(i).getLayoutX() + moveAddPoint[i][xIndex]);
             wrecks.get(i).setLayoutY(wrecks.get(i).getLayoutY() + moveAddPoint[i][yIndex]);
             wrecks.get(i).setOpacity(wrecks.get(i).getOpacity() - 1.3/maxCountOfMovements);
-            wrecks.get(i).getTransforms().add(new Rotate(2));
+
+            if(rotation){
+                wrecks.get(i).getTransforms().add(new Rotate(1));
+            }
         }
         countOfMovements ++;
 

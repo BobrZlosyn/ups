@@ -13,7 +13,7 @@ import javafx.scene.shape.Shape;
 public class SimpleShieldWrecks extends CommonWreck {
 
     public SimpleShieldWrecks(double x, double y, Color color){
-        super(x, y, color, 100);
+        super(x, y, color, 100, true);
         createWrecks();
         createMovementPoints();
     }

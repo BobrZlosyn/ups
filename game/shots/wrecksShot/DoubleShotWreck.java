@@ -12,7 +12,7 @@ import javafx.scene.shape.Circle;
 public class DoubleShotWreck extends CommonWreck {
 
     public DoubleShotWreck(double x1, double y1, double x2, double y2){
-        super(15);
+        super(15, false);
         createWrecks(x1, y1, x2, y2);
         createMovementPoints();
     }

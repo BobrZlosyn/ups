@@ -26,6 +26,7 @@ public class TcpClient implements NetworkInterface{
         // create a socket to communicate to the specified host and port
         try {
             s = new Socket( host, port);
+
         }
         catch (IOException e) {
             System.out.println("Connection to " + host + ":" + port + " refused");
@@ -55,6 +56,10 @@ public class TcpClient implements NetworkInterface{
 
         return true;
 
+    }
+
+    public boolean isConnected(){
+        return s.isConnected();
     }
 
     @Override
@@ -101,14 +106,18 @@ public class TcpClient implements NetworkInterface{
 
         // read the response (a line) from the server
         try {
-            if(reader != null){
-                line = reader.readLine();
+
+            if(reader == null){
+                return line;
             }
 
+            line = reader.readLine();
             // write the line to console
+            System.out.println("ahoj " + line);
             return line;
         }
         catch (IOException e) {
+            e.printStackTrace();
             System.err.println("Read error");
         }
         return line;

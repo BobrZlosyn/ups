@@ -12,7 +12,7 @@ import javafx.scene.shape.Circle;
 public class SimpleShotWreck extends CommonWreck {
 
     public SimpleShotWreck(){
-        super(15);
+        super(15, false);
     }
 
     protected void createWrecks( double x, double y){

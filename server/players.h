@@ -13,7 +13,7 @@ struct players{
 	struct players *previous;
 }PLAYERS;
 
-PLAYERS *add_player(struct players * first, char *ip_adress);
+PLAYERS *add_player(struct players * first, char *ip_adress, int socket);
 
 int verifyGeneretedID(struct players *first, int playerID);
 

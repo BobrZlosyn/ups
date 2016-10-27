@@ -12,7 +12,7 @@ import javafx.scene.shape.Polygon;
 public class BattleShipWreck extends CommonWreck {
 
     public BattleShipWreck(double x, double y, Color color){
-        super(x, y, color, 200);
+        super(x, y, color, 200, true);
         createWrecks();
         createMovementPoints();
     }

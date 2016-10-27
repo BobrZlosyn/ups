@@ -5,13 +5,14 @@ typedef
 struct player{
 
 	int playerID;
+	int socket;
 	char playerIP [15];
 	char playerName [20];
 	char shipInfo [100];
 
 }PLAYER;
 
-PLAYER *create_player(int playerID, char *playerIP, char *playerName);
+PLAYER *create_player(int playerID, char *playerIP, char *playerName, int socket);
 
 void set_shipInfo(struct player *player, char *shipInfo, int maxSize, int indexOfBeginning);
 

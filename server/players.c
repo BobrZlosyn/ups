@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "players.h"
 #include "room.h"
 #include "player.h"
@@ -14,8 +15,9 @@ int maxNumberOfID = 10000;
 int generateRandomID (PLAYERS *first) {
 	int id;
 	while(1){
+		srand ( time(NULL) );
 		id = rand() % maxNumberOfID;
-		if(id == 0) id++;
+		if(id == 0) continue;
 		
 		if (verifyGeneretedID(first, id) == 0){
 			break;	
@@ -28,12 +30,12 @@ int generateRandomID (PLAYERS *first) {
 /*
  * vytvori noveho hrace a prida ho do seznamu hracu
  */	
-PLAYERS *add_player(struct players *first, char *ip_adress){
+PLAYERS *add_player(struct players *first, char *ip_adress, int socket){
 	int id;
 	PLAYERS *newPlayer = (PLAYERS *)malloc(sizeof(PLAYERS));
 	
 	id = generateRandomID(first);
-	PLAYER *player = create_player(id, ip_adress, "none"); 
+	PLAYER *player = create_player(id, ip_adress, "none", socket); 
 	
 	newPlayer->isFree = 1;
 	newPlayer->player = player;
