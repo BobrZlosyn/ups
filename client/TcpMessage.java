@@ -27,6 +27,7 @@ public class TcpMessage {
     public static final String RESULT = "R";
     public static final String ACKNOLEDGE = "P";
     public static final String ORDER = "O";
+    public static final String EQUIPMENT_STATUS = "M";
 
 
     public TcpMessage( ) {

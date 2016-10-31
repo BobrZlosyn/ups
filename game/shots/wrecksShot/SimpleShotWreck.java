@@ -11,8 +11,9 @@ import javafx.scene.shape.Circle;
  */
 public class SimpleShotWreck extends CommonWreck {
 
-    public SimpleShotWreck(){
+    public SimpleShotWreck(boolean isFromEnemy){
         super(15, false);
+        setIsFromEnemy(isFromEnemy);
     }
 
     protected void createWrecks( double x, double y){

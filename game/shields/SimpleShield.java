@@ -57,7 +57,7 @@ public class SimpleShield extends CommonShield {
 
         Pane gameArea = (Pane) place.getField().getParent();
         gameArea.getChildren().addAll(commonShieldModel.getParts());
-
+        place.setIsShield(true);
         displayEquipmentExtension(place);
     }
 

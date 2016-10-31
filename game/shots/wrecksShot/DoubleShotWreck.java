@@ -11,8 +11,9 @@ import javafx.scene.shape.Circle;
  */
 public class DoubleShotWreck extends CommonWreck {
 
-    public DoubleShotWreck(double x1, double y1, double x2, double y2){
+    public DoubleShotWreck(double x1, double y1, double x2, double y2, boolean isFromEnemy){
         super(15, false);
+        setIsFromEnemy(isFromEnemy);
         createWrecks(x1, y1, x2, y2);
         createMovementPoints();
     }
@@ -44,6 +45,7 @@ public class DoubleShotWreck extends CommonWreck {
     protected void createMovementPoints(){
         moveAddPoint = new double [wrecks.size()][2];
 
+
         setMovementPoint(0, -0.9, -2.9);
         setMovementPoint(1, -0.8, -1.3);
         setMovementPoint(2, -0.5, 1.2);
@@ -73,7 +75,7 @@ public class DoubleShotWreck extends CommonWreck {
     public void addWrecksToPane(Pane gameArea, double x, double y) {
 
         gameArea.getChildren().addAll(wrecks);
-
         WrecksHandler.addWrecks(this);
+
     }
 }

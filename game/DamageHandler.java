@@ -2,6 +2,7 @@ package game;
 
 import game.construction.CommonConstruction;
 import game.construction.Placement;
+import game.shields.CommonShield;
 import game.ships.CommonShip;
 import game.shots.CommonShot;
 import game.static_classes.GlobalVariables;
@@ -114,9 +115,9 @@ public class DamageHandler {
                     int rowAttack = attackShip.getPlacementPositions().length - 1;
                     int columnAttack = attackShip.getPlacementPositions()[0].length - 1;
 
-                    if(iAtacker >= 0){
-                        iAtacker = columnAttack - iAtacker;
-                        iTarget = columnTarget - iTarget;
+                    if(iTarget >= 0){
+                        iAtacker = rowAttack - iAtacker;
+                        iTarget = rowTarget - iTarget;
                     }
                 }
 
@@ -227,7 +228,8 @@ public class DamageHandler {
                     continue;
                 }
 
-                target = ((CommonWeapon) placement.getShipEquipment()).getTarget(); //ziskavani cile
+                CommonWeapon weapon = ((CommonWeapon) placement.getShipEquipment());
+                target = weapon.getTarget(); //ziskavani cile
 
                 if(GlobalVariables.isEmpty(target)){
                     continue;
@@ -235,7 +237,7 @@ public class DamageHandler {
 
                 shooting.append(i + "," + j + ","); // pridani souradnic utocnika
                 shooting.append(target.getRow() + "," + target.getColumn()); //pridani cile
-                shooting.append(",120");
+                shooting.append("," + weapon.getMaxStrength()); //damage
                 shooting.append(",1");
                 shooting.append(";"); //ukonceni zbrane
             }
@@ -246,5 +248,33 @@ public class DamageHandler {
         return shooting.toString();
     }
 
+
+    public String exportEquipmentStatus(Placement [][] placements){
+        StringBuilder status = new StringBuilder();
+        Placement placement;
+        for(int i = 0; i < placements.length; i++){
+            for(int j = 0; j < placements[i].length; j++){
+                placement = placements[i][j];
+
+                if(GlobalVariables.isEmpty(placement) || !placement.getShipEquipment().isShield()){
+                    continue;
+                }
+
+                CommonShield shield = ((CommonShield) placement.getShipEquipment());
+                int isActive;
+                if(shield.isActive()){
+                    isActive = 1;
+                }else{
+                    isActive = 0;
+                }
+
+                status.append(i + "," + j + ","); // pridani vybaveni
+                status.append(isActive);
+                status.append(";"); //ukonceni zbrane
+            }
+        }
+
+        return status.toString();
+    }
 
 }

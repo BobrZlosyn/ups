@@ -31,6 +31,7 @@ public abstract class CommonWreck {
     protected ArrayList<Shape> wrecks;
     protected double moveAddPoint [][];
     private int countOfShakes, maxCountOfShakes, marginOfShake;
+    protected boolean isFromEnemy;
 
 
     public CommonWreck(int maxCountOfMovements, boolean allowRotation) {
@@ -58,7 +59,7 @@ public abstract class CommonWreck {
         countOfShakes = 0;
         maxCountOfShakes = 10;
         marginOfShake = 5;
-
+        isFromEnemy = false;
     }
 
     public Circle getFlashCircle() {
@@ -142,6 +143,14 @@ public abstract class CommonWreck {
         }else{
             GridPane.setMargin(flashCircle.getParent(), new Insets(0,0,0,0));
         }
+    }
+
+    public void setIsFromEnemy(boolean isFromEnemy) {
+        this.isFromEnemy = isFromEnemy;
+    }
+
+    public boolean isFromEnemy() {
+        return isFromEnemy;
     }
 
     protected abstract void createWrecks();

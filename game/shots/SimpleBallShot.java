@@ -58,7 +58,8 @@ public class SimpleBallShot extends CommonShot{
 
     @Override
     public SimpleShotWreck getWreck() {
-        SimpleShotWreck shotWreck = new SimpleShotWreck();
+
+        SimpleShotWreck shotWreck = new SimpleShotWreck(attacker.isEnemy());
         shotWreck.addWrecksToPane((Pane)shot.getParent(), x1, y1);
         return shotWreck;
     }

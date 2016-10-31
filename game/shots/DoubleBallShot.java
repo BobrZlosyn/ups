@@ -67,7 +67,7 @@ public class DoubleBallShot extends CommonShot{
     @Override
     public DoubleShotWreck getWreck() {
 
-        DoubleShotWreck shotWreck = new DoubleShotWreck(x1, y1 -5, x1 + 2, y1 + 5);
+        DoubleShotWreck shotWreck = new DoubleShotWreck(x1, y1 -5, x1 + 2, y1 + 5, attacker.isEnemy());
         shotWreck.addWrecksToPane((Pane)shot1.getParent(), x1, y1);
         return shotWreck;
     }

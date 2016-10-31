@@ -13,6 +13,7 @@ public class Placement {
     private IShipEquipment equipment;
     private CommonShip ship;
     private boolean isWeapon;
+    private boolean isShield;
     private int row, column;
 
     public Placement (double x, double y, double size, CommonShip ship, int row, int column) {
@@ -21,6 +22,7 @@ public class Placement {
         setSize(size);
         setIsEmpty(true);
         setIsWeapon(false);
+        setIsShield(false);
         this.ship = ship;
         this.row = row;
         this.column = column;
@@ -28,6 +30,10 @@ public class Placement {
 
     public void setIsWeapon(boolean isWeapon) {
         this.isWeapon = isWeapon;
+    }
+
+    public void setIsShield(boolean isShield) {
+        this.isShield = isShield;
     }
 
     public void setField(Rectangle field) {
@@ -72,6 +78,10 @@ public class Placement {
 
     public boolean isWeapon() {
         return isWeapon;
+    }
+
+    public boolean isShield() {
+        return isShield;
     }
 
     public int getColumn() {

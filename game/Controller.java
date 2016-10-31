@@ -90,6 +90,10 @@ public class Controller implements Initializable{
 
         tcpConnection.closeConnectThread();
         tcpConnection.closeReadThread();
+
+        if (!GlobalVariables.isEmpty(tcpConnection)) {
+            tcpConnection.endConnection();
+        }
     }
 
 
@@ -199,19 +203,24 @@ public class Controller implements Initializable{
                 boolean registrationReceived = false;
                 boolean gameStart = false;
 
-
                 while(true) {
-
                     if (isCancelled()) {
                         tcpConnection.closeConnection();
                         Platform.exit();
                         break;
                     }
 
+                    while (!tcpConnection.isConnected()){
+                        registrationSent = false;
+                        registrationReceived = false;
+                        gameStart = false;
+                    }
+
                     if (!registrationSent) {
                         registrationSent = tcpConnection.sendMessageToServer(TcpMessage.CONNECTION, exportMsg, TcpMessage.IDENTITY);
                     }
-                    if(!registrationReceived){
+
+                    if(!registrationReceived && registrationSent){
                         registrationReceived = TcpMessage.IDENTITY.equals(GlobalVariables.receivedMsg);
                     }
 
@@ -225,13 +234,19 @@ public class Controller implements Initializable{
                         }
                     }
 
+
+
                     //pridat timeout
                     try {
                         Thread.sleep(WAITING_FOR_OPONNENT);
+
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                         break;
                     }
+
+
+
                 }
                 return null;
             }
@@ -286,9 +301,10 @@ public class Controller implements Initializable{
         damageHandler = new DamageHandler(GlobalVariables.choosenShip, enemyShip, gameAreaPane);
         sendDataButton.setOnAction(event1 -> {
             if(GlobalVariables.isPlayingNow.get()){
+                String status = damageHandler.exportEquipmentStatus(GlobalVariables.choosenShip.getPlacementPositions());
+                tcpConnection.sendMessageToServer(TcpMessage.EQUIPMENT_STATUS, status, TcpMessage.WAITING);
                 String actions = damageHandler.exportShooting(GlobalVariables.choosenShip.getPlacementPositions());
                 tcpConnection.sendMessageToServer(TcpMessage.ATTACK, actions, TcpMessage.ATTACK);
-                GlobalVariables.expectedMsg = TcpMessage.ATTACK;
             }
         });
 
@@ -365,7 +381,9 @@ public class Controller implements Initializable{
         enemyShip.getActualLifeBinding().addListener(userWin);
         GlobalVariables.enemyLost.addListener((observable, oldValue, newValue) -> {
             if(newValue){
-                enemyShip.takeDamage((int)enemyShip.getActualLife());
+                Platform.runLater(() -> {
+                    enemyShip.takeDamage((int)enemyShip.getActualLife());
+                });
             }
         });
     }
