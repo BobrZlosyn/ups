@@ -65,37 +65,33 @@ int close_welcome_socket(int welcome_s){
 }
 
 int close_connect_socket(int connect_s){
-	int retcode;
+	int retcode = 0;
 	
 	#ifdef WIN
 	  retcode = closesocket(connect_s);
 	  
-	  if (retcode < 0)
-	  {
+	  if (retcode < 0) {
 	    printf("*** ERROR - closesocket() failed \n");
-	    exit(-1);
 	  }
 	#endif
 	
 	#ifdef BSD
 	  retcode = close(connect_s);
-	  if (retcode < 0)
-	  {
+	  if (retcode < 0) {
 	    printf("*** ERROR - close() failed \n");
-	    exit(-1);
 	  }
 	#endif
 	
-	return 0;
+	return retcode;
 }
 
 void completeAttackAction(int playingID, int playerID, char *message) {
 	
-	if(playingID == playerID){
+	if(playingID == playerID) {
 		char newPokus [sizeof(message)] = "1;;";
 		strcpy(newPokus + 3, message);
 		strcpy(message, newPokus);	
-	}else{
+	}else {
 		char newPokus [sizeof(message)] = "0;;";
 		strcpy(newPokus + 3, message);
 		strcpy(message, newPokus);
@@ -115,8 +111,63 @@ int sendMessage(char *message_to_send, int connect_s){
 	return 0;
 }
 
-int doActionByMessage(struct message *msg, char *ip_client, char *sendMsg, int socket) {
 
+int attack_action(PLAYERS *first, MESSAGE *msg, char *sendMsg) {
+	printf("attack \n");
+	PLAYERS *players = find_player(first, msg->playerID);
+	if (players == NULL) {
+		printf("error \n");
+		sprintf(sendMsg, "<E;chyba ve zpracovani hrace>\n");
+		return 1;
+	}
+	
+	ROOM *room = players->room;
+	if (room == NULL){
+		printf("error \n");
+		sprintf(sendMsg, "<E;chyba ve zpracovani mistnosti>\n");
+		return 2;
+	}
+	
+	if (room->player2 == NULL){
+		printf("error \n");
+		sprintf(sendMsg, "<E;chyba dalsi hrac neexistuje>\n");
+		return 3;
+	}
+	
+	if(room->isPlayingID == msg->playerID){
+		
+		if (room->isPlayingID == room->player1->player->playerID) {
+			room->isPlayingID = room->player2->player->playerID;
+		} else {
+			room->isPlayingID = room->player1->player->playerID;
+		}		
+		
+		/*order sending*/
+		sprintf(sendMsg, "<O;%d>\n", room->isPlayingID);
+		sendMessage(sendMsg, room->player1->player->socket);
+		sendMessage(sendMsg, room->player2->player->socket);
+		
+		
+		sprintf(sendMsg, "<A;0;;0;;0;;%s>\n", msg->data);
+		if(room->isPlayingID == room->player1->player->playerID){
+			sendMessage(sendMsg, room->player1->player->socket);
+		}else{
+			sendMessage(sendMsg, room->player2->player->socket);
+		}
+				
+		sprintf(sendMsg, "<A;1;;0;;0;;%s>\n", msg->data);
+			
+	}else{
+		printf("error \n");
+		sprintf(sendMsg, "<E;hrac neni na rade>\n");	
+	}
+	
+	return 0;
+}
+
+int doActionByMessage(struct message *msg, char *ip_client, char *sendMsg, int socket) {
+	sprintf(sendMsg, " ");
+	
 	switch(msg->action){
 		case 'C':{
 			first = add_player(first, ip_client, socket);
@@ -136,25 +187,53 @@ int doActionByMessage(struct message *msg, char *ip_client, char *sendMsg, int s
 			printf("game \n");
 			ROOM *room = find_free_room(first, msg->playerID);
 			if (room == NULL) {
-				room = create_room(find_player(first, msg->playerID));
-				sprintf(sendMsg, "<W>\n");
+				PLAYERS *player = find_player(first, msg->playerID);
+				if(player == NULL){
+					printf("hrace %d nelze nalezt \n", msg->playerID);
+					sprintf(sendMsg, "<E;hrace nelze najit>\n");
+					break;
+				}
+						
+						
+						
+								
+				room = create_room(player);
+				room->isPlayingID = msg->playerID;
+				sprintf(sendMsg, "<W; cekani na hrace>\n");
 			} else {
-				add_second_player(find_player(first, msg->playerID), room);
-				sprintf(sendMsg, "<S;%s>\n", room->player1->player->shipInfo);
+				PLAYERS *player2 = find_player(first, msg->playerID);
+				if(player2 == NULL){
+					printf("hrace %d nelze nalezt \n", msg->playerID);
+					sprintf(sendMsg, "<E;hrace nelze najit>\n");
+					break;
+				}
 				
+				add_second_player(player2, room);
+				
+				/*order sending*/
+				sprintf(sendMsg, "<O;%d>\n", room->isPlayingID);
 				sendMessage(sendMsg, room->player1->player->socket);
+				sendMessage(sendMsg, room->player2->player->socket);
+				
+				/* ship info sending*/
+				sprintf(sendMsg, "<S;%s>\n", room->player2->player->shipInfo);
+				sendMessage(sendMsg, room->player1->player->socket);
+				
+				sprintf(sendMsg, "<S;%s>\n", room->player1->player->shipInfo);
 			}
 			
 		} break;
 		
-		case 'A':{
-			printf("attack \n");
-			PLAYERS *players = find_player(first, msg->playerID);
-		/*	completeAttackAction(players->room->isPlayingID, players->player->playerID, msg->data);
-		*/			
-		} break;
+		case 'A':attack_action(first, msg, sendMsg); break;
+		
 		case 'S':printf("status \n"); break;
-		case 'L':printf("lost - surrrender \n"); break;
+		
+		case 'L':{
+			printf("lost - surrrender \n");	
+			sprintf(sendMsg, "<L;rusim>\n");
+			break;
+		} break;
+		
 		default :{
 			printf("nenalezeno \n");
 			sprintf(sendMsg, "<E;action not found>\n");
@@ -165,7 +244,6 @@ int doActionByMessage(struct message *msg, char *ip_client, char *sendMsg, int s
 
 	return 0;	
 }
-
 
 int initializeWelcomeSocket(struct sockaddr_in server_addr){
 	int welcome_s, retcode;
@@ -189,24 +267,23 @@ void *user_thread(void *t_param){
 	char 				 out_buf[100];   /* Output buffer for data*/
 	struct data_for_thread *param = (struct data_for_thread *)t_param;	
 	int retcode;
-	printf("ahojky");
 	int 				 socket = param->connect_s;
 	
 	while(1){
 		MESSAGE *message = (MESSAGE *)malloc(sizeof(MESSAGE));
-		
 		/* Receive from the client using the connect socket*/
 		retcode = recv(socket, in_buf, sizeof(in_buf), 0);
 		if (retcode < 0) {
 			printf("*** ERROR - recv() failed \n");
-			exit(-1);
+			break;
 		}
-		printf("received %s \n", in_buf);
+	
 		retcode = decode_message(in_buf, message, 4);
 		if (retcode > 0) {
 			free(message);
 			continue;	
 		}	  
+		printf("player %d received %c --- %s \n", message->playerID, message->action, message->data);
 		
 		retcode = doActionByMessage(message, inet_ntoa(param->client_ip_addr), out_buf, socket);
 		printf("send %s \n", out_buf);

@@ -93,6 +93,7 @@ public class BottomPanel {
         sendOrders.setText("DÁT ROZKAZ K ÚTOKU");
         sendOrders.setMaxWidth(Double.MAX_VALUE);
         sendOrders.setMaxHeight(Double.MAX_VALUE);
+        sendOrders.disableProperty().bind(GlobalVariables.isPlayingNow.not());
     }
 
     private void createActivationShield(){

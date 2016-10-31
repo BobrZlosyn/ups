@@ -1,5 +1,7 @@
 package client;
 
+import game.static_classes.GlobalVariables;
+
 public class TcpMessage {
 
     private String  message;
@@ -8,6 +10,7 @@ public class TcpMessage {
     private final char END_MESSAGE = '>';
     private String id;
     public static final String SEPARATOR = ";";
+    private String expectedType;
 
     /**
      *      MESSAGE TYPES
@@ -20,17 +23,33 @@ public class TcpMessage {
     public static final String ATTACK = "A";
     public static final String WAITING = "W";
     public static final String LOST = "L";
-
+    public static final String ERROR = "E";
+    public static final String RESULT = "R";
+    public static final String ACKNOLEDGE = "P";
+    public static final String ORDER = "O";
 
 
     public TcpMessage( ) {
         message = "";
         bytes = 0;
         id = "0";
+        expectedType = "";
+    }
+
+    public void setExpectedType(String expectedType) {
+        this.expectedType = expectedType;
+    }
+
+    public String getExpectedType() {
+        return expectedType;
     }
 
     public String getMessage() {
         return message;
+    }
+
+    public boolean isEmpty(){
+        return message.isEmpty();
     }
 
     public int getBytes() {
@@ -44,6 +63,7 @@ public class TcpMessage {
     public boolean hasId(){
         return !id.equals("0");
     }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -65,6 +85,12 @@ public class TcpMessage {
     }
 
     public void decodeMessage(String msg) {
+        if(GlobalVariables.isEmpty(msg)){
+            message = "";
+            bytes = 0;
+            return;
+        }
+
         msg = msg.trim();
 
         if (msg.length() < 2
@@ -84,11 +110,17 @@ public class TcpMessage {
         bytes = 0;
     }
 
-    public boolean isWantedMessage(String typeOfMessage){
-         if(message.isEmpty()){
-            return false;
+    public String getData(){
+        if(message.length() < 3){
+            return  "";
         }
+        return message.substring(2);
+    }
 
-        return typeOfMessage.equals("" +message.charAt(0));
+    public String getType(){
+        if(message.isEmpty()){
+            return  "E";
+        }
+        return "" +message.charAt(0);
     }
 }

@@ -5,6 +5,7 @@ import game.static_classes.GameBalance;
 import game.static_classes.GlobalVariables;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -320,8 +321,10 @@ public class Controls {
             return;
         }
 
-        timeValue.set(GameBalance.ROUND_TIME);
-        roundTimeAnimation.playFromStart();
+        Platform.runLater(() -> {
+            timeValue.set(GameBalance.ROUND_TIME);
+            roundTimeAnimation.playFromStart();
+        });
     }
 
 

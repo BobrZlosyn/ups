@@ -53,6 +53,7 @@ void add_second_player(struct players *player2, struct room *room){
 	room->player2 = player2;
 	room->isWaiting = 0;
 	player2->isFree = 0;
+	player2->room = room;
 }
 
 

@@ -9,6 +9,7 @@ import game.weapons.CommonWeapon;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
@@ -40,6 +41,8 @@ public class DamageHandler {
 
     //msg - 1-0;; Shield Damage - 0-N;; Ship damage - 0-N;; Placement position From - 1-N,1-N,Placement position Target - 1-N, 1-N, Damage - 0-N; other placements ...;
     public int doDamage(String msgWithDmg){
+
+        System.out.println("attack 2 "+ msgWithDmg);
         decodeMsg(msgWithDmg);
 
         if(toEnemy){
@@ -104,6 +107,19 @@ public class DamageHandler {
                 int damage = Integer.parseInt(positions[4]);
                 int intoShields = Integer.parseInt(positions[5]);
 
+
+                if(GlobalVariables.isPlayingNow.getValue()){
+                    int rowTarget = targetShip.getPlacementPositions().length - 1;
+                    int columnTarget = targetShip.getPlacementPositions()[0].length - 1;
+                    int rowAttack = attackShip.getPlacementPositions().length - 1;
+                    int columnAttack = attackShip.getPlacementPositions()[0].length - 1;
+
+                    if(iAtacker >= 0){
+                        iAtacker = columnAttack - iAtacker;
+                        iTarget = columnTarget - iTarget;
+                    }
+                }
+
                 double x, y;
                 Placement placeAttacker = attackPlacements[iAtacker][jAtacker];
                 CommonConstruction target;
@@ -132,8 +148,11 @@ public class DamageHandler {
                 }else {
                     commonShot = ((CommonWeapon)placeAttacker.getShipEquipment()).getShot(target, damage, false);
                 }
-                commonShot.addShot(gameArea);
-                shots.add(commonShot);
+
+                Platform.runLater(() -> {
+                    commonShot.addShot(gameArea);
+                    shots.add(commonShot);
+                });
             }
 
             createTimeLineShot();
@@ -200,7 +219,6 @@ public class DamageHandler {
     public String exportShooting(Placement [][] placements){
         StringBuilder shooting = new StringBuilder();
         Placement placement, target;
-        shooting.append("1;;0;;0;;");
         for(int i = 0; i < placements.length; i++){
             for(int j = 0; j < placements[i].length; j++){
                 placement = placements[i][j];

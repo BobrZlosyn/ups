@@ -1,12 +1,9 @@
 package client;
 
 import game.static_classes.GlobalVariables;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.util.Duration;
+import javafx.concurrent.Task;
 
 public class TcpApplication
 {
@@ -19,6 +16,7 @@ public class TcpApplication
     private Timeline setupConnection;
     private SimpleBooleanProperty isConnected;
     private boolean isWaiting;
+    private Task readTask, connectTask;
 
     public TcpApplication(){
         server = "localhost";
@@ -27,6 +25,7 @@ public class TcpApplication
         isConnected = new SimpleBooleanProperty(false);
         message = new TcpMessage();
         isWaiting = false;
+        client = new TcpClient( server, port );
     }
 
     public int getUserID() {
@@ -34,39 +33,11 @@ public class TcpApplication
     }
 
     public SimpleBooleanProperty isConnectedProperty() {
-        return isConnected;
+        return client.isConnectedProperty();
     }
 
     public boolean isConnected() {
-        return isConnected.get();
-    }
-
-    public void setupConnection(){
-        if(sendConnectionMessage()){
-            isConnected.setValue(true);
-            return;
-        }else{
-            isConnected.setValue(false);
-        }
-
-        setupConnection = new Timeline(new KeyFrame(Duration.seconds(10), event -> {
-            if(sendConnectionMessage()){
-                setupConnection.stop();
-                setupConnection = null;
-                isConnected.setValue(true);
-            }else{
-                isConnected.set(false);
-            }
-        }));
-        setupConnection.setCycleCount(Animation.INDEFINITE);
-        setupConnection.playFromStart();
-    }
-
-    public void stopSetupConnection(){
-        if(!GlobalVariables.isEmpty(setupConnection)){
-            setupConnection.stop();
-            setupConnection = null;
-        }
+        return client.isConnectedProperty().get();
     }
 
     public void endConnection(){
@@ -84,34 +55,220 @@ public class TcpApplication
     }
 
     private boolean sendConnectionMessage(){
-        client = new TcpClient( server, port );
         return client.open();
     }
 
-    /**
-     * when user surrender in the game
-     * @return
-     */
-    public boolean sendLostData(){
-            message.setMessage(message.LOST, "vzdavam se");
-            client.putMessage( message );
-            message.decodeMessage(client.getMessage());
+
+    public boolean sendMessageToServer(String typeOfMessage, String dataToSend, String expectedResponse){
+        if(!isConnected()){
+
+            if(!connectTask.isRunning()){
+                connectThread();
+            }
+
+            return false;
+        }
+
+        message.setMessage(typeOfMessage, dataToSend);
+        client.putMessage(message);
+        GlobalVariables.expectedMsg = expectedResponse;
+
+        return true;
+    }
+
+    public boolean listenForMessage( String expectedResponse){
+        GlobalVariables.expectedMsg = expectedResponse;
+
+        // cekani na odpoved
+        try {
+            while (message.isEmpty()){
+                //nastaveni timeoutu
+                Thread.sleep(100);
+            }
+            return doAction();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        return false;
+    }
+
+    private boolean doAction() throws InterruptedException{
+        //pridat cekani na acknowledge
+        String type, data;
+        while(true){
+
+            type = message.getType();
+            data = message.getData();
+            message.clearMessage();
+
+            switch (type){
+
+                case TcpMessage.ATTACK:{
+                    GlobalVariables.attackDefinition.set(data);
+                    break;
+                }
+
+                case TcpMessage.WAITING:{
+                    break;
+                }
+
+                case TcpMessage.END_WAITING:{
+                    GlobalVariables.enemyshipDefinition = data ;
+                    break;
+                }
+
+                case TcpMessage.IDENTITY:{
+                    message.setId(data );
+                    break;
+                }
+
+                case TcpMessage.ORDER:{
+                    Thread.sleep(100);
+                    if(data.equals(message.getId())){
+                        GlobalVariables.isPlayingNow.set(true);
+                    }else{
+                        GlobalVariables.isPlayingNow.set(false);
+                    }
+
+                    break;
+                }
+
+                case TcpMessage.GAME_START: break;
+
+                case TcpMessage.RESULT:{
+
+                    if(data.equals(message.getId())){
+                        GlobalVariables.enemyLost.set(true);
+                    }
+
+                    break;
+                }
+                case TcpMessage.ACKNOLEDGE: break;
+
+                case TcpMessage.ERROR: break;
+
+                default: {
+                    return false;
+                }
+            }
+
+            if(type.equals(GlobalVariables.expectedMsg) && !GlobalVariables.expectedMsg.equals(TcpMessage.WAITING)) {
+
+                break;
+            }
+
+
+
+            Thread.sleep(100);
+        }
 
         return true;
     }
 
     /**
-     * when user do a attack
-     * @param attackMsg
-     * @return
+     * task pro cteni zprav ze serveru
      */
-    public boolean sendAttackData(String attackMsg){
-            message.setMessage(message.ATTACK, attackMsg);
-            client.putMessage( message );
-            message.decodeMessage(client.getMessage());
-        return true;
+    private void readThread(){
+        if(!GlobalVariables.isEmpty(readTask) && !isConnected()){
+            return;
+        }
+
+        readTask = new Task<Void>() {
+            @Override public Void call() {
+                while(true) {
+
+                    if (isCancelled()) {
+                        closeConnection();
+                        break;
+                    }
+
+                    if(isConnected()){
+                        message.decodeMessage(client.getMessage());
+                        if(message.getMessage().isEmpty()){
+                            break;
+                        }
+                        System.out.println("read "+message.getMessage());
+                    }else{
+                        break;
+                    }
+                }
+                return null;
+            }
+        };
+
+        readTask.setOnSucceeded(event -> {
+            client.close();
+            client.updateIsConnected();
+            connectThread();
+            readTask = null;
+        });
+        new Thread(readTask).start();
     }
 
+    /**
+     * task pro vytvoreni spojeni se serverem
+     */
+    public void connectThread(){
+
+
+        if(!GlobalVariables.isEmpty(connectTask) || isConnected()){
+            return;
+        }
+
+        connectTask = new Task<Boolean>() {
+            @Override public Boolean call() {
+                while(true) {
+
+                    if (isCancelled()) {
+                        closeConnection();
+                        break;
+                    }
+
+                    if(sendConnectionMessage()){
+                        break;
+                    }
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+
+                        e.printStackTrace();
+                        break;
+                    }
+                }
+                return true;
+            }
+        };
+
+        connectTask.setOnSucceeded(event -> {
+            System.out.println("coneeeeect task");
+            client.updateIsConnected();
+            readThread();
+            connectTask = null;
+        });
+
+        new Thread(connectTask).start();
+    }
+
+    public void closeReadThread(){
+        if(GlobalVariables.isEmpty(readTask)){
+            return;
+        }
+
+        readTask.cancel();
+    }
+
+    public void closeConnectThread(){
+        if(GlobalVariables.isEmpty(connectTask)){
+            return;
+        }
+
+        connectTask.cancel();
+        connectTask = null;
+    }
     /**********************************************
      ***************  START OF GAME  **************
      **********************************************/
@@ -122,8 +279,10 @@ public class TcpApplication
      * @return
      */
     public boolean prepareGame(String shipInfo){
+        message.setMessage(message.CONNECTION, shipInfo);
+        client.putMessage( message );
 
-        boolean result =  client.isConnected();
+        /*boolean result =  isConnected();
         System.out.println(result);
         if(result && !message.hasId()){
             message.setMessage(message.CONNECTION, shipInfo);
@@ -142,8 +301,8 @@ public class TcpApplication
                     break;
                 }
             }
-        }
-        return true;
+        }*/
+        return false;
     }
 
     public void closeConnection(){
@@ -152,16 +311,7 @@ public class TcpApplication
         }
     }
 
-    private boolean retrieveID(String msg){
 
-        String [] parts = msg.split(message.SEPARATOR);
-        if(parts.length == 2 && parts[0].equals(message.IDENTITY)){
-            message.setId(parts[1]);
-            return  true;
-        }
-
-        return false;
-    }
 
     private boolean runTheGame(String msg){
 
@@ -174,9 +324,7 @@ public class TcpApplication
         return true;
     }
 
-    public String getMessage(){
-        return message.getMessage().substring(2);
-    }
+
 
 
 }

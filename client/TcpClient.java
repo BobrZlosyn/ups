@@ -1,6 +1,7 @@
 package client;
 import game.static_classes.GlobalVariables;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 
 import java.io.*;
 import java.net.*;
@@ -13,11 +14,12 @@ public class TcpClient implements NetworkInterface{
     private PrintWriter writer;
     private int port;
     private String host;
-
+    private SimpleBooleanProperty isConnected;
 
     public TcpClient ( String host, int port ) {
         this.host = host;
         this.port = port;
+        isConnected = new SimpleBooleanProperty(false);
     }
 
     @Override
@@ -54,12 +56,17 @@ public class TcpClient implements NetworkInterface{
             return false;
         }
 
+
         return true;
 
     }
 
-    public boolean isConnected(){
-        return s.isConnected();
+    public SimpleBooleanProperty isConnectedProperty(){
+        return isConnected;
+    }
+
+    public void updateIsConnected(){
+        isConnected.set(!s.isClosed());
     }
 
     @Override
@@ -81,7 +88,9 @@ public class TcpClient implements NetworkInterface{
         //always be sure to close the socket
         finally {
             try {
-                if (s != null) s.close();
+                if (s != null){
+                    s.close();
+                }
             }
             catch (IOException e) { e.printStackTrace(); }
         }
@@ -101,25 +110,27 @@ public class TcpClient implements NetworkInterface{
     }
 
     @Override
-    public String getMessage(  ) {
+    public String getMessage(  ){
         String line = "";
 
         // read the response (a line) from the server
         try {
-
             if(reader == null){
                 return line;
             }
 
-            line = reader.readLine();
-            // write the line to console
-            System.out.println("ahoj " + line);
+            do{
+                Thread.sleep(100);
+            } while((line = reader.readLine()).isEmpty());
+
             return line;
         }
         catch (IOException e) {
-            e.printStackTrace();
             System.err.println("Read error");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+
         return line;
     }
 

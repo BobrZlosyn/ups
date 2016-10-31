@@ -4,11 +4,11 @@
 CPP      = g++.exe -D__DEBUG__
 CC       = gcc.exe -D__DEBUG__
 WINDRES  = windres.exe
-OBJ      = main.o players.o player.o decodeMessage.o rooms.o room.o
-LINKOBJ  = main.o players.o player.o decodeMessage.o rooms.o room.o
-LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib32" -static-libgcc  -lws2_32 -m32 -g3
-INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
-CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
+OBJ      = main.o players.o player.o decodeMessage.o room.o serverActions.o
+LINKOBJ  = main.o players.o player.o decodeMessage.o room.o serverActions.o
+LIBS     = -L"D:/program files/dev-c/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib32" -static-libgcc -lws2_32 -m32 -g3
+INCS     = -I"D:/program files/dev-c/Dev-Cpp/MinGW64/include" -I"D:/program files/dev-c/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"D:/program files/dev-c/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
+CXXINCS  = -I"D:/program files/dev-c/Dev-Cpp/MinGW64/include" -I"D:/program files/dev-c/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"D:/program files/dev-c/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"D:/program files/dev-c/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
 BIN      = server-ups.exe
 CXXFLAGS = $(CXXINCS) -ansi -m32 -Wall -g3
 CFLAGS   = $(INCS) -ansi -m32 -Wall -g3
@@ -36,8 +36,8 @@ player.o: player.c
 decodeMessage.o: decodeMessage.c
 	$(CC) -c decodeMessage.c -o decodeMessage.o $(CFLAGS)
 
-rooms.o: rooms.c
-	$(CC) -c rooms.c -o rooms.o $(CFLAGS)
-
 room.o: room.c
 	$(CC) -c room.c -o room.o $(CFLAGS)
+
+serverActions.o: serverActions.c
+	$(CC) -c serverActions.c -o serverActions.o $(CFLAGS)

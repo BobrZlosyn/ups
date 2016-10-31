@@ -20,11 +20,17 @@ public class GlobalVariables {
     private static boolean isUsersShieldUp = false;
     private static boolean isEnemyShieldUp = false;
     public static SimpleBooleanProperty gameIsFinished = new SimpleBooleanProperty(false);
-    private static boolean userLost = false;
+    public static SimpleBooleanProperty enemyLost = new SimpleBooleanProperty(false);
+    public static SimpleBooleanProperty isPlayingNow = new SimpleBooleanProperty(false);
     public static CommonShip choosenShip;
     public static Color damageHit = Color.RED;
     public static double damageHitDuration = 0.2;
     public static String shipDefinition = "";
+    public static String enemyshipDefinition = "";
+    public static SimpleStringProperty attackDefinition = new SimpleStringProperty("");
+    public static String expectedMsg = "";
+    public static String receivedMsg = "";
+
 
     public static void setMarkedObject(CommonConstruction markedObject) {
         if(!isEmpty(markedObject) && !isEmpty(GlobalVariables.markedObject)){
@@ -110,14 +116,6 @@ public class GlobalVariables {
 
     public static boolean isUsersShieldUp() {
         return isUsersShieldUp;
-    }
-
-    public static boolean isUserLost() {
-        return userLost;
-    }
-
-    public static void setUserLost(boolean userLost) {
-        GlobalVariables.userLost = userLost;
     }
 
     public static void setGameIsFinished(boolean gameIsFinished) {

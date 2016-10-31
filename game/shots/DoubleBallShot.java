@@ -1,8 +1,10 @@
 package game.shots;
 
 import game.construction.CommonConstruction;
+import game.construction.Placement;
 import game.shots.wrecksShot.DoubleShotWreck;
 import game.shots.wrecksShot.SimpleShotWreck;
+import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
