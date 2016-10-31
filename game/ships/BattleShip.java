@@ -201,6 +201,8 @@ public class BattleShip extends CommonShip{
             return;
         }
 
+        damageToShield(getShieldActualLife());
+
         BattleShipWreck wreck = new BattleShipWreck(model.getShip().getCenterX(),model.getShip().getCenterY(), Color.WHITE);
         gameArea.getChildren().add(wreck.getFlashCircle());
         wreck.explosion(getPlacement().getX(), getPlacement().getY(), 1050, 25, model);

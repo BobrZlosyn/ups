@@ -190,10 +190,12 @@ public class DoubleCannonWeapon extends CommonWeapon{
         double x = getPlacement().getX();
         double y = getPlacement().getY();
 
+        setTarget(null);
         Pane gameArea = getModel().getParent();
         if(GlobalVariables.isEmpty(gameArea)){
             return;
         }
+
 
         gameArea.getChildren().removeAll(getModel().getParts());
 

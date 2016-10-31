@@ -41,16 +41,7 @@ public class TcpApplication
     }
 
     public void endConnection(){
-        boolean result = true;
-        if(result){
-            message.setMessage(message.QUIT,"quit");
-            client.putMessage(message);
-            message.decodeMessage(client.getMessage());
-            if(message.getBytes() != 0){
-                message.setId("0");
-            }
-        }
-
+        sendMessageToServer(TcpMessage.QUIT, "quit", "E");
         closeConnection();
     }
 
@@ -60,12 +51,12 @@ public class TcpApplication
 
 
     public boolean sendMessageToServer(String typeOfMessage, String dataToSend, String expectedResponse){
+
         if(!isConnected()){
+            return false;
+        }
 
-            if(!connectTask.isRunning()){
-                connectThread();
-            }
-
+        if(message.getId().equals("0") && !typeOfMessage.equals(TcpMessage.CONNECTION)){
             return false;
         }
 
@@ -121,7 +112,8 @@ public class TcpApplication
                 }
 
                 case TcpMessage.IDENTITY:{
-                    message.setId(data );
+                    System.out.println(data);
+                    message.setId(data);
                     break;
                 }
 
@@ -160,8 +152,6 @@ public class TcpApplication
                 break;
             }
 
-
-
             Thread.sleep(100);
         }
 
@@ -179,7 +169,6 @@ public class TcpApplication
         readTask = new Task<Void>() {
             @Override public Void call() {
                 while(true) {
-
                     if (isCancelled()) {
                         closeConnection();
                         break;
@@ -205,6 +194,7 @@ public class TcpApplication
             connectThread();
             readTask = null;
         });
+
         new Thread(readTask).start();
     }
 
@@ -221,13 +211,13 @@ public class TcpApplication
         connectTask = new Task<Boolean>() {
             @Override public Boolean call() {
                 while(true) {
-
                     if (isCancelled()) {
                         closeConnection();
                         break;
                     }
 
                     if(sendConnectionMessage()){
+                        message.setId("0");
                         break;
                     }
 
@@ -244,7 +234,6 @@ public class TcpApplication
         };
 
         connectTask.setOnSucceeded(event -> {
-            System.out.println("coneeeeect task");
             client.updateIsConnected();
             readThread();
             connectTask = null;
@@ -259,6 +248,7 @@ public class TcpApplication
         }
 
         readTask.cancel();
+        readTask = null;
     }
 
     public void closeConnectThread(){
@@ -273,58 +263,13 @@ public class TcpApplication
      ***************  START OF GAME  **************
      **********************************************/
 
-    /**
-     *
-     * @param shipInfo
-     * @return
-     */
-    public boolean prepareGame(String shipInfo){
-        message.setMessage(message.CONNECTION, shipInfo);
-        client.putMessage( message );
-
-        /*boolean result =  isConnected();
-        System.out.println(result);
-        if(result && !message.hasId()){
-            message.setMessage(message.CONNECTION, shipInfo);
-            client.putMessage( message );
-            message.decodeMessage(client.getMessage());
-            result = retrieveID(message.getMessage());
-        }
-
-        if(result){
-            message.setMessage(message.GAME_START, "start the game please");
-            client.putMessage( message );
-            while (true){
-                message.decodeMessage(client.getMessage());
-                if(message.isWantedMessage(message.END_WAITING)){
-                    System.out.println("ahojkz");
-                    break;
-                }
-            }
-        }*/
-        return false;
-    }
 
     public void closeConnection(){
         if(!GlobalVariables.isEmpty(client)){
             client.close();
         }
+
+        message.setId("0");
     }
-
-
-
-    private boolean runTheGame(String msg){
-
-        if(message.WAITING.equals(msg.charAt(0))){
-            isWaiting = true;
-            return false;
-        }
-
-        isWaiting = false;
-        return true;
-    }
-
-
-
 
 }

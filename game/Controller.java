@@ -61,7 +61,6 @@ public class Controller implements Initializable{
 
 
         GlobalVariables.attackDefinition.addListener((observable, oldValue, newValue) -> {
-            System.out.println(newValue + " ahojkz");
             if(!newValue.isEmpty()){
 
                 if(!GlobalVariables.isEmpty(damageHandler) && !GlobalVariables.isEmpty(controls)){
@@ -81,9 +80,6 @@ public class Controller implements Initializable{
     }
 
     public void clearApplication(){
-        if (!GlobalVariables.isEmpty(tcpConnection)) {
-            tcpConnection.endConnection();
-        }
 
         findGame = stopTask(findGame);
         waitingTask = stopTask(waitingTask);
@@ -185,6 +181,7 @@ public class Controller implements Initializable{
         waitingForOponnent.getCancel().setOnAction(event -> {
             GlobalVariables.shipDefinition = "";
             waitingForOponnent.removePane();
+            tcpConnection.endConnection();
 
             if(!GlobalVariables.isEmpty(findGame) && findGame.isRunning()){
                 isConnected.unbind();
@@ -380,6 +377,7 @@ public class Controller implements Initializable{
         usersShip.getActualLifeBinding().addListener(userLost);
         enemyShip.getActualLifeBinding().addListener(userWin);
         GlobalVariables.enemyLost.addListener((observable, oldValue, newValue) -> {
+            System.out.println("ahojky "+newValue);
             if(newValue){
                 Platform.runLater(() -> {
                     enemyShip.takeDamage((int)enemyShip.getActualLife());

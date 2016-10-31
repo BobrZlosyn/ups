@@ -166,6 +166,7 @@ public class CruiserShip extends CommonShip{
             return;
         }
 
+        damageToShield(getShieldActualLife());
         CruiserShipWreck wreck = new CruiserShipWreck(getCenterX(), getCenterY(), Color.WHITE);
         gameArea.getChildren().add(wreck.getFlashCircle());
         wreck.explosion(getPlacement().getX(), getPlacement().getY(), 1050, 25, model);
