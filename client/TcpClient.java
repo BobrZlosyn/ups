@@ -56,9 +56,7 @@ public class TcpClient implements NetworkInterface{
             return false;
         }
 
-
         return true;
-
     }
 
     public SimpleBooleanProperty isConnectedProperty(){
@@ -121,9 +119,8 @@ public class TcpClient implements NetworkInterface{
 
             do{
                 Thread.sleep(100);
-            } while((line = reader.readLine()).isEmpty());
-
-            return line;
+            } while(!GlobalVariables.isEmpty(reader) && (line = reader.readLine()).isEmpty());
+             return line;
         }
         catch (IOException e) {
             System.err.println("Read error");

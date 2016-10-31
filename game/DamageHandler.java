@@ -114,9 +114,9 @@ public class DamageHandler {
                     int rowAttack = attackShip.getPlacementPositions().length - 1;
                     int columnAttack = attackShip.getPlacementPositions()[0].length - 1;
 
-                    if(iAtacker >= 0){
-                        iAtacker = columnAttack - iAtacker;
-                        iTarget = columnTarget - iTarget;
+                    if(iTarget >= 0){
+                        iAtacker = rowAttack - iAtacker;
+                        iTarget = rowTarget - iTarget;
                     }
                 }
 

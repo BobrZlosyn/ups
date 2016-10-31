@@ -186,6 +186,7 @@ public class CannonWeapon extends CommonWeapon{
         double x = getPlacement().getX();
         double y = getPlacement().getY();
 
+        setTarget(null);
         Pane gameArea = getModel().getParent();
         if(GlobalVariables.isEmpty(gameArea)){
             return;

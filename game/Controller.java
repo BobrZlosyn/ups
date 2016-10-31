@@ -61,7 +61,6 @@ public class Controller implements Initializable{
 
 
         GlobalVariables.attackDefinition.addListener((observable, oldValue, newValue) -> {
-            System.out.println(newValue + " ahojkz");
             if(!newValue.isEmpty()){
 
                 if(!GlobalVariables.isEmpty(damageHandler) && !GlobalVariables.isEmpty(controls)){
@@ -81,15 +80,16 @@ public class Controller implements Initializable{
     }
 
     public void clearApplication(){
-        if (!GlobalVariables.isEmpty(tcpConnection)) {
-            tcpConnection.endConnection();
-        }
 
         findGame = stopTask(findGame);
         waitingTask = stopTask(waitingTask);
 
         tcpConnection.closeConnectThread();
         tcpConnection.closeReadThread();
+
+        if (!GlobalVariables.isEmpty(tcpConnection)) {
+            tcpConnection.endConnection();
+        }
     }
 
 
@@ -181,6 +181,7 @@ public class Controller implements Initializable{
         waitingForOponnent.getCancel().setOnAction(event -> {
             GlobalVariables.shipDefinition = "";
             waitingForOponnent.removePane();
+            tcpConnection.endConnection();
 
             if(!GlobalVariables.isEmpty(findGame) && findGame.isRunning()){
                 isConnected.unbind();
@@ -199,19 +200,24 @@ public class Controller implements Initializable{
                 boolean registrationReceived = false;
                 boolean gameStart = false;
 
-
                 while(true) {
-
                     if (isCancelled()) {
                         tcpConnection.closeConnection();
                         Platform.exit();
                         break;
                     }
 
+                    while (!tcpConnection.isConnected()){
+                        registrationSent = false;
+                        registrationReceived = false;
+                        gameStart = false;
+                    }
+
                     if (!registrationSent) {
                         registrationSent = tcpConnection.sendMessageToServer(TcpMessage.CONNECTION, exportMsg, TcpMessage.IDENTITY);
                     }
-                    if(!registrationReceived){
+
+                    if(!registrationReceived && registrationSent){
                         registrationReceived = TcpMessage.IDENTITY.equals(GlobalVariables.receivedMsg);
                     }
 
@@ -225,13 +231,19 @@ public class Controller implements Initializable{
                         }
                     }
 
+
+
                     //pridat timeout
                     try {
                         Thread.sleep(WAITING_FOR_OPONNENT);
+
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                         break;
                     }
+
+
+
                 }
                 return null;
             }
@@ -364,8 +376,11 @@ public class Controller implements Initializable{
         usersShip.getActualLifeBinding().addListener(userLost);
         enemyShip.getActualLifeBinding().addListener(userWin);
         GlobalVariables.enemyLost.addListener((observable, oldValue, newValue) -> {
+            System.out.println("ahojky "+newValue);
             if(newValue){
-                enemyShip.takeDamage((int)enemyShip.getActualLife());
+                Platform.runLater(() -> {
+                    enemyShip.takeDamage((int)enemyShip.getActualLife());
+                });
             }
         });
     }

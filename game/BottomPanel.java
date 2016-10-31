@@ -303,6 +303,10 @@ public class BottomPanel {
     }
 
     private void notEnoughEnergy(CommonConstruction commonConstruction, Button button, String textIfFalse){
+        if(GlobalVariables.isEmpty(commonConstruction)){
+            return;
+        }
+
         int energy = commonConstruction.getPlacement().getShip().getActualEnergyLevel();
         int cost = commonConstruction.getEnergyCost();
         if(energy < cost){
