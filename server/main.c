@@ -177,6 +177,38 @@ int doActionByMessage(struct message *msg, char *ip_client, char *sendMsg, int s
 			
 		} break;
 		
+		case 'M':{
+			if(player == NULL){
+				printf("hrace %d nelze nalezt \n", msg->playerID);
+				sprintf(sendMsg, "<E;hrace nelze najit>\n");
+				break;
+			}
+			
+			ROOM *room = player->room;
+			if (room == NULL){
+				break;
+			}
+			
+			if(room->player1 != NULL && room->player1->player->playerID == msg->playerID){
+				if(room->player2 != NULL){
+					sprintf(sendMsg, "<M;%s>\n", msg->data);
+					sendMessage(sendMsg, room->player2->player->socket);
+					sprintf(sendMsg, " ");
+				}
+				break;				
+			}
+			
+			if(room->player2 != NULL && room->player2->player->playerID == msg->playerID){
+				if(room->player1 != NULL){
+					sprintf(sendMsg, "<M;%s>\n", msg->data);
+					sendMessage(sendMsg, room->player1->player->socket);
+					sprintf(sendMsg, " ");
+				}
+				break;
+			}
+			
+		} break;
+		
 		case 'Q':{
 			printf("ukonceni \n");	
 			

@@ -27,7 +27,9 @@ public class GlobalVariables {
     public static double damageHitDuration = 0.2;
     public static String shipDefinition = "";
     public static String enemyshipDefinition = "";
+    public static String startingID = "";
     public static SimpleStringProperty attackDefinition = new SimpleStringProperty("");
+    public static SimpleStringProperty equipmentStatus = new SimpleStringProperty("");
     public static String expectedMsg = "";
     public static String receivedMsg = "";
 

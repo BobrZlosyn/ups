@@ -1,5 +1,6 @@
 package game.background;
 
+import game.ExportImportShip;
 import javafx.scene.layout.GridPane;
 
 import java.io.File;
@@ -23,13 +24,20 @@ public class GeneratRandomBackground {
         files = new ArrayList<File>(Arrays.asList(file.listFiles()));
     }
 
-    public void chooseImage(GridPane pane){
+    public void chooseImage(GridPane pane, String id){
         if(files == null || files.isEmpty() ){
             return;
         }
 
+        int index;
         int size = files.size();
-        int index = 0 + (int)(Math.random() * size);
+        try {
+            index = Integer.parseInt(id) % size;
+        }catch (Exception e){
+            index = 0 + (int)(Math.random() * size);
+        }
+
+
         String path = "images/" + files.get(index).getName();
         double width = pane.getWidth();
         double height = pane.getHeight();

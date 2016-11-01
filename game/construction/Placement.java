@@ -1,5 +1,6 @@
 package game.construction;
 import game.ships.CommonShip;
+import game.static_classes.GlobalVariables;
 import javafx.scene.shape.Rectangle;
 
 /**
@@ -73,15 +74,24 @@ public class Placement {
     }
 
     public boolean isEmpty() {
-        return isEmpty;
+        return GlobalVariables.isEmpty(equipment);
     }
 
     public boolean isWeapon() {
-        return isWeapon;
+
+        if(isEmpty()){
+            return false;
+        }else{
+            return equipment.isWeapon();
+        }
     }
 
     public boolean isShield() {
-        return isShield;
+        if(isEmpty()){
+            return false;
+        }else{
+            return equipment.isShield();
+        }
     }
 
     public int getColumn() {

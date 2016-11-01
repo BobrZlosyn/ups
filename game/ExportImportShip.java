@@ -68,8 +68,6 @@ public class ExportImportShip {
             int column = Integer.parseInt(equipmentData[1]);
             equipment.displayEquipment(placements[row][column], enemyShip.isEnemy());
             placements[row][column].setShipEquipment(equipment);
-            placements[row][column].setIsEmpty(false);
-            placements[row][column].setIsWeapon(equipment.isWeapon());
             ((CommonConstruction)equipment).setPlacement(placements[row][column]);
         }
 

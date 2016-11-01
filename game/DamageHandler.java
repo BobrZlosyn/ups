@@ -1,6 +1,8 @@
 package game;
 
+import client.TcpMessage;
 import game.construction.CommonConstruction;
+import game.construction.IShipEquipment;
 import game.construction.Placement;
 import game.shields.CommonShield;
 import game.ships.CommonShip;
@@ -111,12 +113,10 @@ public class DamageHandler {
 
                 if(GlobalVariables.isPlayingNow.getValue()){
                     int rowTarget = targetShip.getPlacementPositions().length - 1;
-                    int columnTarget = targetShip.getPlacementPositions()[0].length - 1;
                     int rowAttack = attackShip.getPlacementPositions().length - 1;
-                    int columnAttack = attackShip.getPlacementPositions()[0].length - 1;
+                    iAtacker = rowAttack - iAtacker;
 
                     if(iTarget >= 0){
-                        iAtacker = rowAttack - iAtacker;
                         iTarget = rowTarget - iTarget;
                     }
                 }
@@ -126,9 +126,9 @@ public class DamageHandler {
                 CommonConstruction target;
 
                 if(iTarget == -1 && jTarget == -1){
-                    x = enemyShip.getCenterX();
-                    y = enemyShip.getCenterY();
-                    target = enemyShip;
+                    x = targetShip.getCenterX();
+                    y = targetShip.getCenterY();
+                    target = targetShip;
                 }else {
                     Placement placeTarget = targetPlacements[iTarget][jTarget];
                     if(GlobalVariables.isEmpty(placeAttacker) || placeAttacker.isEmpty()
@@ -256,7 +256,7 @@ public class DamageHandler {
             for(int j = 0; j < placements[i].length; j++){
                 placement = placements[i][j];
 
-                if(GlobalVariables.isEmpty(placement) || !placement.getShipEquipment().isShield()){
+                if(GlobalVariables.isEmpty(placement) || !placement.isShield()){
                     continue;
                 }
 
@@ -277,4 +277,40 @@ public class DamageHandler {
         return status.toString();
     }
 
+    public void importEquipmentStatus( String status){
+
+        if(GlobalVariables.isEmpty(status) || GlobalVariables.isEmpty(enemyShip)){
+            return;
+        }
+
+        String [] equipments = status.split(TcpMessage.SEPARATOR);
+        Placement placement;
+
+        for (int i = 0; i < equipments.length; i++){
+            String [] parts = equipments[i].split(",");
+
+            int iPosition = Integer.parseInt(parts[0]);
+            int jPosition = Integer.parseInt(parts[1]);
+            int isActive = Integer.parseInt(parts[2]);
+
+
+            placement = enemyShip.getPlacementPositions()[iPosition][jPosition];
+            if(GlobalVariables.isEmpty(placement)){
+                continue;
+            }
+
+            IShipEquipment equipment = placement.getShipEquipment();
+            if(GlobalVariables.isEmpty(equipment) || !equipment.isShield()){
+                continue;
+            }
+
+            CommonShield commonShield = (CommonShield) equipment;
+            if(isActive == 1){
+                commonShield.setIsActive(true);
+            }else{
+                commonShield.setIsActive(false);
+            }
+
+        }
+    }
 }

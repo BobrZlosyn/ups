@@ -112,13 +112,18 @@ public class TcpApplication
                 }
 
                 case TcpMessage.IDENTITY:{
-                    System.out.println(data);
                     message.setId(data);
+                    break;
+                }
+
+                case TcpMessage.EQUIPMENT_STATUS:{
+                    GlobalVariables.equipmentStatus.set(data);
                     break;
                 }
 
                 case TcpMessage.ORDER:{
                     Thread.sleep(100);
+                    GlobalVariables.startingID = data;
                     if(data.equals(message.getId())){
                         GlobalVariables.isPlayingNow.set(true);
                     }else{

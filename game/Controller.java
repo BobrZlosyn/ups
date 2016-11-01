@@ -71,6 +71,16 @@ public class Controller implements Initializable{
             }
         });
 
+        GlobalVariables.equipmentStatus.addListener((observable, oldValue, newValue) -> {
+            if (!newValue.isEmpty()) {
+
+                if (!GlobalVariables.isEmpty(damageHandler)) {
+                    damageHandler.importEquipmentStatus(newValue);
+                    GlobalVariables.equipmentStatus.set("");
+                }
+            }
+        });
+
         GlobalVariables.isPlayingNow.addListener((observable, oldValue, newValue) -> {
             if(!newValue){
                 GlobalVariables.expectedMsg = TcpMessage.ATTACK;
@@ -278,7 +288,7 @@ public class Controller implements Initializable{
 
         //pozadi
         grb.findImages();
-        grb.chooseImage((GridPane) gameAreaPane.getParent());
+        grb.chooseImage((GridPane) gameAreaPane.getParent(), GlobalVariables.startingID);
 
         //horni prvky
         sendDataButton = new Button();
@@ -380,7 +390,7 @@ public class Controller implements Initializable{
             System.out.println("ahojky "+newValue);
             if(newValue){
                 Platform.runLater(() -> {
-                    enemyShip.takeDamage((int)enemyShip.getActualLife());
+                    enemyShip.takeDamage((int) enemyShip.getActualLife());
                 });
             }
         });
