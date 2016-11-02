@@ -218,22 +218,33 @@ int doActionByMessage(struct message *msg, char *ip_client, char *sendMsg, int s
 				return -1;
 			}
 			
+			printf("hrac player 22 \n");
 			ROOM *room = player->room;
+			printf("hrac player 33 \n");
 			if (room != NULL) {
 				PLAYERS *player1 = room->player1;
 									
 				if (player1 != NULL && player1->player->playerID != msg->playerID){	
+					printf("hrac player 1 \n");
 					sprintf(sendMsg, "<R;%d>\n", player1->player->playerID);
+					printf("hrac player 1 2 \n");
 					sendMessage(sendMsg, room->player1->player->socket);
+					room->player2 = NULL;
+					printf("hrac player 1 3 \n");
 				}else{
 					PLAYERS *player2 = room->player2;
 					if (player2 != NULL && player2->player->playerID != msg->playerID) {
+						printf("hrac player 2 \n");
 						sprintf(sendMsg, "<R;%d>\n", player2->player->playerID);
-						sendMessage(sendMsg, room->player2->player->socket);	
+						printf("hrac player 2 2 \n");
+						sendMessage(sendMsg, room->player2->player->socket);
+						printf("hrac player 2 3 \n");	
+						room->player1 = NULL;
 					}
 				}
 			}
 			
+			printf("hrac player 0 \n");
 			first = remove_player(first, msg->playerID);				
 			return -1;
 		} break;

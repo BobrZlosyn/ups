@@ -289,7 +289,7 @@ public class DamageHandler {
         for (int i = 0; i < equipments.length; i++){
             String [] parts = equipments[i].split(",");
 
-            int iPosition = Integer.parseInt(parts[0]);
+            int iPosition = enemyShip.getPlacementPositions().length - Integer.parseInt(parts[0]) - 1;
             int jPosition = Integer.parseInt(parts[1]);
             int isActive = Integer.parseInt(parts[2]);
 

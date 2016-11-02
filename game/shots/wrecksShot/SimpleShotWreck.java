@@ -36,12 +36,16 @@ public class SimpleShotWreck extends CommonWreck {
     protected void createMovementPoints(){
         moveAddPoint = new double [wrecks.size()][2];
 
-        setMovementPoint(0, -0.9, -2.9);
-        setMovementPoint(1, -0.8, -1.3);
-        setMovementPoint(2, -0.5, 1.2);
+        int koeficien = 1;
+        if(isFromEnemy){
+            koeficien = -1;
+        }
+        setMovementPoint(0, -0.9 * koeficien, -2.9);
+        setMovementPoint(1, -0.8 * koeficien, -1.3);
+        setMovementPoint(2, -0.5 * koeficien, 1.2);
 
-        setMovementPoint(3, -0.5, 1.5);
-        setMovementPoint(4, -0.8, 2.9);
+        setMovementPoint(3, -0.5 * koeficien, 1.5);
+        setMovementPoint(4, -0.8 * koeficien, 2.9);
     }
 
     protected void setMovementPoint(int indexOfWreck, double x, double y){

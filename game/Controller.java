@@ -75,8 +75,10 @@ public class Controller implements Initializable{
             if (!newValue.isEmpty()) {
 
                 if (!GlobalVariables.isEmpty(damageHandler)) {
-                    damageHandler.importEquipmentStatus(newValue);
-                    GlobalVariables.equipmentStatus.set("");
+                    Platform.runLater(() ->{
+                        damageHandler.importEquipmentStatus(newValue);
+                        GlobalVariables.equipmentStatus.set("");
+                    });
                 }
             }
         });
@@ -387,7 +389,6 @@ public class Controller implements Initializable{
         usersShip.getActualLifeBinding().addListener(userLost);
         enemyShip.getActualLifeBinding().addListener(userWin);
         GlobalVariables.enemyLost.addListener((observable, oldValue, newValue) -> {
-            System.out.println("ahojky "+newValue);
             if(newValue){
                 Platform.runLater(() -> {
                     enemyShip.takeDamage((int) enemyShip.getActualLife());
