@@ -229,7 +229,6 @@ int doActionByMessage(struct message *msg, char *ip_client, char *sendMsg, int s
 					sprintf(sendMsg, "<R;%d>\n", player1->player->playerID);
 					printf("hrac player 1 2 \n");
 					sendMessage(sendMsg, room->player1->player->socket);
-					room->player2 = NULL;
 					printf("hrac player 1 3 \n");
 				}else{
 					PLAYERS *player2 = room->player2;
@@ -239,7 +238,6 @@ int doActionByMessage(struct message *msg, char *ip_client, char *sendMsg, int s
 						printf("hrac player 2 2 \n");
 						sendMessage(sendMsg, room->player2->player->socket);
 						printf("hrac player 2 3 \n");	
-						room->player1 = NULL;
 					}
 				}
 			}
