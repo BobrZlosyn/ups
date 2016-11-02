@@ -93,15 +93,16 @@ public class Controller implements Initializable{
 
     public void clearApplication(){
 
+        if (!GlobalVariables.isEmpty(tcpConnection)) {
+            tcpConnection.endConnection();
+        }
+
         findGame = stopTask(findGame);
         waitingTask = stopTask(waitingTask);
 
         tcpConnection.closeConnectThread();
         tcpConnection.closeReadThread();
 
-        if (!GlobalVariables.isEmpty(tcpConnection)) {
-            tcpConnection.endConnection();
-        }
     }
 
 
