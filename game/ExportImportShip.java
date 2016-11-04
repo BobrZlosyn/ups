@@ -11,8 +11,18 @@ import javafx.scene.layout.Pane;
  */
 public class ExportImportShip {
 
-    public ExportImportShip(){
+    private boolean isFirstExport;
 
+    public ExportImportShip(){
+        isFirstExport = true;
+    }
+
+    public boolean isFirstExport() {
+        return isFirstExport;
+    }
+
+    public void setFirstExport(boolean firstExport) {
+        isFirstExport = firstExport;
     }
 
     public String exportShip(CommonShip ship){

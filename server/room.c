@@ -56,6 +56,21 @@ void add_second_player(struct players *player2, struct room *room){
 	player2->room = room;
 }
 
+void generate_starting_id (struct room *room) {	
+	if(room == NULL 
+		|| room->player1 == NULL
+		|| room->player2 == NULL
+		) {
+		return; 
+	}
+	
+	srand ( time(NULL) );
+	if ( (rand() % 2) == 0) {
+		room->isPlayingID = room->player1->player->playerID;	
+	} else {
+		room->isPlayingID = room->player2->player->playerID;
+	}
+}
 
 void print_room(struct room *room){
 	if(room != NULL){

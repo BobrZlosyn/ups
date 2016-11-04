@@ -41,7 +41,7 @@ public class TcpApplication
     }
 
     public void endConnection(){
-        sendMessageToServer(TcpMessage.QUIT, "quit", "E");
+        sendMessageToServer(TcpMessage.QUIT, "quit", TcpMessage.ERROR);
         closeConnection();
     }
 
@@ -56,7 +56,9 @@ public class TcpApplication
             return false;
         }
 
-        if(message.getId().equals("0") && !typeOfMessage.equals(TcpMessage.CONNECTION)){
+        if(!message.hasId()
+                && !typeOfMessage.equals(TcpMessage.CONNECTION)
+                && !typeOfMessage.equals(TcpMessage.QUIT)){
             return false;
         }
 
@@ -81,7 +83,6 @@ public class TcpApplication
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
 
         return false;
     }
@@ -222,7 +223,7 @@ public class TcpApplication
                     }
 
                     if(sendConnectionMessage()){
-                        message.setId("0");
+                        message.removeID();
                         break;
                     }
 
@@ -274,7 +275,7 @@ public class TcpApplication
             client.close();
         }
 
-        message.setId("0");
+        message.removeID();
     }
 
 }

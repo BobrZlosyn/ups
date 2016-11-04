@@ -22,11 +22,11 @@ public class WaitingForOponnent {
     private Button cancel;
     private GridPane waitingPane;
 
-    public WaitingForOponnent(GridPane window){
-        createPane(window);
+    public WaitingForOponnent(){
+        createPane();
     }
 
-    private void createPane(GridPane window){
+    private void createPane(){
         waitingPane = new GridPane();
         waitingPane.setMaxWidth(Double.MAX_VALUE);
         waitingPane.setMaxHeight(Double.MAX_VALUE);
@@ -47,6 +47,17 @@ public class WaitingForOponnent {
         waitingPane.add(cancel, 2, 0);
         waitingPane.add(title, 1, 1);
         waitingPane.add(waitingIndicator, 1, 2);
+    }
+
+    public void showWaitingForOponnent(GridPane window) {
+        if(GlobalVariables.isEmpty(window)
+                || GlobalVariables.isEmpty(waitingPane)){
+            return;
+        }
+
+        if(window.getChildren().contains(waitingPane)) {
+            return;
+        }
 
         window.add(waitingPane, 0, 0, GridPane.REMAINING, GridPane.REMAINING);
     }

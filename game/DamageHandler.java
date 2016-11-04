@@ -190,7 +190,9 @@ public class DamageHandler {
 
                 simpleBallShot1.removeShot(gameArea);
 
-                if(simpleBallShot1.getTarget().getActualLife() == 0 && !GlobalVariables.isEmpty(((CommonWeapon)simpleBallShot1.getAttacker()).getTarget())){
+                if(simpleBallShot1.getTarget().getActualLife() == 0
+                        && !GlobalVariables.isEmpty((simpleBallShot1.getAttacker()))
+                        ){
                     simpleBallShot1.getTarget().cancelTarget();
                     ((CommonWeapon)simpleBallShot1.getAttacker()).setTarget(null);
                     ((CommonWeapon)simpleBallShot1.getAttacker()).rotateToDefaultPosition();

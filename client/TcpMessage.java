@@ -28,6 +28,7 @@ public class TcpMessage {
     public static final String ACKNOLEDGE = "P";
     public static final String ORDER = "O";
     public static final String EQUIPMENT_STATUS = "M";
+    public static final String DESTROY_CONNECTION = "D";
 
 
     public TcpMessage( ) {
@@ -116,6 +117,10 @@ public class TcpMessage {
             return  "";
         }
         return message.substring(2);
+    }
+
+    public void removeID(){
+        id = "0";
     }
 
     public String getType(){

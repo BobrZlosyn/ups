@@ -218,31 +218,23 @@ int doActionByMessage(struct message *msg, char *ip_client, char *sendMsg, int s
 				return -1;
 			}
 			
-			printf("hrac player 22 \n");
 			ROOM *room = player->room;
-			printf("hrac player 33 \n");
 			if (room != NULL) {
 				PLAYERS *player1 = room->player1;
-									
 				if (player1 != NULL && player1->player->playerID != msg->playerID){	
-					printf("hrac player 1 \n");
 					sprintf(sendMsg, "<R;%d>\n", player1->player->playerID);
-					printf("hrac player 1 2 \n");
 					sendMessage(sendMsg, room->player1->player->socket);
-					printf("hrac player 1 3 \n");
+					room->player2 = NULL;
 				}else{
 					PLAYERS *player2 = room->player2;
 					if (player2 != NULL && player2->player->playerID != msg->playerID) {
-						printf("hrac player 2 \n");
 						sprintf(sendMsg, "<R;%d>\n", player2->player->playerID);
-						printf("hrac player 2 2 \n");
 						sendMessage(sendMsg, room->player2->player->socket);
-						printf("hrac player 2 3 \n");	
+						room->player1 = NULL;	
 					}
 				}
 			}
 			
-			printf("hrac player 0 \n");
 			first = remove_player(first, msg->playerID);				
 			return -1;
 		} break;
@@ -258,7 +250,6 @@ int doActionByMessage(struct message *msg, char *ip_client, char *sendMsg, int s
 				}
 								
 				room = create_room(player);
-				room->isPlayingID = msg->playerID;
 				sprintf(sendMsg, "<W; cekani na hrace>\n");
 			} else {
 				if(player == NULL){
@@ -270,6 +261,7 @@ int doActionByMessage(struct message *msg, char *ip_client, char *sendMsg, int s
 				add_second_player(player, room);
 				
 				/*order sending*/
+				generate_starting_id (struct room *room); 
 				sprintf(sendMsg, "<O;%d>\n", room->isPlayingID);
 				sendMessage(sendMsg, room->player1->player->socket);
 				sendMessage(sendMsg, room->player2->player->socket);
@@ -284,8 +276,6 @@ int doActionByMessage(struct message *msg, char *ip_client, char *sendMsg, int s
 		} break;
 		
 		case 'A':attack_action(first, msg, sendMsg); break;
-		
-		case 'S':printf("status \n"); break;
 		
 		case 'L':{
 			printf("lost - surrrender %d \n", msg->playerID);	
@@ -307,11 +297,13 @@ int doActionByMessage(struct message *msg, char *ip_client, char *sendMsg, int s
 				}else{
 					PLAYERS *player2 = room->player2;
 					if (player2 != NULL && player2->player->playerID != msg->playerID) {
-						sprintf(sendMsg, "<R;%d>\n", room->player1->player->playerID);
+						sprintf(sendMsg, "<R;%d>\n", room->player2->player->playerID);
 						sendMessage(sendMsg, room->player2->player->socket);	
 					}
 				}
+				free(room);
 			}
+			
 			
 		} break;
 		

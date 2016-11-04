@@ -28,10 +28,6 @@ import java.util.ResourceBundle;
 public class Controller implements Initializable{
 
     @FXML
-    Label connectionStatusLabel;
-    @FXML
-    Button connectButton;
-    @FXML
     GridPane window;
 
     private Button sendDataButton;
@@ -40,25 +36,27 @@ public class Controller implements Initializable{
     private Controls controls;
     private ChangeListener <Number> userLost;
     private ChangeListener <Number> userWin;
-    private ChangeListener <Boolean> waitingForOponentAttack;
     private TcpApplication tcpConnection;
     private Task findGame, waitingTask;
     private final int WAITING_FOR_OPONNENT = 100;
     private DamageHandler damageHandler;
+    private Task <Boolean> sendingTask;
+    private ExportImportShip exportImportShip;
+    private WaitingForOponnent waitingForOponnent;
+    private String sendMessageType = "";
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
         tcpConnection = new TcpApplication();
-        CreateMenu createMenu = new CreateMenu();
-        createMenu.setConnectionBinding(tcpConnection.isConnectedProperty());
-        window.add(createMenu.getMenu(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
-        setupPickShipMenu(createMenu);
-        windowResize();
-        grb = new GeneratRandomBackground();
-        grb.showSpacePort(window);
-        tcpConnection.connectThread();
 
+        grb = new GeneratRandomBackground();
+        createMainPage();
+        windowResize();
+        tcpConnection.connectThread();
+        exportImportShip = new ExportImportShip();
+        waitingForOponnent = new WaitingForOponnent();
+        sendingThread();
 
         GlobalVariables.attackDefinition.addListener((observable, oldValue, newValue) -> {
             if(!newValue.isEmpty()){
@@ -89,6 +87,14 @@ public class Controller implements Initializable{
             }
         });
 
+        tcpConnection.isConnectedProperty().addListener((observable, oldValue, newValue) ->{
+            if (!newValue && !GlobalVariables.enemyshipDefinition.isEmpty()){
+                window.getChildren().clear();
+                createMainPage();
+            }
+        });
+
+
     }
 
     public void clearApplication(){
@@ -97,12 +103,11 @@ public class Controller implements Initializable{
             tcpConnection.endConnection();
         }
 
-        findGame = stopTask(findGame);
-        waitingTask = stopTask(waitingTask);
-
-        tcpConnection.closeConnectThread();
-        tcpConnection.closeReadThread();
-
+        findGame = stopTask(findGame); //ukoncuji hledani hry
+        waitingTask = stopTask(waitingTask); // ukoncuji smycku pri cekani na pozadovanou zpravu
+        sendingTask = stopTask(sendingTask); // ukoncuji odesilaci vlakno
+        tcpConnection.closeReadThread(); // ukoncuji cteci vlakno
+        tcpConnection.closeConnectThread(); // ukoncuji hledani pripojeni
     }
 
 
@@ -169,32 +174,26 @@ public class Controller implements Initializable{
 
         gunsToShipMenu.getNextButton().setOnAction(event -> {
 
-            //gunsToShipMenu.clean();
-            prepareGame(true);
+            exportImportShip.setFirstExport(true);
+            prepareGame();
         });
     }
 
 
-    private void prepareGame(boolean isFirstCreated){
+    private void prepareGame(){
 
         //vytvari nepratelskou lod
-        String exportMsg;
-        ExportImportShip exportImportShip = new ExportImportShip();
-        GlobalVariables.enemyshipDefinition = "";
-
         if(GlobalVariables.shipDefinition.isEmpty()){
-            exportMsg = exportImportShip.exportShip(GlobalVariables.choosenShip);
-            GlobalVariables.shipDefinition = exportMsg;
-        }else{
-            exportMsg = GlobalVariables.shipDefinition;
+            GlobalVariables.shipDefinition = exportImportShip.exportShip(GlobalVariables.choosenShip);
         }
 
         SimpleBooleanProperty isConnected = new SimpleBooleanProperty(false);
-        WaitingForOponnent waitingForOponnent = new WaitingForOponnent(window);
+        waitingForOponnent.showWaitingForOponnent(window);
         waitingForOponnent.getCancel().setOnAction(event -> {
             GlobalVariables.shipDefinition = "";
+            GlobalVariables.enemyshipDefinition = "";
             waitingForOponnent.removePane();
-            tcpConnection.endConnection();
+            sendMessageType = TcpMessage.QUIT;
 
             if(!GlobalVariables.isEmpty(findGame) && findGame.isRunning()){
                 isConnected.unbind();
@@ -207,81 +206,18 @@ public class Controller implements Initializable{
         waitingTask = stopTask(waitingTask);
         waitingThread();
 
-        findGame = new Task<Void>() {
-            @Override public Void call() {
-                boolean registrationSent = false;
-                boolean registrationReceived = false;
-                boolean gameStart = false;
-
-                while(true) {
-                    if (isCancelled()) {
-                        tcpConnection.closeConnection();
-                        Platform.exit();
-                        break;
-                    }
-
-                    while (!tcpConnection.isConnected()){
-                        registrationSent = false;
-                        registrationReceived = false;
-                        gameStart = false;
-                    }
-
-                    if (!registrationSent) {
-                        registrationSent = tcpConnection.sendMessageToServer(TcpMessage.CONNECTION, exportMsg, TcpMessage.IDENTITY);
-                    }
-
-                    if(!registrationReceived && registrationSent){
-                        registrationReceived = TcpMessage.IDENTITY.equals(GlobalVariables.receivedMsg);
-                    }
-
-                    if(registrationReceived && !gameStart) {
-                        gameStart = tcpConnection.sendMessageToServer(TcpMessage.GAME_START, "start the game please", TcpMessage.END_WAITING);
-                    }
-
-                    if(gameStart){
-                        if(TcpMessage.END_WAITING.equals(GlobalVariables.receivedMsg)){
-                            break;
-                        }
-                    }
-
-
-
-                    //pridat timeout
-                    try {
-                        Thread.sleep(WAITING_FOR_OPONNENT);
-
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        break;
-                    }
-
-
-
-                }
-                return null;
-            }
-        };
-        isConnected.bind(findGame.runningProperty().not());
-        new Thread(findGame).start();
-
-        isConnected.addListener((observable, oldValue, newValue) -> {
-            if(newValue.booleanValue() && !GlobalVariables.enemyshipDefinition.isEmpty()){
-                startGame(exportImportShip, isFirstCreated);
-                waitingForOponnent.removePane();
-            }
-        });
-
+        sendMessageType = TcpMessage.CONNECTION;
     }
 
 
-    private void startGame(ExportImportShip exportImportShip, boolean isFirstCreated){
+    private void startGame(){
         window.getChildren().clear();
         gameAreaPane = new Pane();
         window.add(gameAreaPane, 0, 0, GridPane.REMAINING, 1);
 
         Placement[][] placements = GlobalVariables.choosenShip.getPlacementPositions();
         GlobalVariables.choosenShip.displayShip(gameAreaPane);
-        GlobalVariables.choosenShip.fillShipWithEquipment(GlobalVariables.choosenShip, placements, isFirstCreated);
+        GlobalVariables.choosenShip.fillShipWithEquipment(GlobalVariables.choosenShip, placements, exportImportShip.isFirstExport());
         GlobalVariables.choosenShip.createShield();
 
         CommonShip enemyShip = exportImportShip.importShip(GlobalVariables.enemyshipDefinition, gameAreaPane);
@@ -302,7 +238,7 @@ public class Controller implements Initializable{
         BottomPanel bottomPanel = new BottomPanel(sendDataButton);
         bottomPanel.showPanel(window, gameAreaPane);
         bottomPanel.getQuit().setOnAction(event1 -> {
-            tcpConnection.sendMessageToServer(TcpMessage.LOST,  "vzdavam se", TcpMessage.LOST);
+            sendMessageType = TcpMessage.LOST;
             ((Button)event1.getSource()).setDisable(true);
             GlobalVariables.choosenShip.takeDamage((int)GlobalVariables.choosenShip.getActualLife());
             GlobalVariables.choosenShip.damageToShield(GlobalVariables.choosenShip.getShieldActualLife());
@@ -408,6 +344,7 @@ public class Controller implements Initializable{
             controls.stopAnimations();
             usersShip.getActualLifeBinding().removeListener(userLost);
             enemyShip.getActualLifeBinding().removeListener(userWin);
+            GlobalVariables.enemyshipDefinition = "";
 
             endOfGame.getBackToMenu().setOnAction(event -> {
                 tcpConnection.endConnection();
@@ -419,7 +356,8 @@ public class Controller implements Initializable{
                 window.getChildren().clear();
                 GlobalVariables.choosenShip.restartValues();
                 GlobalVariables.choosenShip.unmarkObject();
-                prepareGame(false);
+                exportImportShip.setFirstExport(false);
+                prepareGame();
             });
         }));
         delay.setCycleCount(1);
@@ -438,4 +376,74 @@ public class Controller implements Initializable{
         grb.showSpacePort(window);
 
     }
+
+    private void sendingThread(){
+        if (!GlobalVariables.isEmpty(sendingTask)) {
+            return;
+        }
+
+        sendingTask = new Task <Boolean>() {
+            @Override
+            protected Boolean call() throws InterruptedException{
+                while (true){
+
+                    if (isCancelled() && sendMessageType.isEmpty()) {
+                        return false;
+                    }
+
+                    if(!tcpConnection.isConnected()){
+
+                        if (isCancelled()) return false;
+                        Thread.sleep(1000);
+                        continue;
+                    }
+
+
+                    if(sendMessageType.isEmpty()){
+                        Thread.sleep(100);
+                        continue;
+                    }
+
+                    switch (sendMessageType){
+                        case TcpMessage.CONNECTION: {
+
+                            tcpConnection.sendMessageToServer(TcpMessage.CONNECTION, GlobalVariables.shipDefinition, TcpMessage.IDENTITY);
+                            Thread.sleep(1000);
+                            tcpConnection.sendMessageToServer(TcpMessage.GAME_START, "start the game please", TcpMessage.END_WAITING);
+
+                            while (!TcpMessage.END_WAITING.equals(GlobalVariables.receivedMsg)){
+                                Thread.sleep(100);
+                                if(isCancelled()){
+                                    return false;
+                                }
+                            }
+
+                            Platform.runLater(() -> startGame());
+
+                        }break;
+
+                        case TcpMessage.QUIT: {
+                            tcpConnection.endConnection();
+                        }break;
+
+                        case TcpMessage.LOST: {
+                            tcpConnection.sendMessageToServer(TcpMessage.LOST,  "vzdavam se", TcpMessage.LOST);
+                        }break;
+
+                        case TcpMessage.DESTROY_CONNECTION: {
+
+                            return true;
+                        }
+
+                    }
+
+                    sendMessageType = "";
+                }
+            }
+        };
+
+        new Thread(sendingTask).start();
+    }
+
+
 }

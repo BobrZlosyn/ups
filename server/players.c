@@ -90,6 +90,10 @@ PLAYERS *remove_player(struct players *first, int playerID){
 }
 
 
+PLAYERS *remove_specific_player(struct players *player){
+	
+}
+
 void clear_players(struct players *first) {
 	if (first == NULL) {
 		return;
