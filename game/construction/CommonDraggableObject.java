@@ -1,6 +1,8 @@
 package game.construction;
 
+import game.ships.CommonShip;
 import game.static_classes.GlobalVariables;
+import game.weapons.draggableWeapons.DraggableCannon;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -97,8 +99,6 @@ public abstract class CommonDraggableObject implements IShipEquipment{
         }
     }
 
-    public abstract void isDragSuccesful(MouseEvent event, CommonModel commonModel, Placement[][] placements);
-
     public void addListeners(CommonModel commonModel, Placement[][] placements){
         if(isInPlace){
             modelInPlace.getParts().forEach(shape -> {
@@ -185,6 +185,35 @@ public abstract class CommonDraggableObject implements IShipEquipment{
         if(isInPlace){
             AShipEquipment equipment = (AShipEquipment) getObject();
             GlobalVariables.choosenShip.setAvailablePoints(-equipment.getCostOfEquipment());
+        }
+    }
+
+    protected abstract CommonDraggableObject getDraggableObject(Pane showArea, Placement placement);
+
+    public void isDragSuccesful(MouseEvent event, CommonModel commonModel, Placement [][] placements){
+        double widthPane = commonModel.getParent().getWidth()/2;
+        double widthModel = commonModel.getWidth()/2;
+        double paneY = commonModel.getParent().getLayoutY();
+
+        double objectPositionX = event.getX() - widthPane + widthModel;
+        double objectPositionY = event.getSceneY() - paneY;
+
+        Placement bluePlace = findPosition( placements, objectPositionX , objectPositionY,addX1, addX2, addY1, addY2);
+        if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.getField().getFill().equals(Color.RED)){
+            bluePlace.getField().setFill(Color.WHITE);
+            return;
+        }
+
+        if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.isEmpty()){
+            Pane showArea = ((Pane)bluePlace.getField().getParent());
+            CommonDraggableObject draggableObject = getDraggableObject(showArea, bluePlace);
+            double x = bluePlace.getX() + bluePlace.getSize()/2;
+            double y = bluePlace.getY() + bluePlace.getSize()/2;
+
+            draggableObject.getModel().setModelXY(x, y);
+            bluePlace.setIsEmpty(false);
+            bluePlace.setShipEquipment(draggableObject);
+            substractPoints();
         }
     }
 }

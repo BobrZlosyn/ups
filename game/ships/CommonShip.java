@@ -2,14 +2,17 @@ package game.ships;
 
 import game.construction.*;
 import game.shields.CommonShield;
+import game.ships.wrecksShips.BattleShipWreck;
 import game.static_classes.GlobalVariables;
 import game.weapons.CommonWeapon;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
+import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
 
@@ -233,6 +236,10 @@ public abstract class CommonShip extends CommonConstruction {
 
     public void damageToShield(int damage){
 
+        if(shieldMaxLife == 0){
+            return;
+        }
+
         int newShieldLife = shieldActualLife - damage;
         if(newShieldLife < 0) {
             newShieldLife = 0;
@@ -384,5 +391,38 @@ public abstract class CommonShip extends CommonConstruction {
         shieldFieldArc.setRadiusY(getShieldRadiusY());
         shieldFieldArc.setType(ArcType.ROUND);
 
+    }
+
+    public abstract CommonModel getModel();
+
+    public abstract CommonWreck getWreck();
+
+    @Override
+    public void destroy() {
+        Pane gameArea = getModel().getParent();
+        if(GlobalVariables.isEmpty(gameArea)){
+            return;
+        }
+
+        damageToShield(getShieldActualLife());
+
+        CommonWreck wreck = getWreck();
+        gameArea.getChildren().add(wreck.getFlashCircle());
+        wreck.explosion(getPlacement().getX(), getPlacement().getY(), 1050, 25, getModel());
+
+        Placement [][] placements = getPlacementPositions();
+        for (int i = 0; i < placements.length; i++){
+            for (int j = 0; j < placements[i].length; j++){
+                if(GlobalVariables.isEmpty(placements[i][j])){
+                    continue;
+                }
+
+                if(!placements[i][j].isEmpty()){
+                    ((AShipEquipment) placements[i][j].getShipEquipment()).getModel().removeModel();
+                }
+
+                gameArea.getChildren().removeAll(placements[i][j].getField());
+            }
+        }
     }
 }

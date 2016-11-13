@@ -16,7 +16,7 @@ public class TcpApplication
     private Timeline setupConnection;
     private SimpleBooleanProperty isConnected;
     private boolean isWaiting;
-    private Task readTask, connectTask;
+    private Task readTask, connectTask, actionTask;
 
     public TcpApplication(){
         server = "localhost";
@@ -69,99 +69,100 @@ public class TcpApplication
         return true;
     }
 
-    public boolean listenForMessage( String expectedResponse){
-        GlobalVariables.expectedMsg = expectedResponse;
 
-        // cekani na odpoved
-        try {
-            while (message.isEmpty()){
-                //nastaveni timeoutu
-                Thread.sleep(100);
-            }
-            return doAction();
+    private void actionThread(){
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if(GlobalVariables.expectedMsg.isEmpty()){
+            GlobalVariables.expectedMsg = TcpMessage.WAITING;
         }
 
-        return false;
+        actionTask = new Task() {
+            @Override
+            protected Object call() throws Exception {
+
+                while (true){
+                    if(isCancelled()){
+                        break;
+                    }
+
+                    doAction();
+
+
+                    Thread.sleep(100);
+                }
+
+                return null;
+            }
+        };
+
+        new Thread(actionTask).start();
     }
 
-    private boolean doAction() throws InterruptedException{
+    private void doAction() throws InterruptedException{
         //pridat cekani na acknowledge
-        String type, data;
-        while(true){
 
-            type = message.getType();
-            data = message.getData();
-            message.clearMessage();
+        if(message.getMessage().isEmpty()){
+            return;
+        }
 
-            switch (type){
+        String type = message.getType();
+        String data = message.getData();
+        message.clearMessage();
 
-                case TcpMessage.ATTACK:{
-                    GlobalVariables.attackDefinition.set(data);
-                    break;
-                }
+        switch (type){
 
-                case TcpMessage.WAITING:{
-                    break;
-                }
-
-                case TcpMessage.END_WAITING:{
-                    GlobalVariables.enemyshipDefinition = data ;
-                    break;
-                }
-
-                case TcpMessage.IDENTITY:{
-                    message.setId(data);
-                    break;
-                }
-
-                case TcpMessage.EQUIPMENT_STATUS:{
-                    GlobalVariables.equipmentStatus.set(data);
-                    break;
-                }
-
-                case TcpMessage.ORDER:{
-                    Thread.sleep(100);
-                    GlobalVariables.startingID = data;
-                    if(data.equals(message.getId())){
-                        GlobalVariables.isPlayingNow.set(true);
-                    }else{
-                        GlobalVariables.isPlayingNow.set(false);
-                    }
-
-                    break;
-                }
-
-                case TcpMessage.GAME_START: break;
-
-                case TcpMessage.RESULT:{
-
-                    if(data.equals(message.getId())){
-                        GlobalVariables.enemyLost.set(true);
-                    }
-
-                    break;
-                }
-                case TcpMessage.ACKNOLEDGE: break;
-
-                case TcpMessage.ERROR: break;
-
-                default: {
-                    return false;
-                }
+            case TcpMessage.ATTACK:{
+                GlobalVariables.attackDefinition.set(data);
+                break;
             }
 
-            if(type.equals(GlobalVariables.expectedMsg) && !GlobalVariables.expectedMsg.equals(TcpMessage.WAITING)) {
+            case TcpMessage.WAITING:{
+                break;
+            }
+
+            case TcpMessage.END_WAITING:{
+                GlobalVariables.enemyshipDefinition = data ;
+                break;
+            }
+
+            case TcpMessage.IDENTITY:{
+                message.setId(data);
+                break;
+            }
+
+            case TcpMessage.EQUIPMENT_STATUS:{
+                GlobalVariables.equipmentStatus.set(data);
+                break;
+            }
+
+            case TcpMessage.ORDER:{
+                Thread.sleep(100);
+                GlobalVariables.startingID = data;
+                if(data.equals(message.getId())){
+                    GlobalVariables.isPlayingNow.set(true);
+                }else{
+                    GlobalVariables.isPlayingNow.set(false);
+                }
 
                 break;
             }
 
-            Thread.sleep(100);
+            case TcpMessage.GAME_START: break;
+
+            case TcpMessage.RESULT:{
+
+                if(data.equals(message.getId())){
+                    GlobalVariables.enemyLost.set(true);
+                }
+
+                break;
+            }
+            case TcpMessage.ACKNOLEDGE: break;
+
+            case TcpMessage.ERROR: break;
         }
 
-        return true;
+        GlobalVariables.receivedMsg = type;
     }
 
     /**
@@ -197,7 +198,9 @@ public class TcpApplication
         readTask.setOnSucceeded(event -> {
             client.close();
             client.updateIsConnected();
+            closeActionThread();
             connectThread();
+            actionTask = null;
             readTask = null;
         });
 
@@ -242,6 +245,7 @@ public class TcpApplication
         connectTask.setOnSucceeded(event -> {
             client.updateIsConnected();
             readThread();
+            actionThread();
             connectTask = null;
         });
 
@@ -255,6 +259,15 @@ public class TcpApplication
 
         readTask.cancel();
         readTask = null;
+    }
+
+    public void closeActionThread(){
+        if(GlobalVariables.isEmpty(actionTask)){
+            return;
+        }
+
+        actionTask.cancel();
+        actionTask = null;
     }
 
     public void closeConnectThread(){

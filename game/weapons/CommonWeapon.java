@@ -1,14 +1,13 @@
 package game.weapons;
 
-import game.construction.AShipEquipment;
-import game.construction.CommonModel;
-import game.construction.Placement;
-import game.construction.CommonConstruction;
+import game.construction.*;
 import game.shots.CommonShot;
 import game.static_classes.GlobalVariables;
+import game.weapons.wrecksWeapons.CannonWreck;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 /**
@@ -31,6 +30,7 @@ public abstract class CommonWeapon extends AShipEquipment {
         setMaxStrength(maxStrength);
         setIsEnemy(false);
         createTimelineHit();
+
         targetLife = (observable, oldValue, newValue) -> {
             if(newValue.doubleValue() <= 0) {
                 rotateToDefaultPosition();
@@ -99,10 +99,33 @@ public abstract class CommonWeapon extends AShipEquipment {
         return true;
     }
 
+    public abstract CommonWreck getWreck();
+
     @Override
     public void damageHit() {
         getModel().getParts().forEach(shape -> shape.setFill(GlobalVariables.damageHit));
         hit.playFromStart();
     }
 
+    @Override
+    public void destroy() {
+        double x = getPlacement().getX();
+        double y = getPlacement().getY();
+
+        if (!GlobalVariables.isEmpty(getTarget())){
+            getPlacement().getShip().setActualEnergy(-getEnergyCost());
+        }
+
+        setTarget(null);
+        Pane gameArea = getModel().getParent();
+        if(GlobalVariables.isEmpty(gameArea)){
+            return;
+        }
+
+        gameArea.getChildren().removeAll(getModel().getParts());
+
+        CommonWreck wrecks = getWreck();
+        gameArea.getChildren().add(wrecks.getFlashCircle());
+        wrecks.explosion(x, y, 45, 5, getModel());
+    }
 }

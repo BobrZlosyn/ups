@@ -12,6 +12,7 @@ import game.weapons.CommonWeapon;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
@@ -32,11 +33,14 @@ public class DamageHandler {
     private Timeline shootingTimeline;
     private Pane gameArea;
     private ArrayList<CommonShot> removeShots, shots;
+    private Button sendDataButton;
 
-    public DamageHandler (CommonShip usersShip, CommonShip enemyShip, Pane gameArea){
+    public DamageHandler (CommonShip usersShip, CommonShip enemyShip, Pane gameArea, Button sendDataButton){
         this.usersShip = usersShip;
         this.enemyShip = enemyShip;
         this.gameArea = gameArea;
+        this.sendDataButton = sendDataButton;
+
         shots = new ArrayList();
         removeShots = new ArrayList();
     }
@@ -188,6 +192,7 @@ public class DamageHandler {
                 if(simpleBallShot1.getTarget().getActualLife() == 0
                         && !GlobalVariables.isEmpty((simpleBallShot1.getAttacker()))
                         ){
+
                     simpleBallShot1.getTarget().cancelTarget();
                     ((CommonWeapon)simpleBallShot1.getAttacker()).setTarget(null);
                     ((CommonWeapon)simpleBallShot1.getAttacker()).rotateToDefaultPosition();
@@ -209,6 +214,7 @@ public class DamageHandler {
         removeShots.forEach(simpleBallShot1 -> shots.remove(simpleBallShot1));
 
         if(shots.isEmpty()){
+            sendDataButton.setDisable(!GlobalVariables.isPlayingNow.getValue());
             shootingTimeline.stop();
             shootingTimeline = null;
         }
@@ -232,9 +238,13 @@ public class DamageHandler {
                     continue;
                 }
 
+                int min = weapon.getMinStrength();
+                int max = weapon.getMaxStrength();
+                int damage = (int) (Math.random() * (max - min)) + min;
+
                 shooting.append(i + "," + j + ","); // pridani souradnic utocnika
                 shooting.append(target.getRow() + "," + target.getColumn()); //pridani cile
-                shooting.append("," + weapon.getMaxStrength()); //damage
+                shooting.append("," + damage); //damage
                 shooting.append(",1");
                 shooting.append(";"); //ukonceni zbrane
             }

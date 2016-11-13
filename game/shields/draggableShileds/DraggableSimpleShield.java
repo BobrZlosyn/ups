@@ -46,28 +46,9 @@ public class DraggableSimpleShield extends CommonDraggableObject {
         addY2 = 0;
     }
 
-    public void isDragSuccesful(MouseEvent event, CommonModel commonModel, Placement[][] placements){
-        double widthPane = commonModel.getParent().getWidth()/2;
-        double widthModel = commonModel.getWidth()/2;
-        double paneY = commonModel.getParent().getLayoutY();
-
-        Placement bluePlace = findPosition( placements, event.getX() - widthPane + widthModel, event.getSceneY() - paneY,addX1, addX2, addY1, addY2);
-        if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.getField().getFill().equals(Color.RED)){
-            bluePlace.getField().setFill(Color.WHITE);
-            return;
-        }
-
-        if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.isEmpty()){
-            Pane showArea = ((Pane)bluePlace.getField().getParent());
-            DraggableSimpleShield simpleShield = new DraggableSimpleShield(showArea, bluePlace.getShip().getPlacementPositions(), true, bluePlace);
-            double x = bluePlace.getX() + commonModel.getWidth()/2;
-            double y = bluePlace.getY() + commonModel.getWidth()/2;
-
-            simpleShield.getModel().setModelXY(x, y);
-            bluePlace.setIsEmpty(false);
-            bluePlace.setShipEquipment(simpleShield);
-            substractPoints();
-        }
+    @Override
+    protected CommonDraggableObject getDraggableObject(Pane showArea, Placement placement) {
+        return new DraggableSimpleShield(showArea, placement.getShip().getPlacementPositions(), true, placement);
     }
 
     @Override

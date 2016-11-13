@@ -33,6 +33,7 @@ public class GlobalVariables {
     public static String expectedMsg = "";
     public static String receivedMsg = "";
     public static String errorMsg = "";
+    public static String sendMessageType = "";
 
 
     public static void setMarkedObject(CommonConstruction markedObject) {
@@ -111,6 +112,10 @@ public class GlobalVariables {
 
     public static boolean isEmpty(Object object){
         return object == null;
+    }
+
+    public static boolean isNotEmpty(Object object){
+        return object != null;
     }
 
     public static boolean isEnemyShieldUp() {

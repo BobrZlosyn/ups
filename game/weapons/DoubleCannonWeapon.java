@@ -1,6 +1,7 @@
 package game.weapons;
 
 import game.construction.CommonModel;
+import game.construction.CommonWreck;
 import game.static_classes.ConstructionTypes;
 import game.static_classes.GameBalance;
 import game.static_classes.GlobalVariables;
@@ -186,25 +187,8 @@ public class DoubleCannonWeapon extends CommonWeapon{
     }
 
     @Override
-    public void destroy() {
-        double x = getPlacement().getX();
-        double y = getPlacement().getY();
-
-        if (!GlobalVariables.isEmpty(getTarget())){
-             getPlacement().getShip().setActualEnergy(-getEnergyCost());
-        }
-
-        setTarget(null);
-        Pane gameArea = getModel().getParent();
-        if(GlobalVariables.isEmpty(gameArea)){
-            return;
-        }
-
-
-        gameArea.getChildren().removeAll(getModel().getParts());
-
-        CannonWreck wrecks = new CannonWreck(getCenterX(), getCenterY(), Color.RED);
-        gameArea.getChildren().add(wrecks.getFlashCircle());
-        wrecks.explosion(x, y, 45, 5, getModel());
+    public CommonWreck getWreck() {
+        return new CannonWreck(getCenterX(), getCenterY(), Color.RED);
     }
+
 }

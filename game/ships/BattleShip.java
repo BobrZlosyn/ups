@@ -1,12 +1,10 @@
 package game.ships;
 
-import game.construction.AShipEquipment;
-import game.construction.CommonConstruction;
+import game.construction.*;
 import game.ships.shipModels.BattleshipModel;
 import game.static_classes.ConstructionTypes;
 import game.static_classes.GameBalance;
 import game.static_classes.GlobalVariables;
-import game.construction.Placement;
 import game.ships.wrecksShips.BattleShipWreck;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -64,6 +62,7 @@ public class BattleShip extends CommonShip{
 
     }
 
+    @Override
     public void displayShip(Pane gameArea){
 
         double width = ((GridPane)gameArea.getParent()).getWidth() / 2;
@@ -75,6 +74,7 @@ public class BattleShip extends CommonShip{
 
     }
 
+    @Override
     public void positionOfShip(double x, double y, Pane gameArea){
         gameArea.getChildren().add(model.getShip());
         model.setModelXY(x, y);
@@ -195,33 +195,15 @@ public class BattleShip extends CommonShip{
     }
 
     @Override
-    public void destroy() {
-        Pane gameArea = model.getParent();
-        if(GlobalVariables.isEmpty(gameArea)){
-            return;
-        }
-
-        damageToShield(getShieldActualLife());
-
-        BattleShipWreck wreck = new BattleShipWreck(model.getShip().getCenterX(),model.getShip().getCenterY(), Color.WHITE);
-        gameArea.getChildren().add(wreck.getFlashCircle());
-        wreck.explosion(getPlacement().getX(), getPlacement().getY(), 1050, 25, model);
-
-        Placement [][] placements = getPlacementPositions();
-        for (int i = 0; i < placements.length; i++){
-            for (int j = 0; j < placements[i].length; j++){
-                if(GlobalVariables.isEmpty(placements[i][j])){
-                    continue;
-                }
-
-                if(!placements[i][j].isEmpty()){
-                    ((AShipEquipment) placements[i][j].getShipEquipment()).getModel().removeModel();
-                }
-
-                gameArea.getChildren().removeAll(placements[i][j].getField());
-            }
-        }
+    public CommonWreck getWreck() {
+        return new BattleShipWreck(model.getShip().getCenterX(),model.getShip().getCenterY(), Color.WHITE);
     }
+
+    @Override
+    public CommonModel getModel() {
+        return model;
+    }
+
 
     private void createTimelineHit(){
         hit = new Timeline(new KeyFrame(javafx.util.Duration.seconds(GlobalVariables.damageHitDuration),event -> {

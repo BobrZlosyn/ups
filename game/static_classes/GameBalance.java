@@ -39,7 +39,7 @@ public class GameBalance {
 
     public static final String BATTLE_SHIP_NAME = "Bitevní loď";
     public static final int BATTLE_SHIP_LIFE = 500;
-    public static final int BATTLE_SHIP_SHIELDS = 150;
+    public static final int BATTLE_SHIP_SHIELDS = 0;
     public static final int BATTLE_SHIP_ARMOR = 500;
     public static final int BATTLE_SHIP_SPEED = 500;
     public static final int BATTLE_SHIP_ENERGY = 500;
@@ -65,7 +65,7 @@ public class GameBalance {
     public static final int CANNON_EQUIPMENT_SHIELDS = 0;
     public static final int CANNON_EQUIPMENT_ENERGY_COST = 75;
     public static final int CANNON_EQUIPMENT_MIN_STRENGTH = 40;
-    public static final int CANNON_EQUIPMENT_MAX_STRENGTH = 50;
+    public static final int CANNON_EQUIPMENT_MAX_STRENGTH = 300;
     public static final int CANNON_EQUIPMENT_POINTS_COST = 2;
 
     public static final String DOUBLE_CANNON_EQUIPMENT_NAME = "Dvojité dělo";
@@ -73,7 +73,7 @@ public class GameBalance {
     public static final int DOUBLE_CANNON_EQUIPMENT_SHIELDS = 0;
     public static final int DOUBLE_CANNON_EQUIPMENT_ENERGY_COST = 110;
     public static final int DOUBLE_CANNON_EQUIPMENT_MIN_STRENGTH = 70;
-    public static final int DOUBLE_CANNON_EQUIPMENT_MAX_STRENGTH = 80;
+    public static final int DOUBLE_CANNON_EQUIPMENT_MAX_STRENGTH = 300;
     public static final int DOUBLE_CANNON_EQUIPMENT_POINTS_COST = 2;
 
 

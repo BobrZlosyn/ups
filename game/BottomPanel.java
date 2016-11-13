@@ -93,7 +93,6 @@ public class BottomPanel {
         sendOrders.setText("DÁT ROZKAZ K ÚTOKU");
         sendOrders.setMaxWidth(Double.MAX_VALUE);
         sendOrders.setMaxHeight(Double.MAX_VALUE);
-        sendOrders.disableProperty().bind(GlobalVariables.isPlayingNow.not());
     }
 
     private void createActivationShield(){
@@ -263,6 +262,10 @@ public class BottomPanel {
         targeting.visibleProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue.booleanValue()){
                 CommonWeapon weapon = (CommonWeapon) GlobalVariables.getMarkedObject();
+                if(GlobalVariables.isEmpty(weapon)){
+                    return;
+                }
+
                 notEnoughEnergy(GlobalVariables.getMarkedObject(), targeting, "Zaměřit cíl");
                 if(GlobalVariables.isEmpty(weapon.getTarget())){ //zbran ma vybrany cil
                     cancelTarget.setVisible(false);
