@@ -278,4 +278,7 @@ public class TcpApplication
         message.removeID();
     }
 
+    public TcpMessage getMessage() {
+        return message;
+    }
 }

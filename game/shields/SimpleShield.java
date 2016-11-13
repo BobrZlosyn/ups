@@ -47,6 +47,8 @@ public class SimpleShield extends CommonShield {
     public void displayEquipment(Placement place, boolean isEnemy) {
         double x = place.getX();
         double y = place.getY();
+
+
         setIsEnemy(isEnemy);
         if(!place.isEmpty()){
             return;
@@ -138,6 +140,10 @@ public class SimpleShield extends CommonShield {
     public void destroy() {
         double x = getPlacement().getX();
         double y = getPlacement().getY();
+
+        if (isActive()){
+            getPlacement().getShip().setActualEnergy(-getEnergyCost());
+        }
 
         Pane gameArea = getModel().getParent();
         gameArea.getChildren().removeAll(getModel().getParts());

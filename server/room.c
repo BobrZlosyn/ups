@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "room.h"
 #include "players.h"
 
@@ -7,10 +8,12 @@
 ROOM *create_room(struct players *player1){
 	
 	if (player1 == NULL){
+		printf("jsem hrac nikdo");
 		return NULL;
 	}
 	
 	if (player1->room != NULL) {
+		printf("nejsem prazdny");
 		return player1->room;
 	}
 	

@@ -190,6 +190,10 @@ public class DoubleCannonWeapon extends CommonWeapon{
         double x = getPlacement().getX();
         double y = getPlacement().getY();
 
+        if (!GlobalVariables.isEmpty(getTarget())){
+             getPlacement().getShip().setActualEnergy(-getEnergyCost());
+        }
+
         setTarget(null);
         Pane gameArea = getModel().getParent();
         if(GlobalVariables.isEmpty(gameArea)){

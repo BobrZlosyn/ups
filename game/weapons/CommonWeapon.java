@@ -8,6 +8,7 @@ import game.shots.CommonShot;
 import game.static_classes.GlobalVariables;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.paint.Color;
 
 /**
@@ -20,6 +21,7 @@ public abstract class CommonWeapon extends AShipEquipment {
     private Placement target;
     private double angle;
     private Timeline hit;
+    private ChangeListener <Number> targetLife;
 
     public CommonWeapon (String name, int life, int energy, int minStrength, int maxStrength, int energyCost, int costOfEquipment) {
         super(life, name, maxStrength, energyCost, costOfEquipment, 0);
@@ -29,6 +31,12 @@ public abstract class CommonWeapon extends AShipEquipment {
         setMaxStrength(maxStrength);
         setIsEnemy(false);
         createTimelineHit();
+        targetLife = (observable, oldValue, newValue) -> {
+            if(newValue.doubleValue() <= 0) {
+                rotateToDefaultPosition();
+                setTarget(null);
+            }
+        };
     }
 
     private void createTimelineHit(){
@@ -47,6 +55,13 @@ public abstract class CommonWeapon extends AShipEquipment {
     }
 
     public void setTarget(Placement target) {
+        if(!GlobalVariables.isEmpty(target) && !GlobalVariables.isEmpty(target.getShipEquipment())){
+            ((CommonConstruction)target.getShipEquipment()).getActualLifeBinding().addListener(targetLife);
+        }else {
+            if(!GlobalVariables.isEmpty(this.target) && !GlobalVariables.isEmpty(this.target.getShipEquipment())){
+                ((CommonConstruction)this.target.getShipEquipment()).getActualLifeBinding().removeListener(targetLife);
+            }
+        }
         this.target = target;
     }
 

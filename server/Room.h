@@ -16,6 +16,8 @@ struct room{
 
 ROOM *create_room(struct players *player1);
 
+void generate_starting_id(struct room *room);
+
 void add_second_player(struct players *player2, struct room *room);
 
 ROOM *find_free_room(struct players *first, int playerID);

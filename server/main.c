@@ -261,7 +261,7 @@ int doActionByMessage(struct message *msg, char *ip_client, char *sendMsg, int s
 				add_second_player(player, room);
 				
 				/*order sending*/
-				generate_starting_id (struct room *room); 
+				generate_starting_id(room); 
 				sprintf(sendMsg, "<O;%d>\n", room->isPlayingID);
 				sendMessage(sendMsg, room->player1->player->socket);
 				sendMessage(sendMsg, room->player2->player->socket);
@@ -290,18 +290,25 @@ int doActionByMessage(struct message *msg, char *ip_client, char *sendMsg, int s
 			ROOM *room = player->room;
 			if (room != NULL) {
 				PLAYERS *player1 = room->player1;
-									
+				printf("id msg %d", msg->playerID);
+				
+				/*posle zpravu hraci na prvni pozici*/					
 				if (player1 != NULL && player1->player->playerID != msg->playerID){	
-					sprintf(sendMsg, "<R;%d>\n", room->player1->player->playerID);
-					sendMessage(sendMsg, room->player1->player->socket);
-				}else{
+					sprintf(sendMsg, "<R;%d>\n", player1->player->playerID);
+					sendMessage(sendMsg, player1->player->socket);
+					free(player1->room);
+					player1->room = NULL;
+				} else{
 					PLAYERS *player2 = room->player2;
 					if (player2 != NULL && player2->player->playerID != msg->playerID) {
-						sprintf(sendMsg, "<R;%d>\n", room->player2->player->playerID);
-						sendMessage(sendMsg, room->player2->player->socket);	
+						sprintf(sendMsg, "<R;%d>\n", player2->player->playerID);
+						free(player2->room);
+						player2->room = NULL;
+						sendMessage(sendMsg, player2->player->socket);	
 					}
 				}
 				free(room);
+				player->room = NULL;
 			}
 			
 			

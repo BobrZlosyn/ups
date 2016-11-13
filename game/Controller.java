@@ -38,16 +38,17 @@ public class Controller implements Initializable{
     private ChangeListener <Number> userWin;
     private TcpApplication tcpConnection;
     private Task findGame, waitingTask;
-    private final int WAITING_FOR_OPONNENT = 100;
     private DamageHandler damageHandler;
     private Task <Boolean> sendingTask;
     private ExportImportShip exportImportShip;
     private WaitingForOponnent waitingForOponnent;
     private String sendMessageType = "";
+    private ErrorAlert errorAlert;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        errorAlert = new ErrorAlert();
         tcpConnection = new TcpApplication();
 
         grb = new GeneratRandomBackground();
@@ -62,9 +63,11 @@ public class Controller implements Initializable{
             if(!newValue.isEmpty()){
 
                 if(!GlobalVariables.isEmpty(damageHandler) && !GlobalVariables.isEmpty(controls)){
-                    damageHandler.doDamage(newValue);
-                    GlobalVariables.attackDefinition.set("");
-                    controls.resetAnimation();
+                    Platform.runLater(() -> {
+                        damageHandler.doDamage(newValue);
+                        GlobalVariables.attackDefinition.set("");
+                        controls.resetAnimation();
+                    });
                 }
             }
         });
@@ -90,6 +93,7 @@ public class Controller implements Initializable{
         tcpConnection.isConnectedProperty().addListener((observable, oldValue, newValue) ->{
             if (!newValue && !GlobalVariables.enemyshipDefinition.isEmpty()){
                 window.getChildren().clear();
+                GlobalVariables.errorMsg = ErrorAlert.NOT_CONNECTED_TO_SERVER;
                 createMainPage();
             }
         });
@@ -179,18 +183,19 @@ public class Controller implements Initializable{
         });
     }
 
-
+    /**
+     * zde se zapne obrazovka pro hledani hrace a pri tom se hledani spusti
+     */
     private void prepareGame(){
 
         //vytvari nepratelskou lod
-        if(GlobalVariables.shipDefinition.isEmpty()){
+        if(exportImportShip.isFirstExport()){
             GlobalVariables.shipDefinition = exportImportShip.exportShip(GlobalVariables.choosenShip);
         }
 
         SimpleBooleanProperty isConnected = new SimpleBooleanProperty(false);
         waitingForOponnent.showWaitingForOponnent(window);
         waitingForOponnent.getCancel().setOnAction(event -> {
-            GlobalVariables.shipDefinition = "";
             GlobalVariables.enemyshipDefinition = "";
             waitingForOponnent.removePane();
             sendMessageType = TcpMessage.QUIT;
@@ -209,7 +214,9 @@ public class Controller implements Initializable{
         sendMessageType = TcpMessage.CONNECTION;
     }
 
-
+    /**
+     * nastavi vse potrebne pro zobrazeni hry a jeji ovladani
+     */
     private void startGame(){
         window.getChildren().clear();
         gameAreaPane = new Pane();
@@ -253,8 +260,6 @@ public class Controller implements Initializable{
                 tcpConnection.sendMessageToServer(TcpMessage.ATTACK, actions, TcpMessage.ATTACK);
             }
         });
-
-
     }
 
     private void waitingThread(){
@@ -353,7 +358,6 @@ public class Controller implements Initializable{
             });
 
             endOfGame.getNewGame().setOnAction(event -> {
-                window.getChildren().clear();
                 GlobalVariables.choosenShip.restartValues();
                 GlobalVariables.choosenShip.unmarkObject();
                 exportImportShip.setFirstExport(false);
@@ -374,9 +378,12 @@ public class Controller implements Initializable{
 
         setupPickShipMenu(createMenu);
         grb.showSpacePort(window);
-
+        errorAlert.showErrorPane(window);
     }
 
+    /**
+     * vlakno pro odesilani zprav
+     */
     private void sendingThread(){
         if (!GlobalVariables.isEmpty(sendingTask)) {
             return;
@@ -407,8 +414,11 @@ public class Controller implements Initializable{
                     switch (sendMessageType){
                         case TcpMessage.CONNECTION: {
 
-                            tcpConnection.sendMessageToServer(TcpMessage.CONNECTION, GlobalVariables.shipDefinition, TcpMessage.IDENTITY);
-                            Thread.sleep(1000);
+                            if (!tcpConnection.getMessage().hasId()) {
+                                tcpConnection.sendMessageToServer(TcpMessage.CONNECTION, GlobalVariables.shipDefinition, TcpMessage.IDENTITY);
+                                Thread.sleep(1000);
+                            }
+
                             tcpConnection.sendMessageToServer(TcpMessage.GAME_START, "start the game please", TcpMessage.END_WAITING);
 
                             while (!TcpMessage.END_WAITING.equals(GlobalVariables.receivedMsg)){
@@ -418,7 +428,11 @@ public class Controller implements Initializable{
                                 }
                             }
 
-                            Platform.runLater(() -> startGame());
+                            GlobalVariables.receivedMsg = "";
+                            Platform.runLater(() -> {
+                                System.out.println("ahoj");
+                                startGame();
+                            });
 
                         }break;
 

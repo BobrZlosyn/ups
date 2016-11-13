@@ -12,7 +12,6 @@ import game.weapons.CommonWeapon;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
@@ -44,8 +43,6 @@ public class DamageHandler {
 
     //msg - 1-0;; Shield Damage - 0-N;; Ship damage - 0-N;; Placement position From - 1-N,1-N,Placement position Target - 1-N, 1-N, Damage - 0-N; other placements ...;
     public int doDamage(String msgWithDmg){
-
-        System.out.println("attack 2 "+ msgWithDmg);
         decodeMsg(msgWithDmg);
 
         if(toEnemy){
@@ -150,10 +147,8 @@ public class DamageHandler {
                     commonShot = ((CommonWeapon)placeAttacker.getShipEquipment()).getShot(target, damage, false);
                 }
 
-                Platform.runLater(() -> {
-                    commonShot.addShot(gameArea);
-                    shots.add(commonShot);
-                });
+                commonShot.addShot(gameArea);
+                shots.add(commonShot);
             }
 
             createTimeLineShot();

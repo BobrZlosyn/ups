@@ -32,6 +32,7 @@ public class GlobalVariables {
     public static SimpleStringProperty equipmentStatus = new SimpleStringProperty("");
     public static String expectedMsg = "";
     public static String receivedMsg = "";
+    public static String errorMsg = "";
 
 
     public static void setMarkedObject(CommonConstruction markedObject) {
