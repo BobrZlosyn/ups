@@ -48,6 +48,21 @@ public class CruisershipModel extends CommonModel {
     }
 
     @Override
+    public double getHeight() {
+        return ship.getHeight();
+    }
+
+    @Override
+    public double getCenterX() {
+        return ship.getX() + getWidth()/2;
+    }
+
+    @Override
+    public double getCenterY() {
+        return ship.getY() - getHeight()/2;
+    }
+
+    @Override
     public void setDefaultSkin() {
         ship.setFill(Color.BLACK);
     }

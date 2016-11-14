@@ -53,6 +53,13 @@ public class GameBalance {
     public static final int CRUISER_SHIP_ENERGY = 500;
     public static final int CRUISER_SHIP_POINTS = 14;
 
+    public static final String ADMIRAL_SHIP_NAME = "Velitelská loď";
+    public static final int ADMIRAL_SHIP_LIFE = 500;
+    public static final int ADMIRAL_SHIP_SHIELDS = 500;
+    public static final int ADMIRAL_SHIP_ARMOR = 500;
+    public static final int ADMIRAL_SHIP_SPEED = 500;
+    public static final int ADMIRAL_SHIP_ENERGY = 500;
+    public static final int ADMIRAL_SHIP_POINTS = 14;
 
     /**
      *
@@ -62,7 +69,6 @@ public class GameBalance {
 
     public static final String CANNON_EQUIPMENT_NAME = "Jednoduché dělo";
     public static final int CANNON_EQUIPMENT_LIFE = 200;
-    public static final int CANNON_EQUIPMENT_SHIELDS = 0;
     public static final int CANNON_EQUIPMENT_ENERGY_COST = 75;
     public static final int CANNON_EQUIPMENT_MIN_STRENGTH = 40;
     public static final int CANNON_EQUIPMENT_MAX_STRENGTH = 300;
@@ -70,7 +76,6 @@ public class GameBalance {
 
     public static final String DOUBLE_CANNON_EQUIPMENT_NAME = "Dvojité dělo";
     public static final int DOUBLE_CANNON_EQUIPMENT_LIFE = 250;
-    public static final int DOUBLE_CANNON_EQUIPMENT_SHIELDS = 0;
     public static final int DOUBLE_CANNON_EQUIPMENT_ENERGY_COST = 110;
     public static final int DOUBLE_CANNON_EQUIPMENT_MIN_STRENGTH = 70;
     public static final int DOUBLE_CANNON_EQUIPMENT_MAX_STRENGTH = 300;
@@ -87,7 +92,14 @@ public class GameBalance {
     public static final int SHIELD_EQUIPMENT_LIFE = 200;
     public static final int SHIELD_EQUIPMENT_SHIELDS = 150;
     public static final int SHIELD_EQUIPMENT_ENERGY_COST = 100;
-    public static final int SHIELD_EQUIPMENT_STRENGTH = 0;
     public static final int SHIELD_EQUIPMENT_POINTS_COST = 2;
     public static final int SHIELD_EQUIPMENT_SUCCESS_CHANCE = 4;
+
+
+    public static final String STRONGER_SHIELD_EQUIPMENT_NAME = "Silnější štít";
+    public static final int STRONGER_SHIELD_EQUIPMENT_LIFE = 200;
+    public static final int STRONGER_SHIELD_EQUIPMENT_SHIELDS = 150;
+    public static final int STRONGER_SHIELD_EQUIPMENT_ENERGY_COST = 100;
+    public static final int STRONGER_SHIELD_EQUIPMENT_POINTS_COST = 2;
+    public static final int STRONGER_SHIELD_EQUIPMENT_SUCCESS_CHANCE = 4;
 }

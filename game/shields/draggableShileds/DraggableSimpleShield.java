@@ -18,12 +18,12 @@ public class DraggableSimpleShield extends CommonDraggableObject {
 
     public DraggableSimpleShield(Pane pane, Placement[][] placements){
         init();
-        CommonModel model = createModel(pane, new SimpleShieldModel());
+        CommonModel model = createModel(pane, createPrototypeModel());
         addListeners(model, placements);
     }
 
     public DraggableSimpleShield(Pane pane, Placement[][] placements, boolean isInPlace, Placement placement){
-        modelInPlace = createModel(pane, new SimpleShieldModel());
+        modelInPlace = createModel(pane, createPrototypeModel());
         super.isInPlace = isInPlace;
         super.placement = placement;
         addListeners(modelInPlace, placements);
@@ -40,7 +40,7 @@ public class DraggableSimpleShield extends CommonDraggableObject {
     private void init(){
         xPosition = 100;
         yPosition = 200;
-        addX1 = 115; // z leva do prava
+        addX1 = 120; // z leva do prava
         addX2 = 130; // z prava do leva
         addY1 = -10;
         addY2 = 0;
@@ -51,10 +51,14 @@ public class DraggableSimpleShield extends CommonDraggableObject {
         return new DraggableSimpleShield(showArea, placement.getShip().getPlacementPositions(), true, placement);
     }
 
+    protected CommonModel createPrototypeModel(){
+        return new SimpleShieldModel();
+    }
+
     @Override
     public void createModel(Pane pane, Placement[][] placements, double x, double y) {
         if(GlobalVariables.isEmpty(modelInPlace)){
-            modelInPlace = createModel(pane, new SimpleShieldModel());
+            modelInPlace = createModel(pane, createPrototypeModel());
             xPosition = x;
             yPosition = y;
             modelInPlace.setModelXY(xPosition, yPosition);

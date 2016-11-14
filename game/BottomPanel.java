@@ -456,4 +456,7 @@ public class BottomPanel {
     public void removePanel(GridPane window){
         window.getChildren().remove(panel);
     }
+
+
+
 }

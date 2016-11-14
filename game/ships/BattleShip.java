@@ -114,7 +114,7 @@ public class BattleShip extends CommonShip{
     }
 
     private double countX(double radius, double size, int i){
-        return model.getShip().getCenterX() - radius + size*i + 15*i + 30;
+        return model.getShip().getCenterX() - radius + size*i + 10*i + 35;
     }
 
     private double countY(double radius, double size, int j){
@@ -123,40 +123,6 @@ public class BattleShip extends CommonShip{
 
     public Placement getPosition(int row, int column){
         return getPlacementPositions()[row][column];
-    }
-
-    @Override
-    public void markObject() {
-        model.getShip().setStroke(Color.BLUE);
-        model.getShip().setStrokeWidth(1.5);
-        GlobalVariables.setMarkedObject(this);
-        GlobalVariables.setName(getName());
-        setIsMarked(true);
-    }
-
-    @Override
-    public void unmarkObject() {
-        model.getShip().setStroke(Color.TRANSPARENT);
-        GlobalVariables.setMarkedObject(null);
-        GlobalVariables.setName("");
-        setIsMarked(false);
-
-    }
-
-    @Override
-    public void target() {
-        if(!isEnemy()){
-            return;
-        }
-
-        model.getShip().setStroke(Color.RED);
-        model.getShip().setStrokeWidth(1.5);
-        GlobalVariables.setTargetObject(this);
-    }
-
-    @Override
-    public void cancelTarget() {
-        model.getShip().setStroke(Color.TRANSPARENT);
     }
 
     @Override

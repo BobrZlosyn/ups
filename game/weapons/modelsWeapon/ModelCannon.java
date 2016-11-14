@@ -43,6 +43,21 @@ public class ModelCannon extends CommonModel{
     }
 
     @Override
+    public double getHeight() {
+        return getWidth();
+    }
+
+    @Override
+    public double getCenterX() {
+        return room.getCenterX();
+    }
+
+    @Override
+    public double getCenterY() {
+        return room.getCenterY();
+    }
+
+    @Override
     public void setDefaultSkin() {
 
         room.setFill(Color.ORANGE);

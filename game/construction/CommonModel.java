@@ -26,6 +26,12 @@ public abstract class CommonModel {
 
     public abstract double getWidth();
 
+    public abstract double getHeight();
+
+    public abstract double getCenterX();
+
+    public abstract double getCenterY();
+
     public abstract void setDefaultSkin();
 
 }

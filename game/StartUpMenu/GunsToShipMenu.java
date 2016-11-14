@@ -1,5 +1,7 @@
 package game.StartUpMenu;
 
+import game.shields.draggableShileds.DraggableStrongerShield;
+import game.shields.shieldModels.StrongerShieldModel;
 import game.static_classes.GameBalance;
 import game.static_classes.GlobalVariables;
 import game.construction.AShipEquipment;
@@ -174,12 +176,15 @@ public class GunsToShipMenu {
         items = new VBox(5);
         items.setStyle("-fx-background-color: rgba(0,0,0,0.8);");
 
+        /* pridavani vybaveni do panelu*/
         items.getChildren().add(createItem(new ModelDoubleCannon(), GameBalance.DOUBLE_CANNON_EQUIPMENT_NAME, 35, 35, new DraggableDoubleCannon(35, 35)));
         items.getChildren().add(createItem(new ModelCannon(), GameBalance.CANNON_EQUIPMENT_NAME, 35, 35, new DraggableCannon(35, 35)));
         items.getChildren().add(createItem(new SimpleShieldModel(), GameBalance.SHIELD_EQUIPMENT_NAME, 35, 35, new DraggableSimpleShield(35, 35)));
+        items.getChildren().add(createItem(new StrongerShieldModel(), GameBalance.STRONGER_SHIELD_EQUIPMENT_NAME, 35, 35, new DraggableStrongerShield(35, 35)));
 
         gunsToShipPane.add(items, 0,1, 1, 2);
     }
+
 
     private Pane createItem(CommonModel commonModel, String name, double x, double y, CommonDraggableObject draggableObject){
 
@@ -304,16 +309,10 @@ public class GunsToShipMenu {
     }
 
 
-
-
-
-
-
-
-
-
-
-
+    /**
+     * metody pro animaci prijezdu panelu
+     *
+     */
 
 
     private void createStatusPane(){
@@ -453,7 +452,4 @@ public class GunsToShipMenu {
             }
         }
     }
-
-
-
 }

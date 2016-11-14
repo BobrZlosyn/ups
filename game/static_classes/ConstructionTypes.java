@@ -2,6 +2,8 @@ package game.static_classes;
 
 import game.construction.IShipEquipment;
 import game.shields.SimpleShield;
+import game.shields.StrongerShield;
+import game.ships.AdmiralShip;
 import game.ships.BattleShip;
 import game.ships.CommonShip;
 import game.ships.CruiserShip;
@@ -18,9 +20,11 @@ public class ConstructionTypes {
     private static final String SHIELD = "3";
     public static final String BATTLE_SHIP = SHIP + "1";
     public static final String CRUISER_SHIP = SHIP + "2";
+    public static final String ADMIRAL_SHIP = SHIP + "3";
     public static final String CANNON_WEAPON = WEAPON + "1";
     public static final String DOUBLE_CANNON_WEAPON = WEAPON + "2";
     public static final String SIMPLE_SHIELD = SHIELD + "1";
+    public static final String STRONGER_SHIELD = SHIELD + "2";
 
 
 
@@ -28,6 +32,7 @@ public class ConstructionTypes {
         switch (typeOfShip){
             case ConstructionTypes.BATTLE_SHIP: return new BattleShip(true);
             case ConstructionTypes.CRUISER_SHIP: return new CruiserShip(true);
+            case ConstructionTypes.ADMIRAL_SHIP: return new AdmiralShip(true);
         }
         return null;
     }
@@ -37,6 +42,7 @@ public class ConstructionTypes {
             case ConstructionTypes.CANNON_WEAPON: return new CannonWeapon();
             case ConstructionTypes.DOUBLE_CANNON_WEAPON: return new DoubleCannonWeapon();
             case ConstructionTypes.SIMPLE_SHIELD: return new SimpleShield();
+            case ConstructionTypes.STRONGER_SHIELD: return new StrongerShield();
 
         }
         return null;

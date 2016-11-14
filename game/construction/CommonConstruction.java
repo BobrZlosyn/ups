@@ -3,6 +3,7 @@ package game.construction;
 import game.static_classes.ConstructionTypes;
 import game.static_classes.GlobalVariables;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.scene.shape.Shape;
 
 /**
  * Created by BobrZlosyn on 28.09.2016.
@@ -121,9 +122,7 @@ public abstract class CommonConstruction implements IMarkableObject{
         return;
     }
 
-    public boolean containsPosition(double x, double y){
-        return false;
-    }
+    public abstract boolean containsPosition(double x, double y);
 
     public abstract double getCenterX();
 
@@ -139,4 +138,9 @@ public abstract class CommonConstruction implements IMarkableObject{
 
     public abstract String getConstructionType();
 
+    protected void markShape(Shape shape){
+        shape.setOnMouseClicked(event -> {
+            markingHandle(isMarked(), this);
+        });
+    }
 }

@@ -1,10 +1,12 @@
 package game.shields;
 
 import game.construction.*;
+import game.shields.wrecksShields.SimpleShieldWrecks;
 import game.static_classes.GlobalVariables;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 /**
@@ -69,5 +71,70 @@ public abstract class CommonShield extends AShipEquipment {
     public void damageHit() {
         getModel().getParts().forEach(shape -> shape.setFill(GlobalVariables.damageHit));
         hit.playFromStart();
+    }
+
+    protected abstract CommonWreck getWreck();
+
+    @Override
+    public void destroy() {
+        double x = getPlacement().getX();
+        double y = getPlacement().getY();
+
+        if (isActive()){
+            getPlacement().getShip().setActualEnergy(-getEnergyCost());
+        }
+
+        Pane gameArea = getModel().getParent();
+        gameArea.getChildren().removeAll(getModel().getParts());
+
+        CommonWreck wrecks = getWreck();
+        gameArea.getChildren().add(wrecks.getFlashCircle());
+        wrecks.explosion(x, y, 45, 5, getModel());
+    }
+
+    @Override
+    public void markObject() {
+        getModel().getParts().forEach(shape -> {
+            shape.setStroke(Color.BLUE);
+            shape.setStrokeWidth(1.5);
+        });
+
+        setIsMarked(true);
+
+        GlobalVariables.setMarkedObject(this);
+        GlobalVariables.setName(getName());
+        GlobalVariables.setCanTarget(false);
+    }
+
+    @Override
+    public void unmarkObject() {
+        getModel().getParts().forEach(shape -> {
+            shape.setStroke(Color.TRANSPARENT);
+        });
+
+        setIsMarked(false);
+        GlobalVariables.setMarkedObject(null);
+        GlobalVariables.setName("");
+        GlobalVariables.setCanTarget(false);
+    }
+
+    @Override
+    public void target() {
+        if(!isEnemy()){
+            return;
+        }
+
+        getModel().getParts().forEach(shape -> {
+            shape.setStroke(Color.RED);
+            shape.setStrokeWidth(1.5);
+        });
+        GlobalVariables.setTargetObject(this);
+    }
+
+    @Override
+    public void cancelTarget() {
+        getModel().getParts().forEach(shape -> {
+            shape.setStroke(Color.TRANSPARENT);
+        });
     }
 }

@@ -1,6 +1,7 @@
 package game.shields;
 
 import game.construction.CommonModel;
+import game.construction.CommonWreck;
 import game.static_classes.ConstructionTypes;
 import game.static_classes.GameBalance;
 import game.static_classes.GlobalVariables;
@@ -33,15 +34,10 @@ public class SimpleShield extends CommonShield {
     private void createShield() {
         commonShieldModel = new SimpleShieldModel();
         commonShieldModel.getParts().forEach(shape -> {
-            markShield(shape);
+            markShape(shape);
         });
     }
 
-    private void markShield(Shape shape){
-        shape.setOnMouseClicked(event -> {
-            markingHandle(isMarked(), this);
-        });
-    }
 
     @Override
     public void displayEquipment(Placement place, boolean isEnemy) {
@@ -63,62 +59,15 @@ public class SimpleShield extends CommonShield {
         displayEquipmentExtension(place);
     }
 
-    @Override
-    public void markObject() {
-        commonShieldModel.getParts().forEach(shape -> {
-            shape.setStroke(Color.BLUE);
-            shape.setStrokeWidth(1.5);
-        });
-
-        setIsMarked(true);
-
-        GlobalVariables.setMarkedObject(this);
-        GlobalVariables.setName(getName());
-        GlobalVariables.setCanTarget(false);
-    }
-
-    @Override
-    public void unmarkObject() {
-        commonShieldModel.getParts().forEach(shape -> {
-            shape.setStroke(Color.TRANSPARENT);
-        });
-
-        setIsMarked(false);
-        GlobalVariables.setMarkedObject(null);
-        GlobalVariables.setName("");
-        GlobalVariables.setCanTarget(false);
-    }
-
-    @Override
-    public void target() {
-        if(!isEnemy()){
-            return;
-        }
-
-        commonShieldModel.getParts().forEach(shape -> {
-            shape.setStroke(Color.RED);
-            shape.setStrokeWidth(1.5);
-        });
-        GlobalVariables.setTargetObject(this);
-    }
-
-    @Override
-    public void cancelTarget() {
-        commonShieldModel.getParts().forEach(shape -> {
-            shape.setStroke(Color.TRANSPARENT);
-        });
-    }
 
     @Override
     public double getCenterX() {
-        double x = commonShieldModel.getShield().getX() + commonShieldModel.getShield().getWidth()/2;
-        return x;
+        return commonShieldModel.getShield().getX() + commonShieldModel.getShield().getWidth()/2;
     }
 
     @Override
     public double getCenterY() {
-        double y = commonShieldModel.getShield().getY() + commonShieldModel.getShield().getHeight()/2;
-        return y;
+        return commonShieldModel.getShield().getY() + commonShieldModel.getShield().getHeight()/2;
     }
 
     @Override
@@ -137,19 +86,7 @@ public class SimpleShield extends CommonShield {
     }
 
     @Override
-    public void destroy() {
-        double x = getPlacement().getX();
-        double y = getPlacement().getY();
-
-        if (isActive()){
-            getPlacement().getShip().setActualEnergy(-getEnergyCost());
-        }
-
-        Pane gameArea = getModel().getParent();
-        gameArea.getChildren().removeAll(getModel().getParts());
-
-        SimpleShieldWrecks wrecks = new SimpleShieldWrecks(getCenterX(), getCenterY(), Color.RED);
-        gameArea.getChildren().add(wrecks.getFlashCircle());
-        wrecks.explosion(x, y, 45, 5, commonShieldModel);
+    protected CommonWreck getWreck() {
+        return new SimpleShieldWrecks(getCenterX(), getCenterY(), Color.RED);
     }
 }

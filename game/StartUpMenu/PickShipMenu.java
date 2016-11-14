@@ -1,5 +1,6 @@
 package game.StartUpMenu;
 
+import game.ships.AdmiralShip;
 import game.static_classes.GameBalance;
 import game.static_classes.GlobalVariables;
 import game.ships.BattleShip;
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 public class PickShipMenu {
     private GridPane pickship;
     private Pane showArea;
-    private Button battleShip, cruiserShip, nextSetup, previous;
+    private Button battleShip, cruiserShip, admiralShip, nextSetup, previous;
     private Label title, nameOfShip;
     private CommonShip choosenShip;
     private int begin, end;
@@ -57,6 +58,7 @@ public class PickShipMenu {
     private void init(){
         createBattleShipButton();
         createCruiserShipButton();
+        createAdmiralShipButton();
         createNextSetupButton();
         createStatusPane();
         createPreviousButton();
@@ -109,6 +111,20 @@ public class PickShipMenu {
         });
     }
 
+    private void createAdmiralShipButton(){
+        admiralShip = new Button(GameBalance.ADMIRAL_SHIP_NAME);
+
+        admiralShip.setMaxWidth(Double.MAX_VALUE);
+        admiralShip.setMaxHeight(Double.MAX_VALUE);
+        admiralShip.setMinHeight(70);
+        admiralShip.setOnAction(event -> {
+            AdmiralShip ship = new AdmiralShip(false);
+            double x = showArea.getWidth() / 2;
+            double y = showArea.getHeight() / 2 - admiralShip.getHeight() / 2;
+            createShip(ship, x, y);
+        });
+    }
+
     private void createCruiserShipButton(){
 
         cruiserShip = new Button(GameBalance.CRUISER_SHIP_NAME);
@@ -150,7 +166,7 @@ public class PickShipMenu {
     private void createVBox(){
         menuVBox = new VBox(5);
         menuVBox.setStyle("-fx-background-color: rgba(0,0,0,0.8)");
-        menuVBox.getChildren().addAll(battleShip, cruiserShip);
+        menuVBox.getChildren().addAll(battleShip, cruiserShip, admiralShip);
     }
 
     private void createNextSetupButton(){

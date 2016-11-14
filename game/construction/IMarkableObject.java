@@ -1,6 +1,7 @@
 package game.construction;
 
 import game.static_classes.GlobalVariables;
+import javafx.scene.shape.Shape;
 
 /**
  * Created by BobrZlosyn on 28.09.2016.
@@ -37,4 +38,5 @@ public interface IMarkableObject {
             unmarkObject();
         }
     }
+
 }

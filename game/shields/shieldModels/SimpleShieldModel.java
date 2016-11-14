@@ -52,6 +52,21 @@ public class SimpleShieldModel extends CommonModel {
     }
 
     @Override
+    public double getHeight() {
+        return shield.getHeight();
+    }
+
+    @Override
+    public double getCenterX() {
+        return shield.getX() + getWidth()/2;
+    }
+
+    @Override
+    public double getCenterY() {
+        return shield.getY() - getHeight();
+    }
+
+    @Override
     public void setDefaultSkin() {
         shield.setFill(Color.ORANGE);
     }

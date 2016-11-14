@@ -16,7 +16,6 @@ public class BattleshipModel extends CommonModel{
 
     public BattleshipModel(){
         ship = new Circle(150);
-        ship.setStyle("-fx-background-color: red;");
     }
 
     public Circle getShip() {
@@ -44,6 +43,21 @@ public class BattleshipModel extends CommonModel{
     @Override
     public double getWidth() {
         return ship.getRadius() * 2;
+    }
+
+    @Override
+    public double getHeight() {
+        return getWidth();
+    }
+
+    @Override
+    public double getCenterX() {
+        return ship.getCenterX();
+    }
+
+    @Override
+    public double getCenterY() {
+        return ship.getCenterY();
     }
 
     @Override
