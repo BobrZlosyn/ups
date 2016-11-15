@@ -12,6 +12,7 @@ import game.weapons.modelsWeapon.ModelSimpleLaserWeapon;
 import game.weapons.wrecksWeapons.CannonWreck;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.Rotate;
 
 /**
  * Created by Kanto on 15.11.2016.
@@ -92,11 +93,57 @@ public class SimpleLaserWeapon extends CommonWeapon{
 
     @Override
     public void rotateEquipment(double x, double y) {
+        rotateToDefaultPosition();
+        double cosinus = calculationForRotation(x, y, getCenterX(), getCenterY(), isEnemy());
+        double angleNew = cosinus - getAngle();
+        System.out.println("ahojddddkz");
+
+       // Rotate rotation = new Rotate(cosinus, 168, getCenterY() - 40);
+        setAngle(angleNew);
+
+        model.getTower1().setRotate(cosinus);
+        model.getTower2().setRotate(cosinus);
+
+
+
+        if (cosinus > 0) {
+            model.getTower1().setLayoutY(model.getTower1().getLayoutY() + 5);
+            model.getTower2().setLayoutY(model.getTower2().getLayoutY() + 5);
+            model.getTower1().setLayoutX(model.getTower1().getLayoutX() + 5);
+        } else {
+            model.getTower1().setLayoutY(model.getTower1().getLayoutY() - 5);
+            model.getTower2().setLayoutY(model.getTower2().getLayoutY() - 5);
+            model.getTower2().setLayoutX(model.getTower2().getLayoutX() + 5);
+        }
+
+
+
+        // model.getTower1().getTransforms().add(rotation);
+      //  model.getTower2().getTransforms().add(rotation);
 
     }
 
     @Override
     public void rotateToDefaultPosition() {
+        double newAngle = -getAngle();
+        setAngle(0);
 
+        System.out.println("ahojkz");
+        if( newAngle == 0 ){
+            return;
+        }
+
+        model.getTower1().setRotate(newAngle);
+        model.getTower2().setRotate(newAngle);
+
+        if (newAngle > 0) {
+            model.getTower1().setLayoutY(model.getTower1().getLayoutY() - 5);
+            model.getTower2().setLayoutY(model.getTower2().getLayoutY() - 5);
+            model.getTower1().setLayoutX(model.getTower1().getLayoutX() - 5);
+        } else {
+            model.getTower1().setLayoutY(model.getTower1().getLayoutY() + 5);
+            model.getTower2().setLayoutY(model.getTower2().getLayoutY() + 5);
+            model.getTower2().setLayoutX(model.getTower2().getLayoutX() - 5);
+        }
     }
 }

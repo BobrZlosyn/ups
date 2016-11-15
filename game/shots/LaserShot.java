@@ -14,11 +14,25 @@ public class LaserShot extends CommonShot {
 
     public LaserShot(CommonConstruction target, CommonConstruction attacker, int damage, boolean intoShields) {
         super(target, attacker, damage, intoShields);
+
         shot = new Line();
-        shot.setStartX(attacker.getCenterX());
-        shot.setStartY(attacker.getCenterY());
+
+        setXY();
+        shot.setStrokeWidth(2.5);
         shot.setFill(Color.RED);
         shot.setStroke(Color.RED);
+    }
+
+    public void setXY(){
+        //posunuti pred kanon
+        for(int i = 0; i < 20; i++){
+            pocitatTrasu();
+        }
+
+        shot.setStartX(x1);
+        shot.setStartY(y1);
+        shot.setEndX(x1);
+        shot.setEndY(y1);
     }
 
     @Override
@@ -39,7 +53,7 @@ public class LaserShot extends CommonShot {
         y1 = coordinates[1];
 
         shot.setEndX(x1);
-        shot.setEndY(x1);
+        shot.setEndY(y1);
 
         if(isIntoShields() && target.getPlacement().getShip().getShieldActualLife() != 0){
             return target.getPlacement().getShip().isOnShield(x1, y1);

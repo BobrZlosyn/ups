@@ -1,6 +1,5 @@
 package game.construction;
 
-import javafx.scene.transform.Rotate;
 
 /**
  * Created by BobrZlosyn on 01.10.2016.
@@ -9,7 +8,7 @@ public interface IShipEquipment {
 
     void displayEquipment(Placement place, boolean isEnemy);
 
-    default Rotate calculationForRotation(double x, double y, double centerX, double centerY, boolean isEnemy){
+    default double calculationForRotation(double x, double y, double centerX, double centerY, boolean isEnemy){
         double countCx = (x - centerX)*(x - centerX);
         double countAx = (x - centerX)*(x - centerX);
         double countAy = (y - centerY)*(y - centerY);
@@ -22,9 +21,9 @@ public interface IShipEquipment {
         }
 
         if(isEnemy){
-            return new Rotate(cosinus, centerX, centerY);
+            return cosinus;
         }else{
-            return new Rotate(-cosinus, centerX, centerY);
+            return -cosinus;
         }
     }
 

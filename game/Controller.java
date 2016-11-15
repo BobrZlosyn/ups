@@ -243,7 +243,7 @@ public class Controller implements Initializable{
         damageHandler = new DamageHandler(GlobalVariables.choosenShip, enemyShip, gameAreaPane, sendDataButton);
         sendDataButton.setOnAction(event1 -> {
             if(GlobalVariables.isPlayingNow.get()){
-                sendDataButton.setDisable(false);
+                sendDataButton.setDisable(true);
                 String status = damageHandler.exportEquipmentStatus(GlobalVariables.choosenShip.getPlacementPositions());
                 tcpConnection.sendMessageToServer(TcpMessage.EQUIPMENT_STATUS, status, TcpMessage.WAITING);
                 String actions = damageHandler.exportShooting(GlobalVariables.choosenShip.getPlacementPositions());
@@ -318,6 +318,7 @@ public class Controller implements Initializable{
             usersShip.getActualLifeBinding().removeListener(userLost);
             enemyShip.getActualLifeBinding().removeListener(userWin);
             GlobalVariables.enemyshipDefinition = "";
+            GlobalVariables.setDefaultValues();
 
             endOfGame.getBackToMenu().setOnAction(event -> {
                 tcpConnection.endConnection();

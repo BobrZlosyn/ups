@@ -79,19 +79,14 @@ public class DoubleCannonWeapon extends CommonWeapon{
     @Override
     public void rotateEquipment(double x, double y) {
         rotateToDefaultPosition();
-        Rotate rotation = calculationForRotation(x, y, getCenterX(), getCenterY(), isEnemy());
-        double angleNew = rotation.getAngle() - getAngle();
-        rotation.setAngle(angleNew);
+        double cosinus = calculationForRotation(x, y, getCenterX(), getCenterY(), isEnemy());
+        double angleNew = cosinus - getAngle();
+        Rotate rotation = new Rotate(cosinus, getCenterX(), getCenterY());
         setAngle(angleNew);
 
+        modelDoubleCannon.getCannonTop().getTransforms().add(rotation);
+        modelDoubleCannon.getCannonBottom().getTransforms().add(rotation);
 
-        if(isEnemy()){
-            modelDoubleCannon.getCannonTop().getTransforms().add(rotation);
-            modelDoubleCannon.getCannonBottom().getTransforms().add(rotation);
-        }else{
-            modelDoubleCannon.getCannonTop().getTransforms().add(rotation);
-            modelDoubleCannon.getCannonBottom().getTransforms().add(rotation);
-        }
     }
 
     @Override

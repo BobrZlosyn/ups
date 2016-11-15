@@ -142,7 +142,9 @@ public class DamageHandler {
                 }
 
 
-                placeAttacker.getShipEquipment().rotateEquipment(x, y);
+                if (!GlobalVariables.choosenShip.equals(placeAttacker.getShip())){
+                    placeAttacker.getShipEquipment().rotateEquipment(x, y);
+                }
 
                 CommonShot commonShot;
                 if(intoShields == 1){

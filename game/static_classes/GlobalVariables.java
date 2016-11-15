@@ -133,4 +133,26 @@ public class GlobalVariables {
     public static SimpleBooleanProperty gameIsFinishedProperty() {
         return gameIsFinished;
     }
+
+    public static void setDefaultValues(){
+        name.set("");
+        targetObject = null;
+        markedObject = null;
+        isTargeting = false;
+        canTarget.set(false);
+        isSelected.set(false);
+        isUsersShieldUp = false;
+        isEnemyShieldUp = false;
+        gameIsFinished.set(false);
+        enemyLost.set(false);
+        isPlayingNow.set(false);
+        enemyshipDefinition = "";
+        startingID = "";
+        attackDefinition.set("");
+        equipmentStatus.set("");
+        expectedMsg = "";
+        receivedMsg = "";
+        errorMsg = "";
+        sendMessageType = "";
+    }
 }
