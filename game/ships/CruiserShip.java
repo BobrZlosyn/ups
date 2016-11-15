@@ -172,23 +172,6 @@ public class CruiserShip extends CommonShip{
     }
 
     @Override
-    public boolean containsPosition(double x, double y){
-        return model.getShip().contains(x, y);
-    }
-
-    @Override
-    public double getCenterX(){
-        double middleX = model.getShip().getX()+ model.getShip().getWidth()/2;
-        return middleX ;
-    }
-
-    @Override
-    public double getCenterY(){
-        double middleY = model.getShip().getY()+ model.getShip().getHeight()/2;
-        return middleY;
-    }
-
-    @Override
     public Placement getPlacement() {
         return new Placement(getCenterX(), getCenterY(), model.getWidth(), this, -1, -1);
     }
@@ -200,6 +183,6 @@ public class CruiserShip extends CommonShip{
 
     @Override
     public Pane getPane() {
-        return model.getParent();
+        return getModel().getParent();
     }
 }

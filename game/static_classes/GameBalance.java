@@ -81,7 +81,12 @@ public class GameBalance {
     public static final int DOUBLE_CANNON_EQUIPMENT_MAX_STRENGTH = 300;
     public static final int DOUBLE_CANNON_EQUIPMENT_POINTS_COST = 2;
 
-
+    public static final String SIMPLE_LASER_EQUIPMENT_NAME = "Laserové dělo";
+    public static final int SIMPLE_LASER_EQUIPMENT_LIFE = 250;
+    public static final int SIMPLE_LASER_EQUIPMENT_ENERGY_COST = 110;
+    public static final int SIMPLE_LASER_EQUIPMENT_MIN_STRENGTH = 70;
+    public static final int SIMPLE_LASER_EQUIPMENT_MAX_STRENGTH = 300;
+    public static final int SIMPLE_LASER_EQUIPMENT_POINTS_COST = 2;
     /**
      * 
      * SHIELDS

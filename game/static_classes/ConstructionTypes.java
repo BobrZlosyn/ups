@@ -9,6 +9,7 @@ import game.ships.CommonShip;
 import game.ships.CruiserShip;
 import game.weapons.CannonWeapon;
 import game.weapons.DoubleCannonWeapon;
+import game.weapons.SimpleLaserWeapon;
 
 /**
  * Created by Kanto on 03.10.2016.
@@ -23,6 +24,7 @@ public class ConstructionTypes {
     public static final String ADMIRAL_SHIP = SHIP + "3";
     public static final String CANNON_WEAPON = WEAPON + "1";
     public static final String DOUBLE_CANNON_WEAPON = WEAPON + "2";
+    public static final String SIMPLE_LASER_WEAPON = WEAPON + "3";
     public static final String SIMPLE_SHIELD = SHIELD + "1";
     public static final String STRONGER_SHIELD = SHIELD + "2";
 
@@ -41,6 +43,7 @@ public class ConstructionTypes {
         switch (equipment){
             case ConstructionTypes.CANNON_WEAPON: return new CannonWeapon();
             case ConstructionTypes.DOUBLE_CANNON_WEAPON: return new DoubleCannonWeapon();
+            case ConstructionTypes.SIMPLE_LASER_WEAPON: return new SimpleLaserWeapon();
             case ConstructionTypes.SIMPLE_SHIELD: return new SimpleShield();
             case ConstructionTypes.STRONGER_SHIELD: return new StrongerShield();
 

@@ -30,6 +30,7 @@ public abstract class CommonWeapon extends AShipEquipment {
         setMaxStrength(maxStrength);
         setIsEnemy(false);
         createTimelineHit();
+        setIsMarked(false);
 
         targetLife = (observable, oldValue, newValue) -> {
             if(newValue.doubleValue() <= 0) {

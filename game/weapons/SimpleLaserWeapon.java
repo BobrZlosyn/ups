@@ -5,13 +5,35 @@ import game.construction.CommonModel;
 import game.construction.CommonWreck;
 import game.construction.Placement;
 import game.shots.CommonShot;
+import game.static_classes.ConstructionTypes;
+import game.static_classes.GameBalance;
+import game.weapons.modelsWeapon.ModelSimpleLaserWeapon;
+import game.weapons.wrecksWeapons.CannonWreck;
+import javafx.scene.paint.Color;
 
 /**
  * Created by Kanto on 15.11.2016.
  */
 public class SimpleLaserWeapon extends CommonWeapon{
-    public SimpleLaserWeapon(String name, int life, int energy, int minStrength, int maxStrength, int energyCost, int costOfEquipment) {
-        super(name, life, energy, minStrength, maxStrength, energyCost, costOfEquipment);
+    private ModelSimpleLaserWeapon model;
+
+    public SimpleLaserWeapon() {
+        super(  GameBalance.SIMPLE_LASER_EQUIPMENT_NAME,
+                GameBalance.SIMPLE_LASER_EQUIPMENT_LIFE,
+                GameBalance.SIMPLE_LASER_EQUIPMENT_ENERGY_COST,
+                GameBalance.SIMPLE_LASER_EQUIPMENT_MIN_STRENGTH,
+                GameBalance.SIMPLE_LASER_EQUIPMENT_MAX_STRENGTH,
+                GameBalance.SIMPLE_LASER_EQUIPMENT_ENERGY_COST,
+                GameBalance.SIMPLE_LASER_EQUIPMENT_POINTS_COST);
+        createCannon();
+    }
+
+    private void createCannon() {
+        model = new ModelSimpleLaserWeapon();
+        model.getParts().forEach(shape -> {
+            markShape(shape);
+        });
+
     }
 
     @Override
@@ -21,7 +43,7 @@ public class SimpleLaserWeapon extends CommonWeapon{
 
     @Override
     public CommonModel getModel() {
-        return null;
+        return model;
     }
 
     @Override
@@ -31,11 +53,21 @@ public class SimpleLaserWeapon extends CommonWeapon{
 
     @Override
     public CommonWreck getWreck() {
-        return null;
+        return new CannonWreck(getCenterX(), getCenterY(), Color.RED);
     }
 
     @Override
     public String getConstructionType() {
-        return null;
+        return ConstructionTypes.SIMPLE_LASER_WEAPON;
+    }
+
+    @Override
+    public void rotateEquipment(double x, double y) {
+
+    }
+
+    @Override
+    public void rotateToDefaultPosition() {
+
     }
 }

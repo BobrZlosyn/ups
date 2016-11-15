@@ -34,9 +34,9 @@ public class CannonWeapon extends CommonWeapon{
                 GameBalance.CANNON_EQUIPMENT_ENERGY_COST,
                 GameBalance.CANNON_EQUIPMENT_POINTS_COST
         );
-        setIsMarked(false);
         createCannon();
     }
+
 
     private void createCannon() {
         modelCannon = new ModelCannon();

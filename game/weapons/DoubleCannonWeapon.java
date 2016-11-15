@@ -32,7 +32,6 @@ public class DoubleCannonWeapon extends CommonWeapon{
                 GameBalance.DOUBLE_CANNON_EQUIPMENT_ENERGY_COST,
                 GameBalance.DOUBLE_CANNON_EQUIPMENT_POINTS_COST
         );
-        setIsMarked(false);
         createCannon();
     }
 
@@ -101,11 +100,6 @@ public class DoubleCannonWeapon extends CommonWeapon{
         setAngle(0);
         modelDoubleCannon.getCannonTop().getTransforms().add(new Rotate(newAngle, getCenterX(), getCenterY()));
         modelDoubleCannon.getCannonBottom().getTransforms().add(new Rotate(newAngle, getCenterX(), getCenterY()));
-    }
-
-    @Override
-    public boolean containsPosition(double x, double y){
-        return modelDoubleCannon.getRoom().contains(x, y);
     }
 
     @Override

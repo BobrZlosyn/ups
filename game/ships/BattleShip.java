@@ -114,11 +114,11 @@ public class BattleShip extends CommonShip{
     }
 
     private double countX(double radius, double size, int i){
-        return model.getShip().getCenterX() - radius + size*i + 10*i + 35;
+        return getCenterX() - radius + size*i + 10*i + 35;
     }
 
     private double countY(double radius, double size, int j){
-        return model.getShip().getCenterY() - radius + size*j + 10*j + 35;
+        return getCenterY() - radius + size*j + 10*j + 35;
     }
 
     public Placement getPosition(int row, int column){
@@ -205,18 +205,4 @@ public class BattleShip extends CommonShip{
         }
     }
 
-    @Override
-    public boolean containsPosition(double x, double y){
-        return model.getShip().contains(x, y);
-    }
-
-    @Override
-    public double getCenterX(){
-        return model.getShip().getCenterX();
-    }
-
-    @Override
-    public double getCenterY(){
-        return model.getShip().getCenterY();
-    }
 }
