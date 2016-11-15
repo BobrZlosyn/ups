@@ -130,7 +130,7 @@ public class AdmiralShip extends CommonShip{
                 Pane parent = model.getParent();
                 parent.getChildren().add(place);
 
-                place.setY(countY(-model.getHeight()/2, size, j));
+                place.setY(countY(model.getHeight()/2, size, j));
                 place.setX(countX(model.getWidth()/2 , size, i));
                 shipMapping[i][j] = new Placement(place.getX(), place.getY(), place.getWidth(), this, i, j);
                 shipMapping[i][j].setField(place);
@@ -143,6 +143,11 @@ public class AdmiralShip extends CommonShip{
         return getPlacementPositions()[row][column];
     }
 
+    @Override
+    public Placement getPlacement() {
+        return new Placement(getCenterX(), getCenterY(), getWidth(), this, -1, -1);
+    }
+
     private double countX(double radius, double size, int i){
         return model.getCenterX() - radius + size*i + 10*i + 20;
     }
@@ -153,7 +158,7 @@ public class AdmiralShip extends CommonShip{
 
     @Override
     public double getWidth() {
-        return model.getWidth();
+        return getModel().getWidth();
     }
 
     @Override
@@ -192,7 +197,7 @@ public class AdmiralShip extends CommonShip{
                     continue;
                 }
 
-                placement.resize(countX(model.getWidth()/2, placement.getSize(), i), countY(-model.getHeight()/2, placement.getSize(), j));
+                placement.resize(countX(model.getWidth()/2, placement.getSize(), i), countY(model.getHeight()/2, placement.getSize(), j));
 
             }
         }

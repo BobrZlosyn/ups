@@ -82,7 +82,8 @@ public class AdmiralshipModel extends CommonModel {
 
     @Override
     public double getCenterY() {
-        return ship.getLayoutY() - getHeight()/2;
+
+        return ship.getLayoutY() + getHeight()/2;
     }
 
     @Override
