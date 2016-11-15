@@ -6,6 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
+import javafx.scene.transform.Rotate;
 
 import java.util.ArrayList;
 
@@ -14,7 +15,7 @@ import java.util.ArrayList;
  */
 public class ModelSimpleLaserWeapon extends CommonModel {
 
-    private Circle room;
+    private Circle room, room2;
     private Polygon tower1, tower2;
 
     public ModelSimpleLaserWeapon () {
@@ -23,17 +24,20 @@ public class ModelSimpleLaserWeapon extends CommonModel {
 
     private void createCannon(){
         room = new Circle(25);
+        room2 = new Circle(20);
 
         double [] points1 = new double []{
                 0.0, 22,
-                50, 22,
-                0 ,2
+                36, 22,
+                36, 19,
+                0 ,8
         };
 
         double [] points2 = new double []{
                 0.0, 22 + 5,
-                50, 22 + 5,
-                0 ,48
+                36, 22 + 5,
+                36, 25 + 5,
+                0 ,42
         };
 
         tower1 = new Polygon(points1);
@@ -51,8 +55,11 @@ public class ModelSimpleLaserWeapon extends CommonModel {
         tower1.setLayoutX(x);
         tower2.setLayoutX(x);
 
-        tower1.setLayoutY(y);
-        tower1.setLayoutY(y);
+        tower1.setLayoutY(y - 27);
+        tower2.setLayoutY(y - 23);
+
+        room2.setCenterY(y);
+        room2.setCenterX(x);
     }
 
     @Override
@@ -61,6 +68,7 @@ public class ModelSimpleLaserWeapon extends CommonModel {
         cannonParts.add(room);
         cannonParts.add(tower1);
         cannonParts.add(tower2);
+        cannonParts.add(room2);
         return cannonParts;
     }
 
@@ -93,6 +101,7 @@ public class ModelSimpleLaserWeapon extends CommonModel {
     public void setDefaultSkin() {
 
         room.setFill(Color.ORANGE);
+        room2.setFill(Color.GREEN);
         tower1.setFill(Color.YELLOW);
         tower2.setFill(Color.RED);
     }
@@ -100,5 +109,13 @@ public class ModelSimpleLaserWeapon extends CommonModel {
     @Override
     public boolean containsPosition(double x, double y) {
         return room.contains(x, y);
+    }
+
+    public Polygon getTower1() {
+        return tower1;
+    }
+
+    public Polygon getTower2() {
+        return tower2;
     }
 }

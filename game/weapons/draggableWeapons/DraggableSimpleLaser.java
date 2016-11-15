@@ -12,9 +12,9 @@ import javafx.scene.layout.Pane;
 /**
  * Created by BobrZlosyn on 15.11.2016.
  */
-public class DraggableSImpleLaser extends CommonDraggableObject {
+public class DraggableSimpleLaser extends CommonDraggableObject {
 
-    public DraggableSImpleLaser(Pane pane, Placement[][] placements, double x, double y){
+    public DraggableSimpleLaser(Pane pane, Placement[][] placements, double x, double y){
         init();
         xPosition = x;
         yPosition = y;
@@ -25,7 +25,7 @@ public class DraggableSImpleLaser extends CommonDraggableObject {
         addListeners(modelInPlace, placements);
     }
 
-    public DraggableSImpleLaser(double x, double y){
+    public DraggableSimpleLaser(double x, double y){
         init();
         xPosition = x;
         yPosition = y;
@@ -33,7 +33,7 @@ public class DraggableSImpleLaser extends CommonDraggableObject {
         super.placement = null;
     }
 
-    public DraggableSImpleLaser(Pane pane, Placement[][] placements, boolean isInPlace, Placement placement){
+    public DraggableSimpleLaser(Pane pane, Placement[][] placements, boolean isInPlace, Placement placement){
         modelInPlace = createModel(pane, new ModelSimpleLaserWeapon());
         super.isInPlace = isInPlace;
         super.placement = placement;
@@ -69,6 +69,6 @@ public class DraggableSImpleLaser extends CommonDraggableObject {
 
     @Override
     protected CommonDraggableObject getDraggableObject(Pane showArea, Placement placement) {
-        return null;
+        return new DraggableSimpleLaser(showArea, placement.getShip().getPlacementPositions(), true, placement);
     }
 }

@@ -13,8 +13,10 @@ import game.shields.shieldModels.SimpleShieldModel;
 import game.ships.CommonShip;
 import game.weapons.draggableWeapons.DraggableCannon;
 import game.weapons.draggableWeapons.DraggableDoubleCannon;
+import game.weapons.draggableWeapons.DraggableSimpleLaser;
 import game.weapons.modelsWeapon.ModelCannon;
 import game.weapons.modelsWeapon.ModelDoubleCannon;
+import game.weapons.modelsWeapon.ModelSimpleLaserWeapon;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -181,6 +183,7 @@ public class GunsToShipMenu {
         items.getChildren().add(createItem(new ModelCannon(), GameBalance.CANNON_EQUIPMENT_NAME, 35, 35, new DraggableCannon(35, 35)));
         items.getChildren().add(createItem(new SimpleShieldModel(), GameBalance.SHIELD_EQUIPMENT_NAME, 35, 35, new DraggableSimpleShield(35, 35)));
         items.getChildren().add(createItem(new StrongerShieldModel(), GameBalance.STRONGER_SHIELD_EQUIPMENT_NAME, 35, 35, new DraggableStrongerShield(35, 35)));
+        items.getChildren().add(createItem(new ModelSimpleLaserWeapon(), GameBalance.SIMPLE_LASER_EQUIPMENT_NAME, 35, 35, new DraggableSimpleLaser(35, 35)));
 
         gunsToShipPane.add(items, 0,1, 1, 2);
     }

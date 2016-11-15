@@ -105,7 +105,7 @@ public class CruiserShip extends CommonShip{
     }
 
     private double countX(double size, int i){
-        return model.getShip().getX() + size*i + 10*i + 15;
+        return model.getShip().getX() + size*i + 13*i + 12;
     }
 
     private double countY(double size, int j){

@@ -134,7 +134,7 @@ public class AdmiralShip extends CommonShip{
     }
 
     private double countX(double radius, double size, int i){
-        return model.getCenterX() - radius + size*i + 10*i + 20;
+        return model.getCenterX() - radius + size*i + 13*i + 14;
     }
 
     private double countY(double radius, double size, int j){

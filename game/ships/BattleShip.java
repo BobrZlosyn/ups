@@ -114,7 +114,7 @@ public class BattleShip extends CommonShip{
     }
 
     private double countX(double radius, double size, int i){
-        return getCenterX() - radius + size*i + 10*i + 35;
+        return getCenterX() - radius + size*i + 13*i + 30;
     }
 
     private double countY(double radius, double size, int j){

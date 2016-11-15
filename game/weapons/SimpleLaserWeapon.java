@@ -5,10 +5,12 @@ import game.construction.CommonModel;
 import game.construction.CommonWreck;
 import game.construction.Placement;
 import game.shots.CommonShot;
+import game.shots.LaserShot;
 import game.static_classes.ConstructionTypes;
 import game.static_classes.GameBalance;
 import game.weapons.modelsWeapon.ModelSimpleLaserWeapon;
 import game.weapons.wrecksWeapons.CannonWreck;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 /**
@@ -38,6 +40,33 @@ public class SimpleLaserWeapon extends CommonWeapon{
 
     @Override
     public void displayEquipment(Placement place, boolean isEnemy) {
+        double width = place.getSize();
+        double x = place.getX() + width/2;
+        double y = place.getY() + width/2;
+
+        setIsEnemy(isEnemy);
+        if(!place.isEmpty()){
+            return;
+        }
+
+        getModel().setModelXY(x, y);
+
+
+        if(isEnemy()){
+            model.getTower1().setRotate(180);
+            model.getTower1().setLayoutX(x - 36 );
+            model.getTower1().setLayoutY(y - 3);
+
+            model.getTower2().setRotate(180);
+            model.getTower2().setLayoutX(x - 36 );
+            model.getTower2().setLayoutY(y - 45);
+        }
+
+        Pane gameArea = (Pane) place.getField().getParent();
+        gameArea.getChildren().addAll(getModel().getParts());
+        place.setIsEmpty(false);
+        place.setShipEquipment(this);
+        place.setIsWeapon(true);
 
     }
 
@@ -48,7 +77,7 @@ public class SimpleLaserWeapon extends CommonWeapon{
 
     @Override
     public CommonShot getShot(CommonConstruction target, int damage, boolean intoShields) {
-        return null;
+        return new LaserShot(target, this, damage, intoShields);
     }
 
     @Override
