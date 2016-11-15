@@ -122,11 +122,17 @@ public abstract class CommonConstruction implements IMarkableObject{
         return;
     }
 
-    public abstract boolean containsPosition(double x, double y);
+    public boolean containsPosition(double x, double y){
+        return getModel().containsPosition(x, y);
+    }
 
-    public abstract double getCenterX();
+    public double getCenterX(){
+        return getModel().getCenterX();
+    }
 
-    public abstract double getCenterY();
+    public double getCenterY() {
+        return getModel().getCenterY();
+    }
 
     public Placement getPlacement() {
         return placement;
@@ -143,4 +149,6 @@ public abstract class CommonConstruction implements IMarkableObject{
             markingHandle(isMarked(), this);
         });
     }
+
+    public abstract CommonModel getModel();
 }

@@ -109,4 +109,9 @@ public class ModelDoubleCannon extends CommonModel{
         cannonTop.setFill(Color.RED);
         cannonBottom.setFill(Color.GREEN);
     }
+
+    @Override
+    public boolean containsPosition(double x, double y) {
+        return room.contains(x ,y);
+    }
 }

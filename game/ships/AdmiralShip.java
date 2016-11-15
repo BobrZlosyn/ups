@@ -59,21 +59,6 @@ public class AdmiralShip extends CommonShip{
     }
 
     @Override
-    public boolean containsPosition(double x, double y) {
-        return model.getParts().get(0).contains(x, y);
-    }
-
-    @Override
-    public double getCenterX() {
-        return getModel().getCenterX();
-    }
-
-    @Override
-    public double getCenterY() {
-        return getModel().getCenterY();
-    }
-
-    @Override
     public String getConstructionType() {
         return ConstructionTypes.ADMIRAL_SHIP;
     }

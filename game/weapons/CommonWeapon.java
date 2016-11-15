@@ -128,4 +128,53 @@ public abstract class CommonWeapon extends AShipEquipment {
         gameArea.getChildren().add(wrecks.getFlashCircle());
         wrecks.explosion(x, y, 45, 5, getModel());
     }
+
+
+    @Override
+    public void markObject() {
+        getModel().getParts().forEach(shape -> {
+            shape.setStroke(Color.BLUE);
+            shape.setStrokeWidth(1.5);
+        });
+
+        setIsMarked(true);
+
+        GlobalVariables.setMarkedObject(this);
+        GlobalVariables.setName(getName());
+        GlobalVariables.setCanTarget(!isEnemy());
+
+    }
+
+    @Override
+    public void unmarkObject() {
+        getModel().getParts().forEach(shape -> {
+            shape.setStroke(Color.TRANSPARENT);
+        });
+
+        setIsMarked(false);
+        GlobalVariables.setMarkedObject(null);
+        GlobalVariables.setName("");
+        GlobalVariables.setCanTarget(false);
+    }
+
+    @Override
+    public void target() {
+        if(!isEnemy()){
+            return;
+        }
+
+        getModel().getParts().forEach(shape -> {
+            shape.setStroke(Color.RED);
+            shape.setStrokeWidth(1.5);
+        });
+        GlobalVariables.setTargetObject(this);
+    }
+
+    @Override
+    public void cancelTarget() {
+        getModel().getParts().forEach(shape -> {
+            shape.setStroke(Color.TRANSPARENT);
+        });
+    }
+
 }

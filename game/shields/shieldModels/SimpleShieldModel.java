@@ -71,4 +71,9 @@ public class SimpleShieldModel extends CommonModel {
         shield.setFill(Color.ORANGE);
     }
 
+    @Override
+    public boolean containsPosition(double x, double y) {
+        return shield.contains(x, y);
+    }
+
 }

@@ -41,15 +41,9 @@ public class CannonWeapon extends CommonWeapon{
     private void createCannon() {
         modelCannon = new ModelCannon();
         modelCannon.getParts().forEach(shape -> {
-            markCannon(shape);
+            markShape(shape);
         });
 
-    }
-
-    private void markCannon(Shape shape){
-            shape.setOnMouseClicked(event -> {
-                markingHandle(isMarked(), this);
-            });
     }
 
     @Override
@@ -83,53 +77,6 @@ public class CannonWeapon extends CommonWeapon{
     }
 
     @Override
-    public void markObject() {
-        modelCannon.getParts().forEach(shape -> {
-            shape.setStroke(Color.BLUE);
-            shape.setStrokeWidth(1.5);
-        });
-
-        setIsMarked(true);
-
-        GlobalVariables.setMarkedObject(this);
-        GlobalVariables.setName(getName());
-        GlobalVariables.setCanTarget(!isEnemy());
-
-    }
-
-    @Override
-    public void unmarkObject() {
-        modelCannon.getParts().forEach(shape -> {
-            shape.setStroke(Color.TRANSPARENT);
-        });
-
-        setIsMarked(false);
-        GlobalVariables.setMarkedObject(null);
-        GlobalVariables.setName("");
-        GlobalVariables.setCanTarget(false);
-    }
-
-    @Override
-    public void target() {
-        if(!isEnemy()){
-            return;
-        }
-
-        modelCannon.getParts().forEach(shape -> {
-            shape.setStroke(Color.RED);
-            shape.setStrokeWidth(1.5);
-        });
-        GlobalVariables.setTargetObject(this);
-    }
-
-    @Override
-    public void cancelTarget() {
-        modelCannon.getParts().forEach(shape -> {
-            shape.setStroke(Color.TRANSPARENT);
-        });
-    }
-
-    @Override
     public void rotateEquipment(double x, double y) {
         rotateToDefaultPosition();
         Rotate rotation = calculationForRotation(x, y, getCenterX(), getCenterY(), isEnemy());
@@ -149,22 +96,6 @@ public class CannonWeapon extends CommonWeapon{
         double newAngle = -getAngle();
         setAngle(0);
         modelCannon.getCannon().getTransforms().add(new Rotate(newAngle, getCenterX(), getCenterY()));
-    }
-
-
-    @Override
-    public boolean containsPosition(double x, double y){
-        return modelCannon.getRoom().contains(x,y);
-    }
-
-    @Override
-    public double getCenterX(){
-        return modelCannon.getRoom().getCenterX();
-    }
-
-    @Override
-    public double getCenterY(){
-        return modelCannon.getRoom().getCenterY();
     }
 
     @Override

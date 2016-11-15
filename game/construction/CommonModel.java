@@ -34,4 +34,7 @@ public abstract class CommonModel {
 
     public abstract void setDefaultSkin();
 
+    public abstract boolean containsPosition(double x, double y);
+
+
 }

@@ -65,4 +65,9 @@ public class BattleshipModel extends CommonModel{
         ship.setFill(Color.BLACK);
     }
 
+    @Override
+    public boolean containsPosition(double x, double y) {
+        return ship.contains(x ,y);
+    }
+
 }

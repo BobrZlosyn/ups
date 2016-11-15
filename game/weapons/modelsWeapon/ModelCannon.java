@@ -65,6 +65,11 @@ public class ModelCannon extends CommonModel{
         cannon.setFill(Color.RED);
     }
 
+    @Override
+    public boolean containsPosition(double x, double y) {
+        return room.contains(x ,y);
+    }
+
     public Rectangle getCannon() {
         return cannon;
     }

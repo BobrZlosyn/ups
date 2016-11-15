@@ -39,15 +39,9 @@ public class DoubleCannonWeapon extends CommonWeapon{
     private void createCannon() {
         modelDoubleCannon = new ModelDoubleCannon();
         modelDoubleCannon.getParts().forEach(shape -> {
-            markCannon(shape);
+            markShape(shape);
         });
 
-    }
-
-    private void markCannon(Shape shape){
-        shape.setOnMouseClicked(event -> {
-            markingHandle(isMarked(), this);
-        });
     }
 
     @Override
@@ -84,52 +78,6 @@ public class DoubleCannonWeapon extends CommonWeapon{
     }
 
     @Override
-    public void markObject() {
-        modelDoubleCannon.getParts().forEach(shape -> {
-            shape.setStroke(Color.BLUE);
-            shape.setStrokeWidth(1.5);
-        });
-
-        setIsMarked(true);
-
-        GlobalVariables.setMarkedObject(this);
-        GlobalVariables.setName(getName());
-        GlobalVariables.setCanTarget(!isEnemy());
-    }
-
-    @Override
-    public void unmarkObject() {
-        modelDoubleCannon.getParts().forEach(shape -> {
-            shape.setStroke(Color.TRANSPARENT);
-        });
-
-        setIsMarked(false);
-        GlobalVariables.setMarkedObject(null);
-        GlobalVariables.setName("");
-        GlobalVariables.setCanTarget(false);
-    }
-
-    @Override
-    public void target() {
-        if(!isEnemy()){
-            return;
-        }
-
-        modelDoubleCannon.getParts().forEach(shape -> {
-            shape.setStroke(Color.RED);
-            shape.setStrokeWidth(1.5);
-        });
-        GlobalVariables.setTargetObject(this);
-    }
-
-    @Override
-    public void cancelTarget() {
-        modelDoubleCannon.getParts().forEach(shape -> {
-            shape.setStroke(Color.TRANSPARENT);
-        });
-    }
-
-    @Override
     public void rotateEquipment(double x, double y) {
         rotateToDefaultPosition();
         Rotate rotation = calculationForRotation(x, y, getCenterX(), getCenterY(), isEnemy());
@@ -158,17 +106,6 @@ public class DoubleCannonWeapon extends CommonWeapon{
     @Override
     public boolean containsPosition(double x, double y){
         return modelDoubleCannon.getRoom().contains(x, y);
-    }
-
-
-    @Override
-    public double getCenterX(){
-        return modelDoubleCannon.getRoom().getCenterX();
-    }
-
-    @Override
-    public double getCenterY(){
-        return modelDoubleCannon.getRoom().getCenterY();
     }
 
     @Override

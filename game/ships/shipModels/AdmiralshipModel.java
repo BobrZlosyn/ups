@@ -90,4 +90,9 @@ public class AdmiralshipModel extends CommonModel {
     public void setDefaultSkin() {
         ship.setFill(Color.BLACK);
     }
+
+    @Override
+    public boolean containsPosition(double x, double y) {
+        return ship.contains(x, y);
+    }
 }
