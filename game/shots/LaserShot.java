@@ -11,12 +11,13 @@ import javafx.scene.shape.Line;
  */
 public class LaserShot extends CommonShot {
     private Line shot;
+    private int countHit;
 
     public LaserShot(CommonConstruction target, CommonConstruction attacker, int damage, boolean intoShields) {
         super(target, attacker, damage, intoShields);
 
         shot = new Line();
-
+        countHit = 0;
         setXY();
         shot.setStrokeWidth(2.5);
         shot.setFill(Color.RED);
@@ -26,7 +27,9 @@ public class LaserShot extends CommonShot {
     public void setXY(){
         //posunuti pred kanon
         for(int i = 0; i < 20; i++){
-            pocitatTrasu();
+            double [] coordinates = rovnicePrimka(x1,y1,target.getCenterX(),target.getCenterY());
+            x1 = coordinates[0];
+            y1 = coordinates[1];
         }
 
         shot.setStartX(x1);
@@ -47,21 +50,35 @@ public class LaserShot extends CommonShot {
 
     @Override
     public boolean pocitatTrasu() {
-        double [] coordinates = rovnicePrimka(x1,y1,target.getCenterX(),target.getCenterY());
+        boolean result = false;
 
-        x1 = coordinates[0];
-        y1 = coordinates[1];
+        for (int i = 0; i < 3; i++){
+            if(countHit != 0 || result){
+                break;
+            }
+            double [] coordinates = rovnicePrimka(x1,y1,target.getCenterX(),target.getCenterY());
+
+            x1 = coordinates[0];
+            y1 = coordinates[1];
+
+            if(isIntoShields() && target.getPlacement().getShip().getShieldActualLife() != 0){
+                result = target.getPlacement().getShip().isOnShield(x1, y1);
+            }else {
+                setIntoShields(false);
+            }
+        }
 
         shot.setEndX(x1);
         shot.setEndY(y1);
 
-        if(isIntoShields() && target.getPlacement().getShip().getShieldActualLife() != 0){
-            return target.getPlacement().getShip().isOnShield(x1, y1);
-        }else {
-            setIntoShields(false);
+        if(countHit <= 25 && (target.containsPosition(x1,y1) || result)){
+            countHit ++;
+            return false;
+        }else if (countHit > 25) {
+            return true;
         }
 
-        return target.containsPosition(x1,y1);
+        return false;
     }
 
     @Override

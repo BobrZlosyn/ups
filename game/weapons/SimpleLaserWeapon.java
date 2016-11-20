@@ -96,7 +96,6 @@ public class SimpleLaserWeapon extends CommonWeapon{
         rotateToDefaultPosition();
         double cosinus = calculationForRotation(x, y, getCenterX(), getCenterY(), isEnemy());
         double angleNew = cosinus - getAngle();
-        System.out.println("ahojddddkz");
 
        // Rotate rotation = new Rotate(cosinus, 168, getCenterY() - 40);
         setAngle(angleNew);
@@ -128,7 +127,6 @@ public class SimpleLaserWeapon extends CommonWeapon{
         double newAngle = -getAngle();
         setAngle(0);
 
-        System.out.println("ahojkz");
         if( newAngle == 0 ){
             return;
         }

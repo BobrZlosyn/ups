@@ -469,4 +469,12 @@ public abstract class CommonShip extends CommonConstruction {
         getModel().getParts().forEach(shape -> shape.setStroke(Color.TRANSPARENT));
     }
 
+    @Override
+    public void takeDamage(int damage) {
+        damage = damage - getArmorMaxValue();
+        if (damage < 0) return;
+
+        super.takeDamage(damage);
+    }
+
 }

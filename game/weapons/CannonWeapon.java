@@ -56,21 +56,13 @@ public class CannonWeapon extends CommonWeapon{
             return;
         }
 
-        modelCannon.getRoom().setCenterX(x + width/2);
-        modelCannon.getRoom().setCenterY(y + width/2);
-
-        modelCannon.getHead().setCenterX(x + width/2);
-        modelCannon.getHead().setCenterY(y + width/2);
-
+        getModel().setModelXY(x + width/2, y + width/2);
         if(isEnemy()){
             modelCannon.getCannon().setX(x - 5);
-        }else {
-            modelCannon.getCannon().setX(x + width/2);
         }
 
-        modelCannon.getCannon().setY(y + width/2 - modelCannon.getCannon().getHeight()/2);
         Pane gameArea = (Pane) position.getField().getParent();
-        gameArea.getChildren().addAll(modelCannon.getParts());
+        gameArea.getChildren().addAll(getModel().getParts());
         position.setIsEmpty(false);
         position.setShipEquipment(this);
         position.setIsWeapon(true);

@@ -26,7 +26,7 @@ public class GameBalance {
 
 
     public static final int EQUIPMENT_LIFE = 250;
-    public static final int EQUIPMENT_SHIELDS = 0;
+    public static final int EQUIPMENT_SHIELDS = 250;
     public static final int EQUIPMENT_ENERGY_COST = 300;
     public static final int EQUIPMENT_STRENGTH = 300;
 
@@ -40,7 +40,7 @@ public class GameBalance {
     public static final String BATTLE_SHIP_NAME = "Bitevní loď";
     public static final int BATTLE_SHIP_LIFE = 500;
     public static final int BATTLE_SHIP_SHIELDS = 0;
-    public static final int BATTLE_SHIP_ARMOR = 500;
+    public static final int BATTLE_SHIP_ARMOR = 0;
     public static final int BATTLE_SHIP_SPEED = 500;
     public static final int BATTLE_SHIP_ENERGY = 500;
     public static final int BATTLE_SHIP_POINTS = 10;
@@ -48,7 +48,7 @@ public class GameBalance {
     public static final String CRUISER_SHIP_NAME = "Křižník";
     public static final int CRUISER_SHIP_LIFE = 500;
     public static final int CRUISER_SHIP_SHIELDS = 500;
-    public static final int CRUISER_SHIP_ARMOR = 500;
+    public static final int CRUISER_SHIP_ARMOR = 0;
     public static final int CRUISER_SHIP_SPEED = 500;
     public static final int CRUISER_SHIP_ENERGY = 500;
     public static final int CRUISER_SHIP_POINTS = 14;
@@ -56,7 +56,7 @@ public class GameBalance {
     public static final String ADMIRAL_SHIP_NAME = "Velitelská loď";
     public static final int ADMIRAL_SHIP_LIFE = 500;
     public static final int ADMIRAL_SHIP_SHIELDS = 500;
-    public static final int ADMIRAL_SHIP_ARMOR = 500;
+    public static final int ADMIRAL_SHIP_ARMOR = 0;
     public static final int ADMIRAL_SHIP_SPEED = 500;
     public static final int ADMIRAL_SHIP_ENERGY = 500;
     public static final int ADMIRAL_SHIP_POINTS = 14;

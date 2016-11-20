@@ -84,6 +84,7 @@ public abstract class CommonConstruction implements IMarkableObject{
     }
 
     public void takeDamage(int damage){
+
         double life = getActualLife() - damage;
         if(life > 0){
             setActualLife(life);

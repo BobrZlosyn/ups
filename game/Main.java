@@ -24,7 +24,6 @@ public class Main extends Application {
         primaryStage.getScene().getStylesheets().add(getClass().getResource("gameCSS.css").toExternalForm());
         primaryStage.show();
 
-
     }
 
 

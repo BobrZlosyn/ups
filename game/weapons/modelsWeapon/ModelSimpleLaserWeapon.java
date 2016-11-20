@@ -57,8 +57,10 @@ public class ModelSimpleLaserWeapon extends CommonModel {
 
         tower1.setLayoutY(y - 27);
         tower2.setLayoutY(y - 23);
+
         room2.setCenterY(y);
         room2.setCenterX(x);
+
     }
 
     @Override
