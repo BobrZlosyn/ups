@@ -21,7 +21,6 @@ import java.util.ArrayList;
  */
 public class BattleShip extends CommonShip{
     private BattleshipModel model;
-    private Timeline hit;
 
     public BattleShip (boolean isEnemy){
         super(
@@ -36,7 +35,6 @@ public class BattleShip extends CommonShip{
         );
         createShip();
         setIsMarked(false);
-        createTimelineHit();
     }
 
     private void createShip(){
@@ -168,20 +166,6 @@ public class BattleShip extends CommonShip{
     @Override
     public CommonModel getModel() {
         return model;
-    }
-
-
-    private void createTimelineHit(){
-        hit = new Timeline(new KeyFrame(javafx.util.Duration.seconds(GlobalVariables.damageHitDuration),event -> {
-            model.getShip().setFill(Color.BLACK);
-        }));
-        hit.setCycleCount(1);
-    }
-
-    @Override
-    public void damageHit() {
-        model.getShip().setFill(GlobalVariables.damageHit);
-        hit.playFromStart();
     }
 
     @Override

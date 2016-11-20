@@ -97,28 +97,12 @@ public class SimpleLaserWeapon extends CommonWeapon{
         double cosinus = calculationForRotation(x, y, getCenterX(), getCenterY(), isEnemy());
         double angleNew = cosinus - getAngle();
 
-       // Rotate rotation = new Rotate(cosinus, 168, getCenterY() - 40);
         setAngle(angleNew);
 
-        model.getTower1().setRotate(cosinus);
-        model.getTower2().setRotate(cosinus);
+        model.getTower1().getTransforms().add(new Rotate(cosinus, 0, model.getTower1().getBoundsInLocal().getHeight()));
+        model.getTower2().getTransforms().add(new Rotate(cosinus, 0, model.getTower2().getBoundsInLocal().getHeight()));
 
 
-
-        if (cosinus > 0) {
-            model.getTower1().setLayoutY(model.getTower1().getLayoutY() + 5);
-            model.getTower2().setLayoutY(model.getTower2().getLayoutY() + 5);
-            model.getTower1().setLayoutX(model.getTower1().getLayoutX() + 5);
-        } else {
-            model.getTower1().setLayoutY(model.getTower1().getLayoutY() - 5);
-            model.getTower2().setLayoutY(model.getTower2().getLayoutY() - 5);
-            model.getTower2().setLayoutX(model.getTower2().getLayoutX() + 5);
-        }
-
-
-
-        // model.getTower1().getTransforms().add(rotation);
-      //  model.getTower2().getTransforms().add(rotation);
 
     }
 
@@ -127,21 +111,8 @@ public class SimpleLaserWeapon extends CommonWeapon{
         double newAngle = -getAngle();
         setAngle(0);
 
-        if( newAngle == 0 ){
-            return;
-        }
+        model.getTower1().getTransforms().add(new Rotate(newAngle, 0, model.getTower1().getBoundsInLocal().getHeight()));
+        model.getTower2().getTransforms().add(new Rotate(newAngle, 0, model.getTower2().getBoundsInLocal().getHeight()));
 
-        model.getTower1().setRotate(newAngle);
-        model.getTower2().setRotate(newAngle);
-
-        if (newAngle > 0) {
-            model.getTower1().setLayoutY(model.getTower1().getLayoutY() - 5);
-            model.getTower2().setLayoutY(model.getTower2().getLayoutY() - 5);
-            model.getTower1().setLayoutX(model.getTower1().getLayoutX() - 5);
-        } else {
-            model.getTower1().setLayoutY(model.getTower1().getLayoutY() + 5);
-            model.getTower2().setLayoutY(model.getTower2().getLayoutY() + 5);
-            model.getTower2().setLayoutX(model.getTower2().getLayoutX() - 5);
-        }
     }
 }

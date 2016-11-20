@@ -24,7 +24,7 @@ public class GlobalVariables {
     public static SimpleBooleanProperty isPlayingNow = new SimpleBooleanProperty(false);
     public static CommonShip choosenShip;
     public static Color damageHit = Color.RED;
-    public static double damageHitDuration = 0.2;
+    public static double damageHitDuration = 0.02;
     public static String shipDefinition = "";
     public static String enemyshipDefinition = "";
     public static String startingID = "";

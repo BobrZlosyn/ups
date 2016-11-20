@@ -23,7 +23,6 @@ import javafx.scene.shape.Rectangle;
 public class CruiserShip extends CommonShip{
 
     private CruisershipModel model;
-    private Timeline hit;
 
     public CruiserShip(boolean isEnemy) {
         super(
@@ -38,7 +37,6 @@ public class CruiserShip extends CommonShip{
         );
         createShip();
         setIsMarked(false);
-        createTimelineHit();
     }
 
 
@@ -134,19 +132,6 @@ public class CruiserShip extends CommonShip{
     @Override
     public CommonModel getModel() {
         return model;
-    }
-
-    private void createTimelineHit(){
-        hit = new Timeline(new KeyFrame(javafx.util.Duration.seconds(GlobalVariables.damageHitDuration),event -> {
-            model.getShip().setFill(Color.BLACK);
-        }));
-        hit.setCycleCount(1);
-    }
-
-    @Override
-    public void damageHit() {
-        model.getShip().setFill(GlobalVariables.damageHit);
-        hit.playFromStart();
     }
 
     @Override

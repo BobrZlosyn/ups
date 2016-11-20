@@ -21,7 +21,6 @@ import javafx.scene.shape.Rectangle;
 public class AdmiralShip extends CommonShip{
 
     private AdmiralshipModel model;
-    private Timeline hit;
 
     public AdmiralShip(boolean isEnemy) {
         super(GameBalance.ADMIRAL_SHIP_NAME,
@@ -34,7 +33,6 @@ public class AdmiralShip extends CommonShip{
                 isEnemy);
         createShip();
         setIsMarked(false);
-        createTimelineHit();
     }
 
     private void createShip(){
@@ -43,19 +41,6 @@ public class AdmiralShip extends CommonShip{
         model.getShip().setOnMouseClicked(event -> {
             markingHandle(isMarked(), this);
         });
-    }
-
-    private void createTimelineHit(){
-        hit = new Timeline(new KeyFrame(javafx.util.Duration.seconds(GlobalVariables.damageHitDuration), event -> {
-            model.getShip().setFill(Color.BLACK);
-        }));
-        hit.setCycleCount(1);
-    }
-
-    @Override
-    public void damageHit() {
-        model.getShip().setFill(GlobalVariables.damageHit);
-        hit.playFromStart();
     }
 
     @Override

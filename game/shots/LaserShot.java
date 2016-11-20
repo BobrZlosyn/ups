@@ -26,7 +26,7 @@ public class LaserShot extends CommonShot {
 
     public void setXY(){
         //posunuti pred kanon
-        for(int i = 0; i < 20; i++){
+        for(int i = 0; i < 15; i++){
             double [] coordinates = rovnicePrimka(x1,y1,target.getCenterX(),target.getCenterY());
             x1 = coordinates[0];
             y1 = coordinates[1];
@@ -50,19 +50,20 @@ public class LaserShot extends CommonShot {
 
     @Override
     public boolean pocitatTrasu() {
-        boolean result = false;
+        boolean resultShield = false;
+        boolean resultTarget;
 
         for (int i = 0; i < 3; i++){
-            if(countHit != 0 || result){
+            if(countHit != 0 || resultShield){
                 break;
             }
-            double [] coordinates = rovnicePrimka(x1,y1,target.getCenterX(),target.getCenterY());
 
+            double [] coordinates = rovnicePrimka(x1,y1,target.getCenterX(),target.getCenterY());
             x1 = coordinates[0];
             y1 = coordinates[1];
 
             if(isIntoShields() && target.getPlacement().getShip().getShieldActualLife() != 0){
-                result = target.getPlacement().getShip().isOnShield(x1, y1);
+                resultShield = target.getPlacement().getShip().isOnShield(x1, y1);
             }else {
                 setIntoShields(false);
             }
@@ -70,16 +71,29 @@ public class LaserShot extends CommonShot {
 
         shot.setEndX(x1);
         shot.setEndY(y1);
+        resultTarget = target.containsPosition(x1,y1);
 
-        if(countHit <= 25 && (target.containsPosition(x1,y1) || result)){
+        if(countHit <= 25 && (resultTarget || resultShield)){
             countHit ++;
+            hittingTarget(resultTarget);
             return false;
-        }else if (countHit > 25) {
+        } else if (countHit > 25) {
             return true;
         }
 
         return false;
     }
+
+    private void hittingTarget(boolean resultTarget){
+        if (resultTarget){
+            if(countHit % 4 == 0) {
+                target.getModel().setDefaultSkin();
+            }else {
+                target.getModel().getParts().forEach(shape -> shape.setFill(Color.RED));
+            }
+        }
+    }
+
 
     @Override
     public CommonWreck getWreck() {

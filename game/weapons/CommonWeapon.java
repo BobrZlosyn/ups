@@ -29,7 +29,6 @@ public abstract class CommonWeapon extends AShipEquipment {
         setMinStrength(minStrength);
         setMaxStrength(maxStrength);
         setIsEnemy(false);
-        createTimelineHit();
         setIsMarked(false);
 
         targetLife = (observable, oldValue, newValue) -> {
@@ -38,13 +37,6 @@ public abstract class CommonWeapon extends AShipEquipment {
                 setTarget(null);
             }
         };
-    }
-
-    private void createTimelineHit(){
-        hit = new Timeline(new KeyFrame(javafx.util.Duration.seconds(GlobalVariables.damageHitDuration),event -> {
-            getModel().setDefaultSkin();
-        }));
-        hit.setCycleCount(1);
     }
 
     public void setAngle(double angle) {
@@ -101,12 +93,6 @@ public abstract class CommonWeapon extends AShipEquipment {
     }
 
     public abstract CommonWreck getWreck();
-
-    @Override
-    public void damageHit() {
-        getModel().getParts().forEach(shape -> shape.setFill(GlobalVariables.damageHit));
-        hit.playFromStart();
-    }
 
     @Override
     public void destroy() {

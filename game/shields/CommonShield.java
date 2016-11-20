@@ -14,22 +14,14 @@ import javafx.scene.paint.Color;
  */
 public abstract class CommonShield extends AShipEquipment {
     private double chance;
-    private Timeline hit;
     private SimpleBooleanProperty isActive;
 
     public CommonShield( String name, int life, int energy, int cost, int shieldBonus, int chance) {
         super(life, name, 0, energy, cost, shieldBonus );
         this.chance = chance;
         isActive = new SimpleBooleanProperty(true);
-        createTimelineHit();
     }
 
-    private void createTimelineHit(){
-        hit = new Timeline(new KeyFrame(javafx.util.Duration.seconds(GlobalVariables.damageHitDuration),event -> {
-            getModel().setDefaultSkin();
-        }));
-        hit.setCycleCount(1);
-    }
 
     public void setIsActive( boolean isActive) {
         this.isActive.set(isActive);
@@ -60,17 +52,8 @@ public abstract class CommonShield extends AShipEquipment {
         }
     }
 
-
-
     public boolean isShield(){
         return true;
-    }
-
-
-    @Override
-    public void damageHit() {
-        getModel().getParts().forEach(shape -> shape.setFill(GlobalVariables.damageHit));
-        hit.playFromStart();
     }
 
     protected abstract CommonWreck getWreck();
