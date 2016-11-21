@@ -278,6 +278,7 @@ public abstract class CommonShip extends CommonConstruction {
     }
 
     public void fillShipWithEquipment(CommonShip ship, Placement [][] oldShipPlacements, boolean isFirstCreation){
+        ship.getModel().setDefaultSkin();
         for (int i = 0; i < oldShipPlacements.length; i++){
             for (int j = 0; j < oldShipPlacements[i].length; j++){
                 Placement place = oldShipPlacements[i][j];
@@ -412,6 +413,7 @@ public abstract class CommonShip extends CommonConstruction {
         CommonWreck wreck = getWreck();
         gameArea.getChildren().add(wreck.getFlashCircle());
         wreck.explosion(getPlacement().getX(), getPlacement().getY(), 1050, 25, getModel());
+
 
         Placement [][] placements = getPlacementPositions();
         for (int i = 0; i < placements.length; i++){

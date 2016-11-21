@@ -87,6 +87,12 @@ public class SimpleLaserWeapon extends CommonWeapon{
     }
 
     @Override
+    public void shotFired() {}
+
+    @Override
+    public void returnToBeforeFiredPosition() {}
+
+    @Override
     public String getConstructionType() {
         return ConstructionTypes.SIMPLE_LASER_WEAPON;
     }
@@ -113,6 +119,5 @@ public class SimpleLaserWeapon extends CommonWeapon{
 
         model.getTower1().getTransforms().add(new Rotate(newAngle, 0, model.getTower1().getBoundsInLocal().getHeight()));
         model.getTower2().getTransforms().add(new Rotate(newAngle, 0, model.getTower2().getBoundsInLocal().getHeight()));
-
     }
 }

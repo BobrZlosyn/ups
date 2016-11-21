@@ -2,6 +2,7 @@ package game.shots;
 
 import game.construction.CommonConstruction;
 import game.shots.wrecksShot.SimpleShotWreck;
+import game.weapons.CommonWeapon;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -15,13 +16,14 @@ public class SimpleBallShot extends CommonShot{
 
     public SimpleBallShot(CommonConstruction target, CommonConstruction attacker, int damage, boolean intoShields){
         super(target, attacker, damage, intoShields);
-
         shot = new Circle(x1, y1, 4, Color.GOLD);
         setXY();
     }
 
     @Override
     public void addShot(Pane gameArea) {
+        ((CommonWeapon) attacker).shotFired();
+        setShotFiredStatus(true);
         gameArea.getChildren().add(shot);
     }
 
@@ -38,6 +40,7 @@ public class SimpleBallShot extends CommonShot{
     }
 
     public boolean pocitatTrasu(){
+        returnToPreparePosition(25);
 
         double [] coordinates = rovnicePrimka(x1,y1,target.getCenterX(),target.getCenterY());
 

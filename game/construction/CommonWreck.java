@@ -3,6 +3,7 @@ package game.construction;
 
 import game.construction.CommonModel;
 import game.ships.CommonShip;
+import game.static_classes.GlobalVariables;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -89,6 +90,10 @@ public abstract class CommonWreck {
 
 
     public void explosion(double x, double y, double radiusMax, double addToRadius, CommonModel model){
+        if (GlobalVariables.isNotEmpty(flashAnimation)) {
+            return;
+        }
+
         flashAnimation = new Timeline(new KeyFrame(Duration.seconds(0.02), event -> {
             double radius = flashCircle.getRadius() + addToRadius;
             shakeOfShip();
@@ -111,6 +116,7 @@ public abstract class CommonWreck {
                     Pane pane = (Pane) flashCircle.getParent();
                     pane.getChildren().remove(flashCircle);
                     flashAnimation.stop();
+                    flashAnimation = null;
                 }
             }else{
                 flashCircle.setRadius(radius);

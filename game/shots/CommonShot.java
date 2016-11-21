@@ -3,6 +3,7 @@ package game.shots;
 import game.construction.CommonConstruction;
 import game.construction.CommonWreck;
 import game.shots.wrecksShot.SimpleShotWreck;
+import game.weapons.CommonWeapon;
 import javafx.scene.layout.Pane;
 
 /**
@@ -15,6 +16,8 @@ public abstract class CommonShot {
     protected double x1, y1;
     private int damage;
     private boolean intoShields;
+    private boolean shotFiredStatus;
+    private int shotFiredStatusInterval;
 
     public CommonShot (CommonConstruction target, CommonConstruction attacker, int damage, boolean intoShields){
         this.target = target;
@@ -23,6 +26,11 @@ public abstract class CommonShot {
         y1 = attacker.getCenterY();
         this.damage = damage;
         this.intoShields = intoShields;
+        shotFiredStatusInterval = 0;
+    }
+
+    public void setShotFiredStatus(boolean shotFiredStatus) {
+        this.shotFiredStatus = shotFiredStatus;
     }
 
     public void setIntoShields(boolean intoShields) {
@@ -75,6 +83,15 @@ public abstract class CommonShot {
         }else{
             return x1 - time * u1;
         }
+    }
+
+    protected void returnToPreparePosition(int interval){
+        if (shotFiredStatus && shotFiredStatusInterval == interval) {
+            ((CommonWeapon) attacker).returnToBeforeFiredPosition();
+            shotFiredStatus = false;
+            shotFiredStatusInterval = 0;
+        }
+        shotFiredStatusInterval++;
     }
 
     public abstract void addShot(Pane gameArea);

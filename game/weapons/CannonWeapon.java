@@ -109,4 +109,22 @@ public class CannonWeapon extends CommonWeapon{
     public CommonWreck getWreck() {
         return new CannonWreck(getCenterX(), getCenterY(), Color.RED);
     }
+
+    @Override
+    public void shotFired() {
+        if(isEnemy()){
+            modelCannon.getCannon().setX(modelCannon.getCannon().getX() + 5);
+        }else {
+            modelCannon.getCannon().setX(modelCannon.getCannon().getX() - 5);
+        }
+    }
+
+    @Override
+    public void returnToBeforeFiredPosition() {
+        if(isEnemy()){
+            modelCannon.getCannon().setX(modelCannon.getCannon().getX() - 5);
+        }else {
+            modelCannon.getCannon().setX(modelCannon.getCannon().getX() + 5);
+        }
+    }
 }

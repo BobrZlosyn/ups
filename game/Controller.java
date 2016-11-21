@@ -206,6 +206,7 @@ public class Controller implements Initializable{
      * nastavi vse potrebne pro zobrazeni hry a jeji ovladani
      */
     private void startGame(){
+        GlobalVariables.setGameIsFinished(false);
         window.getChildren().clear();
         gameAreaPane = new Pane();
         window.add(gameAreaPane, 0, 0, GridPane.REMAINING, 1);
@@ -234,6 +235,7 @@ public class Controller implements Initializable{
         bottomPanel = new BottomPanel(sendDataButton);
         bottomPanel.showPanel(window, gameAreaPane);
         bottomPanel.getQuit().setOnAction(event1 -> {
+            GlobalVariables.setGameIsFinished(true);
             GlobalVariables.sendMessageType = TcpMessage.LOST;
             ((Button)event1.getSource()).setDisable(true);
             GlobalVariables.choosenShip.takeDamage((int)GlobalVariables.choosenShip.getActualLife());
@@ -273,20 +275,24 @@ public class Controller implements Initializable{
      * @param enemyShip
      */
     private void endWindowShowUp(CommonShip usersShip, CommonShip enemyShip){
+
         userLost = (observable, oldValue, newValue) -> {
 
             if(newValue.doubleValue() <= 0){
+                GlobalVariables.setGameIsFinished(true);
                 EndOfGameMenu endOfGame = new EndOfGameMenu(false);
                 endWindowSetting(endOfGame, usersShip, enemyShip);
                 if(GlobalVariables.isNotEmpty(bottomPanel)){
                     bottomPanel.getQuit().setDisable(true);
                 }
+                GlobalVariables.sendMessageType = TcpMessage.LOST;
             }
         };
 
         userWin = (observable, oldValue, newValue) -> {
 
             if (newValue.doubleValue() <= 0) {
+                GlobalVariables.setGameIsFinished(true);
                 EndOfGameMenu endOfGame = new EndOfGameMenu(true);
                 endWindowSetting(endOfGame, usersShip, enemyShip);
                 if(GlobalVariables.isNotEmpty(bottomPanel)){
@@ -298,8 +304,9 @@ public class Controller implements Initializable{
         usersShip.getActualLifeBinding().addListener(userLost);
         enemyShip.getActualLifeBinding().addListener(userWin);
         GlobalVariables.enemyLost.addListener((observable, oldValue, newValue) -> {
-            if(newValue){
+            if(newValue && !GlobalVariables.gameIsFinished.get()){
                 Platform.runLater(() -> {
+
                     enemyShip.takeDamage((int) enemyShip.getActualLife());
                     GlobalVariables.enemyLost.set(false);
                 });
@@ -403,15 +410,19 @@ public class Controller implements Initializable{
                                     return false;
                                 }
 
+                                if(!tcpConnection.isConnected()){
+                                    error = true;
+                                    break;
+                                }
+
                                 if(GlobalVariables.sendMessageType.equals(TcpMessage.QUIT)){
-                                    tcpConnection.endConnection();
                                     error = true;
                                     break;
                                 }
                                 Thread.sleep(100);
                             }
                             if (error){
-                                break;
+                                continue;
                             }
 
                             waitingForOponnent.setTitleText(WaitingForOponnent.STARTING_GAME);
@@ -431,7 +442,6 @@ public class Controller implements Initializable{
                         }break;
 
                         case TcpMessage.DESTROY_CONNECTION: {
-
                             return true;
                         }
 

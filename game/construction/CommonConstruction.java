@@ -156,16 +156,16 @@ public abstract class CommonConstruction implements IMarkableObject{
 
         hit = new Timeline(new KeyFrame(Duration.seconds(GlobalVariables.damageHitDuration), event -> {
 
-            if(firstHit && hitCount.get(0).equals(7)){
+            if((hitCount.isEmpty() || hitCount.get(0).equals(7))){
                 getModel().setDefaultSkin();
-                firstHit = false;
             }
 
-            int size = damage.size();
-            for (int i = 0; i < size; i++) {
-                if(damage.isEmpty()){
-                    break;
-                }
+            //zastaveni timeline
+            if(damage.isEmpty()){
+                hit.stop();
+            }
+
+            for (int i = 0; i < damage.size(); i++) {
 
                 Label label = damage.get(i);
 
@@ -188,10 +188,7 @@ public abstract class CommonConstruction implements IMarkableObject{
                 }
             }
 
-            //zastaveni timeline
-            if(damage.isEmpty()){
-                hit.stop();
-            }
+
         }));
         hit.setCycleCount(Animation.INDEFINITE);
     }
@@ -235,4 +232,52 @@ public abstract class CommonConstruction implements IMarkableObject{
     }
 
     public abstract CommonModel getModel();
+
+    @Override
+    public void markObject() {
+        getModel().getParts().forEach(shape -> {
+            shape.setStroke(Color.BLUE);
+            shape.setStrokeWidth(1.5);
+        });
+
+        setIsMarked(true);
+
+        GlobalVariables.setMarkedObject(this);
+        GlobalVariables.setName(getName());
+        GlobalVariables.setCanTarget(!isEnemy());
+
+    }
+
+    @Override
+    public void unmarkObject() {
+        getModel().getParts().forEach(shape -> {
+            shape.setStroke(Color.TRANSPARENT);
+        });
+
+        setIsMarked(false);
+        GlobalVariables.setMarkedObject(null);
+        GlobalVariables.setName("");
+        GlobalVariables.setCanTarget(false);
+    }
+
+    @Override
+    public void target() {
+        if(!isEnemy()){
+            return;
+        }
+
+        getModel().getParts().forEach(shape -> {
+            shape.setStroke(Color.RED);
+            shape.setStrokeWidth(1.5);
+        });
+        GlobalVariables.setTargetObject(this);
+    }
+
+    @Override
+    public void cancelTarget() {
+        getModel().getParts().forEach(shape -> {
+            shape.setStroke(Color.TRANSPARENT);
+        });
+    }
+
 }

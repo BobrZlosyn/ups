@@ -15,7 +15,7 @@ public class LaserShot extends CommonShot {
 
     public LaserShot(CommonConstruction target, CommonConstruction attacker, int damage, boolean intoShields) {
         super(target, attacker, damage, intoShields);
-
+        setIntoShields(false);
         shot = new Line();
         countHit = 0;
         setXY();
@@ -50,47 +50,37 @@ public class LaserShot extends CommonShot {
 
     @Override
     public boolean pocitatTrasu() {
-        boolean resultShield = false;
-        boolean resultTarget;
-
         for (int i = 0; i < 3; i++){
-            if(countHit != 0 || resultShield){
+            returnToPreparePosition(25);
+            if(countHit != 0){
                 break;
             }
 
             double [] coordinates = rovnicePrimka(x1,y1,target.getCenterX(),target.getCenterY());
             x1 = coordinates[0];
             y1 = coordinates[1];
-
-            if(isIntoShields() && target.getPlacement().getShip().getShieldActualLife() != 0){
-                resultShield = target.getPlacement().getShip().isOnShield(x1, y1);
-            }else {
-                setIntoShields(false);
-            }
         }
 
         shot.setEndX(x1);
         shot.setEndY(y1);
-        resultTarget = target.containsPosition(x1,y1);
 
-        if(countHit <= 25 && (resultTarget || resultShield)){
+        if(countHit <= 25 && target.containsPosition(x1,y1) ){
             countHit ++;
-            hittingTarget(resultTarget);
+            hittingTarget();
             return false;
         } else if (countHit > 25) {
+            target.getModel().setDefaultSkin();
             return true;
         }
 
         return false;
     }
 
-    private void hittingTarget(boolean resultTarget){
-        if (resultTarget){
-            if(countHit % 4 == 0) {
-                target.getModel().setDefaultSkin();
-            }else {
-                target.getModel().getParts().forEach(shape -> shape.setFill(Color.RED));
-            }
+    private void hittingTarget(){
+        if(countHit % 5 == 0) {
+            target.getModel().getParts().forEach(shape -> shape.setFill(Color.RED));
+        }else {
+            target.getModel().setDefaultSkin();
         }
     }
 

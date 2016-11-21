@@ -4,6 +4,7 @@ import game.construction.CommonConstruction;
 import game.construction.Placement;
 import game.shots.wrecksShot.DoubleShotWreck;
 import game.shots.wrecksShot.SimpleShotWreck;
+import game.weapons.CommonWeapon;
 import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -26,6 +27,8 @@ public class DoubleBallShot extends CommonShot{
 
     @Override
     public void addShot(Pane gameArea){
+        ((CommonWeapon) attacker).shotFired();
+        setShotFiredStatus(true);
         gameArea.getChildren().addAll(shot1, shot2);
     }
 
@@ -43,7 +46,7 @@ public class DoubleBallShot extends CommonShot{
 
     @Override
     public boolean pocitatTrasu(){
-
+        returnToPreparePosition(25);
         double [] coordinates = rovnicePrimka(x1,y1,target.getCenterX(),target.getCenterY());
 
         x1 = coordinates[0];

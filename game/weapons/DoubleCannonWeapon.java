@@ -117,4 +117,25 @@ public class DoubleCannonWeapon extends CommonWeapon{
         return new CannonWreck(getCenterX(), getCenterY(), Color.RED);
     }
 
+    @Override
+    public void shotFired() {
+        if(isEnemy()){
+            modelDoubleCannon.getCannonTop().setX(modelDoubleCannon.getCannonTop().getX() + 5);
+            modelDoubleCannon.getCannonBottom().setX(modelDoubleCannon.getCannonBottom().getX() + 5);
+        }else {
+            modelDoubleCannon.getCannonTop().setX(modelDoubleCannon.getCannonTop().getX() - 5);
+            modelDoubleCannon.getCannonBottom().setX(modelDoubleCannon.getCannonBottom().getX() - 5);
+        }
+    }
+
+    @Override
+    public void returnToBeforeFiredPosition() {
+        if(isEnemy()){
+            modelDoubleCannon.getCannonTop().setX(modelDoubleCannon.getCannonTop().getX() - 5);
+            modelDoubleCannon.getCannonBottom().setX(modelDoubleCannon.getCannonBottom().getX() - 5);
+        }else {
+            modelDoubleCannon.getCannonTop().setX(modelDoubleCannon.getCannonTop().getX() + 5);
+            modelDoubleCannon.getCannonBottom().setX(modelDoubleCannon.getCannonBottom().getX() + 5);
+        }
+    }
 }
