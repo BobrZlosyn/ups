@@ -1,6 +1,7 @@
 package game.StartUpMenu;
 
 import game.static_classes.GlobalVariables;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -22,6 +23,11 @@ public class WaitingForOponnent {
     private Button cancel;
     private GridPane waitingPane;
 
+    public static final String WAITING_FOR_OPONENT = "ČEKÁNÍ NA PROTIHRÁČE";
+    public static final String CONNECTING_TO_SERVER = "PŘIPOJUJI SE K SEVERU";
+    public static final String CREATING_GAME = "VYTVÁŘÍM MÍSTNOST S HROU";
+    public static final String STARTING_GAME = "PŘESUNUJI SE NA SOUŘADNICE STŘETNUTÍ";
+
     public WaitingForOponnent(){
         createPane();
     }
@@ -35,7 +41,7 @@ public class WaitingForOponnent {
         waitingPane.getColumnConstraints().addAll(generateColumns(3));
         waitingPane.getRowConstraints().addAll(generateRows(5));
 
-        title = new Label("ČEKÁNÍ NA PROTIHRÁČE");
+        title = new Label(WAITING_FOR_OPONENT);
         title.setTextFill(Color.WHITE);
         title.setMaxWidth(Double.MAX_VALUE);
         title.setMaxHeight(Double.MAX_VALUE);
@@ -94,6 +100,11 @@ public class WaitingForOponnent {
         if(!GlobalVariables.isEmpty(parent)){
             parent.getChildren().removeAll(waitingPane);
         }
+    }
 
+    public void setTitleText(String text){
+        Platform.runLater(() -> {
+            title.setText(text);
+        });
     }
 }

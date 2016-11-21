@@ -365,6 +365,13 @@ public class Controller implements Initializable{
                     }
 
                     if(!tcpConnection.isConnected()){
+                        if(GlobalVariables.sendMessageType.equals(TcpMessage.CONNECTION)){
+                            waitingForOponnent.setTitleText(WaitingForOponnent.CONNECTING_TO_SERVER);
+                        }
+
+                        if(GlobalVariables.sendMessageType.equals(TcpMessage.QUIT)){
+                            GlobalVariables.sendMessageType = "";
+                        }
 
                         if (isCancelled()) return false;
                         Thread.sleep(1000);
@@ -385,9 +392,11 @@ public class Controller implements Initializable{
                                 Thread.sleep(1000);
                             }
 
+                            waitingForOponnent.setTitleText(WaitingForOponnent.CREATING_GAME);
                             tcpConnection.sendMessageToServer(TcpMessage.GAME_START, "start the game please", TcpMessage.END_WAITING);
 
                             boolean error = false;
+                            waitingForOponnent.setTitleText(WaitingForOponnent.WAITING_FOR_OPONENT);
                             while (!TcpMessage.END_WAITING.equals(GlobalVariables.receivedMsg)){
 
                                 if(isCancelled()){
@@ -401,11 +410,11 @@ public class Controller implements Initializable{
                                 }
                                 Thread.sleep(100);
                             }
-
                             if (error){
                                 break;
                             }
 
+                            waitingForOponnent.setTitleText(WaitingForOponnent.STARTING_GAME);
                             GlobalVariables.receivedMsg = "";
                             Platform.runLater(() -> {
                                 startGame();
