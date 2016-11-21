@@ -14,9 +14,7 @@ public interface IMarkableObject {
 
     void target();
 
-    default void cancelTarget() {
-        return;
-    }
+    void cancelTarget();
 
     default void markingHandle(boolean isMarked, CommonConstruction object){
         if(GlobalVariables.isTargeting){

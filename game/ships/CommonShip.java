@@ -222,6 +222,10 @@ public abstract class CommonShip extends CommonConstruction {
         return armorMaxValue;
     }
 
+    public int getArmorActualValue() {
+        return (int)((getActualLife()/getTotalLife().get()) * armorMaxValue);
+    }
+
     public int getEnergyMaxValue() {
         return energyMaxValue;
     }
@@ -471,7 +475,7 @@ public abstract class CommonShip extends CommonConstruction {
 
     @Override
     public void takeDamage(int damage) {
-        damage = damage - getArmorMaxValue();
+        damage = damage - getArmorActualValue();
         if (damage < 0) return;
 
         super.takeDamage(damage);

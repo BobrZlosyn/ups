@@ -86,6 +86,12 @@ public class DamageHandler {
 
     }
 
+    /**
+     *
+     * @param targetShip
+     * @param attackShip
+     * @return
+     */
     private int calculateDamage(CommonShip targetShip, CommonShip attackShip){
         if(GlobalVariables.isEmpty(targetShip)){
             return 0;
