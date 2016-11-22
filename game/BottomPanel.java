@@ -339,8 +339,7 @@ public class BottomPanel {
         if(!GlobalVariables.isEmpty(GlobalVariables.getTargetObject())){
             CommonConstruction construction = GlobalVariables.getTargetObject();
             weapon.rotateEquipment(construction.getCenterX(), construction.getCenterY());
-            GlobalVariables.setTargetObject(construction);
-            construction.target();
+
             //odeber energii pokud zbran nema vybrano cil
             if(GlobalVariables.isEmpty(weapon.getTarget())){
                 ship.setActualEnergy(energyCost);
