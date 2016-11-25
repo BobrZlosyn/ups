@@ -1,11 +1,8 @@
 package game.construction;
 
-import game.ships.CommonShip;
 import game.static_classes.GlobalVariables;
-import game.weapons.draggableWeapons.DraggableCannon;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
@@ -33,19 +30,19 @@ public abstract class CommonDraggableObject implements IShipEquipment{
                         || pokus.contains(x - xAdd1, y + yAdd2) || pokus.contains(x - xAdd2, y + yAdd2)){
 
                     if(GlobalVariables.choosenShip.getAvailablePoints() < ((AShipEquipment)getObject()).getCostOfEquipment()){
-                        if(pokus.getFill().equals(Color.BLUE)){
+                        if( placements[i][j].isFullColorSet()){
                             continue;
                         }
-                        pokus.setFill(Color.RED);
+                        placements[i][j].setErrorPlaceColor();
                         place = placements[i][j];
 
                     }else{
-                        pokus.setFill(Color.BLUE);
+                        placements[i][j].setFullPlaceColor();
                         place = placements[i][j];
                     }
                 }else{
                     if(placements[i][j].isEmpty()){
-                        pokus.setFill(Color.WHITE);
+                        placements[i][j].setClearPlaceColor();
                     }
                 }
             }
@@ -90,7 +87,7 @@ public abstract class CommonDraggableObject implements IShipEquipment{
         double widthModel = commonModel.getWidth()/2;
         double paneY = commonModel.getParent().getLayoutY();
         if(isInPlace){
-            placement.getField().setFill(Color.WHITE);
+            placement.setClearPlaceColor();
             commonModel.setModelXY(event.getX(), event.getY());
             findPosition(placements, event.getX(), event.getY(),addX1, addX2, addY1, addY2);
         }else {
@@ -134,14 +131,14 @@ public abstract class CommonDraggableObject implements IShipEquipment{
 
         placement.setIsEmpty(true);
         placement.setShipEquipment(null);
-        placement.getField().setFill(Color.WHITE);
+        placement.setClearPlaceColor();
     }
 
     protected void moveToAnotherPlace(MouseEvent event, CommonModel commonModel, Placement[][] placements) {
 
         Placement bluePlace = findPosition( placements, event.getX(), event.getY(),addX1, addX2, addY1, addY2);
-        if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.getField().getFill().equals(Color.RED)){
-            bluePlace.getField().setFill(Color.WHITE);
+        if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.isWarningColorSet()){
+            bluePlace.setClearPlaceColor();
             return;
         }
 
@@ -160,7 +157,7 @@ public abstract class CommonDraggableObject implements IShipEquipment{
             //mazani stareho
             placement.setIsEmpty(true);
             placement.setShipEquipment(null);
-            placement.getField().setFill(Color.WHITE);
+            placement.setClearPlaceColor();
 
             double x = bluePlace.getX() + bluePlace.getSize()/2;
             double y = bluePlace.getY() + bluePlace.getSize()/2;
@@ -199,8 +196,8 @@ public abstract class CommonDraggableObject implements IShipEquipment{
         double objectPositionY = event.getSceneY() - paneY;
 
         Placement bluePlace = findPosition( placements, objectPositionX , objectPositionY,addX1, addX2, addY1, addY2);
-        if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.getField().getFill().equals(Color.RED)){
-            bluePlace.getField().setFill(Color.WHITE);
+        if(!GlobalVariables.isEmpty(bluePlace) && bluePlace.isWarningColorSet()){
+            bluePlace.setClearPlaceColor();
             return;
         }
 

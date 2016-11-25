@@ -2,6 +2,7 @@ package game.construction;
 
 import game.static_classes.GlobalVariables;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
@@ -36,5 +37,50 @@ public abstract class CommonModel {
 
     public abstract boolean containsPosition(double x, double y);
 
+    /**
+     * priradi novy styl na cursor
+     */
+    protected void addCursorHandClass() {
+        getParts().forEach(shape -> shape.getStyleClass().add("hand-cursor"));
+    }
 
+    /**
+     * zvyrazni model barevne pokud neni vybrano uzivatelem
+     */
+    protected void strokeOnMouseOver() {
+        getParts().forEach(shape -> {
+            shape.setOnMouseEntered(event -> getParts().forEach(shape1 -> {
+                if (GlobalVariables.isEmpty(GlobalVariables.getMarkedObject())
+                        || isNotMarkedObject()
+                        || isNotTargetObject()){
+
+                    shape1.setStroke(Color.YELLOW);
+                }
+            }));
+
+            shape.setOnMouseExited(event -> getParts().forEach(shape1 -> {
+
+                if (GlobalVariables.isEmpty(GlobalVariables.getMarkedObject())
+                        || isNotMarkedObject()
+                        || isNotTargetObject()){
+
+                    shape1.setStroke(Color.TRANSPARENT);
+                }
+            }));
+        });
+
+
+    }
+
+    private boolean isNotMarkedObject(){
+        boolean isMarkedObject = GlobalVariables.isNotEmpty(GlobalVariables.getMarkedObject()) &&
+                                 !GlobalVariables.getMarkedObject().getModel().equals(this);
+        return isMarkedObject;
+    }
+
+    private boolean isNotTargetObject(){
+        boolean isTargetObject = GlobalVariables.isNotEmpty(GlobalVariables.getTargetObject()) &&
+                                 !GlobalVariables.getTargetObject().getModel().equals(this);
+        return isTargetObject;
+    }
 }

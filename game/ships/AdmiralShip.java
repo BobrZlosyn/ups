@@ -96,7 +96,6 @@ public class AdmiralShip extends CommonShip{
                 }
 
                 Rectangle place = new Rectangle(size, size);
-                place.setFill(Color.WHITE);
                 Pane parent = model.getParent();
                 parent.getChildren().add(place);
 
@@ -119,7 +118,7 @@ public class AdmiralShip extends CommonShip{
     }
 
     private double countX(double radius, double size, int i){
-        return model.getCenterX() - radius + size*i + 13*i + 14;
+        return model.getCenterX() - radius + size*i + 13*i + 15;
     }
 
     private double countY(double radius, double size, int j){

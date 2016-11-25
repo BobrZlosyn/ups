@@ -16,6 +16,8 @@ public class BattleshipModel extends CommonModel{
 
     public BattleshipModel(){
         ship = new Circle(150);
+        addCursorHandClass();
+        strokeOnMouseOver();
     }
 
     public Circle getShip() {

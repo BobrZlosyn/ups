@@ -1,6 +1,7 @@
 package game.construction;
 import game.ships.CommonShip;
 import game.static_classes.GlobalVariables;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
@@ -16,6 +17,10 @@ public class Placement {
     private boolean isWeapon;
     private boolean isShield;
     private int row, column;
+    private final Color WARNING = Color.color(1,0.2,0.2,0.5);
+    private final Color FULL_PLACE = Color.rgb(14,100,160,0.9);
+
+    private final Color EMPTY_PLACE = Color.color(1,1,1,0.5);
 
     public Placement (double x, double y, double size, CommonShip ship, int row, int column) {
         setX(x);
@@ -27,6 +32,7 @@ public class Placement {
         this.ship = ship;
         this.row = row;
         this.column = column;
+
     }
 
     public void setIsWeapon(boolean isWeapon) {
@@ -39,6 +45,27 @@ public class Placement {
 
     public void setField(Rectangle field) {
         this.field = field;
+        setClearPlaceColor();
+    }
+
+    public void setClearPlaceColor(){
+        this.field.setFill(EMPTY_PLACE);
+    }
+
+    public void setFullPlaceColor(){
+        this.field.setFill(FULL_PLACE);
+    }
+
+    public void setErrorPlaceColor(){
+        this.field.setFill(WARNING);
+    }
+
+    public boolean isWarningColorSet(){
+        return field.getFill().equals(WARNING);
+    }
+
+    public boolean isFullColorSet(){
+        return field.getFill().equals(FULL_PLACE);
     }
 
     public void setIsEmpty(boolean isEmpty) {

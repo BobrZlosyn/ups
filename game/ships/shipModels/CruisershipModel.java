@@ -17,7 +17,8 @@ public class CruisershipModel extends CommonModel {
     public CruisershipModel(){
 
         ship = new Rectangle(200, 400);
-        ship.setStyle("-fx-background-color: red;");
+        addCursorHandClass();
+        strokeOnMouseOver();
     }
 
     public Rectangle getShip() {

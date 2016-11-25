@@ -87,6 +87,15 @@ public class Controller implements Initializable{
             if(!newValue){
                 GlobalVariables.expectedMsg = TcpMessage.ATTACK;
             }
+
+            //napise zpravu hraci o tom kdo hraje
+            if (GlobalVariables.isNotEmpty(controls)){
+                if (newValue) {
+                    controls.setMessageToPlayer(Controls.USER_IS_PLAYING);
+                }else {
+                    controls.setMessageToPlayer(Controls.ENEMY_IS_PLAYING);
+                }
+            }
         });
 
         tcpConnection.isConnectedProperty().addListener((observable, oldValue, newValue) ->{
@@ -147,7 +156,6 @@ public class Controller implements Initializable{
     private void setupGunsToShipMenu(PickShipMenu pickShipMenu){
         pickShipMenu.getPrevious().setOnAction(event1 -> {
             pickShipMenu.clean();
-
             createMainPage();
         });
 
@@ -175,7 +183,6 @@ public class Controller implements Initializable{
         });
 
         gunsToShipMenu.getNextButton().setOnAction(event -> {
-
             exportImportShip.setFirstExport(true);
             prepareGame();
         });
@@ -230,6 +237,8 @@ public class Controller implements Initializable{
         sendDataButton.setDisable(!GlobalVariables.isPlayingNow.getValue());
         controls = new Controls(GlobalVariables.choosenShip, enemyShip, sendDataButton);
         controls.showStatusBars(gameAreaPane);
+
+
 
         //dolni prvky
         bottomPanel = new BottomPanel(sendDataButton);

@@ -432,50 +432,6 @@ public abstract class CommonShip extends CommonConstruction {
     }
 
     @Override
-    public void markObject() {
-        getModel().getParts().forEach(shape -> {
-            shape.setStroke(Color.BLUE);
-            shape.setStrokeWidth(1.5);
-        });
-
-        GlobalVariables.setMarkedObject(this);
-        GlobalVariables.setName(getName());
-        setIsMarked(true);
-    }
-
-    @Override
-    public void unmarkObject() {
-        getModel().getParts().forEach(shape -> {
-            shape.setStroke(Color.TRANSPARENT);
-        });
-
-        GlobalVariables.setMarkedObject(null);
-        GlobalVariables.setName("");
-        setIsMarked(false);
-
-    }
-
-
-    @Override
-    public void target() {
-        if(!isEnemy()){
-            return;
-        }
-
-        getModel().getParts().forEach(shape -> {
-            shape.setStroke(Color.RED);
-            shape.setStrokeWidth(1.5);
-        });
-
-        GlobalVariables.setTargetObject(this);
-    }
-
-    @Override
-    public void cancelTarget() {
-        getModel().getParts().forEach(shape -> shape.setStroke(Color.TRANSPARENT));
-    }
-
-    @Override
     public void takeDamage(int damage) {
         damage = damage - getArmorActualValue();
         if (damage < 0) return;

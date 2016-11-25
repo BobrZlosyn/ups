@@ -34,6 +34,16 @@ public class BottomPanel {
     private ProgressBar lifeProgress;
     private String background;
 
+    private final String SELECT_TARGET = "Zaměřit cíl";
+    private final String CANCEL_TARGET = "Zrušit cíl";
+    private final String CHANGE_TARGET = "Změnit cíl";
+    private final String ACKNOLEDGE_TARGET = "Potvrdit cíl";
+    private final String NO_ENERGY = "Nedostatek energie";
+    private final String SURRENDER = "UTÉCT Z BOJE";
+    private final String SHIELD_OFF = "Deaktivovat štít";
+    private final String SHIELD_ON = "Aktivovat štít";
+    private final String SEND_ATTACK = "DÁT ROZKAZ K ÚTOKU";
+
     private ProgressBar avaibleShieldProgress;
 
 
@@ -90,13 +100,13 @@ public class BottomPanel {
     }
 
     private void createButtonSend(Button sendOrders){
-        sendOrders.setText("DÁT ROZKAZ K ÚTOKU");
+        sendOrders.setText(SEND_ATTACK);
         sendOrders.setMaxWidth(Double.MAX_VALUE);
         sendOrders.setMaxHeight(Double.MAX_VALUE);
     }
 
     private void createActivationShield(){
-        activateShield = new Button("Deaktivovat štít");
+        activateShield = new Button(SHIELD_OFF);
         activateShield.setMaxWidth(Double.MAX_VALUE);
         activateShield.setMaxHeight(Double.MAX_VALUE);
         activateShield.setVisible(false);
@@ -114,11 +124,11 @@ public class BottomPanel {
                 if (equipment.isShield()) { // zda je stit
                     activateShield.setVisible(newValue.booleanValue());
                     if (((CommonShield) equipment).isActive()) { // pokud je aktivni
-                        activateShield.setText("Deaktivovat štít");
+                        activateShield.setText(SHIELD_OFF);
                         activateShield.setDisable(false);
                     } else { // pokud neni aktivni
-                        activateShield.setText("Aktivovat štít");
-                        notEnoughEnergy(GlobalVariables.getMarkedObject(), activateShield, "Aktivovat štít");
+                        activateShield.setText(SHIELD_ON);
+                        notEnoughEnergy(GlobalVariables.getMarkedObject(), activateShield, SHIELD_ON);
                     }
 
                     avaibleShieldProgress.progressProperty().bind(equipment.shieldProgressProperty());
@@ -139,12 +149,12 @@ public class BottomPanel {
         activateShield.setOnAction(event -> {
             CommonShield shield = ((CommonShield) GlobalVariables.getMarkedObject());
             if (shield.isActive()) {
-                activateShield.setText("Aktivovat štít");
+                activateShield.setText(SHIELD_ON);
                 shield.getPlacement().getShip().setActualEnergy(-shield.getEnergyCost());
                 shield.setIsActive(!shield.isActive());
             } else {
                 if (shield.getPlacement().getShip().getActualEnergyLevel() >= shield.getEnergyCost()) {
-                    activateShield.setText("Deaktivovat štít");
+                    activateShield.setText(SHIELD_OFF);
                     shield.getPlacement().getShip().setActualEnergy(shield.getEnergyCost());
                     shield.setIsActive(!shield.isActive());
                 }
@@ -208,7 +218,7 @@ public class BottomPanel {
 
 
     private void createCancelTargetButton(){
-        cancelTarget = new Button("Zrušit cíl");
+        cancelTarget = new Button(CANCEL_TARGET);
         cancelTarget.setMaxWidth(Double.MAX_VALUE);
         cancelTarget.setMaxHeight(Double.MAX_VALUE);
         cancelTarget.setVisible(false);
@@ -218,6 +228,7 @@ public class BottomPanel {
             weapon.rotateToDefaultPosition();
             weapon.getPlacement().getShip().setActualEnergy(-weapon.getEnergyCost());
             weapon.unmarkObject();
+            weapon.markObject();
             cancelTarget.setVisible(false);
         });
 
@@ -230,7 +241,7 @@ public class BottomPanel {
         lifeProgress.getStyleClass().add("lifeStatus");
         lifeProgress.setVisible(false);
 
-        lifeLabel = new Label("život konstrukce");
+        lifeLabel = new Label();
         lifeLabel.getStyleClass().add("statusLabel");
         lifeLabel.setMaxWidth(Double.MAX_VALUE);
         lifeLabel.setAlignment(Pos.CENTER);
@@ -257,16 +268,18 @@ public class BottomPanel {
 
     private void createButtonTargeting(){
         targeting = new Button();
-        targeting.setText("Zaměřit cíl");
+        targeting.setText(SELECT_TARGET);
         targeting.visibleProperty().bind(GlobalVariables.canTarget);
         targeting.visibleProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue.booleanValue()){
-                CommonWeapon weapon = (CommonWeapon) GlobalVariables.getMarkedObject();
-                if(GlobalVariables.isEmpty(weapon)){
+
+                if(GlobalVariables.isEmpty(GlobalVariables.getMarkedObject())
+                        || !GlobalVariables.getMarkedObject().getPlacement().isWeapon()){
                     return;
                 }
 
-                notEnoughEnergy(GlobalVariables.getMarkedObject(), targeting, "Zaměřit cíl");
+                CommonWeapon weapon = (CommonWeapon) GlobalVariables.getMarkedObject();
+                notEnoughEnergy(GlobalVariables.getMarkedObject(), targeting, SELECT_TARGET);
                 if(GlobalVariables.isEmpty(weapon.getTarget())){ //zbran ma vybrany cil
                     cancelTarget.setVisible(false);
                     return;
@@ -302,7 +315,7 @@ public class BottomPanel {
     private void startTargeting(){
         setTarget = true;
         GlobalVariables.setIsTargeting(true);
-        targeting.setText("Potvrdit cíl");
+        targeting.setText(ACKNOLEDGE_TARGET);
     }
 
     private void notEnoughEnergy(CommonConstruction commonConstruction, Button button, String textIfFalse){
@@ -313,7 +326,7 @@ public class BottomPanel {
         int energy = commonConstruction.getPlacement().getShip().getActualEnergyLevel();
         int cost = commonConstruction.getEnergyCost();
         if(energy < cost){
-            button.setText("Nedostatek energie");
+            button.setText(NO_ENERGY);
             button.setDisable(true);
         }else{
             button.setText(textIfFalse);
@@ -332,7 +345,7 @@ public class BottomPanel {
         if(energyCost > ship.getActualEnergyLevel()){
             setTarget = false;
             GlobalVariables.setIsTargeting(false);
-            targeting.setText("Zaměřit cíl");
+            targeting.setText(SELECT_TARGET);
             return;
         }
 
@@ -347,7 +360,7 @@ public class BottomPanel {
 
             weapon.setTarget(construction.getPlacement());
             cancelTarget.setVisible(true);
-            targeting.setText("Změnit cíl");
+            targeting.setText(CHANGE_TARGET);
         }else {
             if(!GlobalVariables.isEmpty(weapon.getTarget())){
                 weapon.setTarget(null);
@@ -355,7 +368,7 @@ public class BottomPanel {
                 weapon.rotateToDefaultPosition();
             }
             cancelTarget.setVisible(false);
-            targeting.setText("Zaměřit cíl");
+            targeting.setText(SELECT_TARGET);
         }
 
 
@@ -365,13 +378,13 @@ public class BottomPanel {
     }
 
     private void createButtonQuit(){
-        quit = new Button("UTÉCT Z BOJE");
+        quit = new Button(SURRENDER);
         quit.setMaxWidth(Double.MAX_VALUE);
         quit.setMaxHeight(Double.MAX_VALUE);
     }
 
     private void createName(){
-        name = new Label("Název kliknutého objektu");
+        name = new Label();
         name.textProperty().bind(GlobalVariables.name);
         name.visibleProperty().bind(GlobalVariables.isSelected);
         name.getStyleClass().add("statusLabel");

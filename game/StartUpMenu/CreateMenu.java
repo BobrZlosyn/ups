@@ -97,32 +97,32 @@ public class CreateMenu {
     }
 
     private void createStartButton(){
-        start = new Button("NOVÁ HRA");
-        start.setMaxWidth(Double.MAX_VALUE);
-        start.setMaxHeight(Double.MAX_VALUE);
+        start = createButton("NOVÁ HRA");
     }
 
     private void createStartSettings(){
-        settings = new Button("NASTAVENÍ");
-        settings.setMaxWidth(Double.MAX_VALUE);
-        settings.setMaxHeight(Double.MAX_VALUE);
+        settings = createButton("NASTAVENÍ");
     }
 
     private void createStartAbout(){
-        about = new Button("O HŘE");
-        about.setMaxWidth(Double.MAX_VALUE);
-        about.setMaxHeight(Double.MAX_VALUE);
+        about = createButton("O HŘE");
     }
 
     private void createStartExit() {
-        exit = new Button("ODEJÍT");
-        exit.setMaxWidth(Double.MAX_VALUE);
-        exit.setMaxHeight(Double.MAX_VALUE);
+        exit = createButton("ODEJÍT");
+        exit.getStyleClass().add("exitButton");
         exit.setOnAction(event -> {
             Platform.exit();
         });
     }
 
+    private Button createButton(String text){
+        Button button = new Button(text);
+        button.setMaxWidth(Double.MAX_VALUE);
+        button.setMaxHeight(Double.MAX_VALUE);
+        button.getStyleClass().add("menuButtons");
+        return button;
+    }
     private void createConnectionIndicator(){
         connection = new Label("Neřipojeno");
         connection.setTextFill(Color.RED);

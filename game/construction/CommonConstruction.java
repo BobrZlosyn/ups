@@ -156,7 +156,7 @@ public abstract class CommonConstruction implements IMarkableObject{
 
         hit = new Timeline(new KeyFrame(Duration.seconds(GlobalVariables.damageHitDuration), event -> {
 
-            if((hitCount.isEmpty() || hitCount.get(0).equals(7))){
+            if((hitCount.isEmpty() || hitCount.get(0).equals(5))){
                 getModel().setDefaultSkin();
             }
 
@@ -168,6 +168,7 @@ public abstract class CommonConstruction implements IMarkableObject{
             for (int i = 0; i < damage.size(); i++) {
 
                 Label label = damage.get(i);
+                label.setOpacity(1 - hitCount.get(i)/100);
 
                 //pohyb prvku na plose
                 label.setLayoutX(label.getLayoutX() + 0.1);
@@ -235,6 +236,10 @@ public abstract class CommonConstruction implements IMarkableObject{
 
     @Override
     public void markObject() {
+        if(!GlobalVariables.isGameStartUp()){
+            return;
+        }
+
         getModel().getParts().forEach(shape -> {
             shape.setStroke(Color.BLUE);
             shape.setStrokeWidth(1.5);
@@ -244,7 +249,9 @@ public abstract class CommonConstruction implements IMarkableObject{
 
         GlobalVariables.setMarkedObject(this);
         GlobalVariables.setName(getName());
-        GlobalVariables.setCanTarget(!isEnemy());
+
+        boolean canTarget = !isEnemy() && getPlacement().isWeapon();
+        GlobalVariables.setCanTarget(canTarget);
 
     }
 

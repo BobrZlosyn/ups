@@ -22,6 +22,9 @@ public class SimpleShieldModel extends CommonModel {
     private void createShiled(){
         shield = new Rectangle(50,50);
         setDefaultSkin();
+
+        addCursorHandClass();
+        strokeOnMouseOver();
     }
 
     public Rectangle getShield() {

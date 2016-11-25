@@ -96,11 +96,13 @@ public class GunsToShipMenu {
         previous = new Button("Zpět");
         previous.setMaxHeight(Double.MAX_VALUE);
         previous.setMaxWidth(200);
+        previous.getStyleClass().add("prevButton");
     }
 
     private void createNextButton(){
-        next = new Button("pokračovat");
+        next = new Button("Pokračovat");
         next.setMaxHeight(Double.MAX_VALUE);
+        next.getStyleClass().add("nextButton");
         next.setMaxWidth(200);
     }
 
@@ -186,6 +188,8 @@ public class GunsToShipMenu {
         items.getChildren().add(createItem(new ModelSimpleLaserWeapon(), GameBalance.SIMPLE_LASER_EQUIPMENT_NAME, 35, 35, new DraggableSimpleLaser(35, 35)));
 
         gunsToShipPane.add(items, 0,1, 1, 2);
+        GridPane.setMargin(next, new Insets(0,10,10,10));
+        GridPane.setMargin(previous, new Insets(0,10,10,10));
     }
 
 
@@ -195,7 +199,7 @@ public class GunsToShipMenu {
         item.setMaxWidth(Double.MAX_VALUE);
         item.setMaxHeight(70);
         item.setMinHeight(70);
-        item.setStyle("-fx-background-color: rgba(0,0,0,0.5);");
+
 
         //create object
         commonModel.getParts().forEach(shape -> {
@@ -267,6 +271,8 @@ public class GunsToShipMenu {
             draggableObject.removeModel(paneOnTop);
         });
 
+        overPane.setOnMouseEntered(event -> item.setStyle("-fx-background-color: rgba(0,0,0,0.9);  -fx-cursor: hand;"));
+        overPane.setOnMouseExited(event -> item.setStyle("-fx-background-color: rgba(0,0,0,0); -fx-cursor: pointer;"));
         item.getChildren().addAll(overPane);
         return item;
     }
@@ -316,8 +322,6 @@ public class GunsToShipMenu {
      * metody pro animaci prijezdu panelu
      *
      */
-
-
     private void createStatusPane(){
         shipStatus = new Pane();
         statuses = new GridPane();

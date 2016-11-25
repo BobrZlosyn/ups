@@ -73,9 +73,10 @@ public class PickShipMenu {
     }
 
     private void createPreviousButton(){
-        previous = new Button("zpět");
+        previous = new Button("Zpět");
         previous.setMaxHeight(Double.MAX_VALUE);
         previous.setMaxWidth(200);
+        previous.getStyleClass().add("prevButton");
     }
 
     private void createTitleLabel(){
@@ -171,9 +172,10 @@ public class PickShipMenu {
 
     private void createNextSetupButton(){
         nextSetup = new Button("Pokračovat");
-        nextSetup.setMaxWidth(Double.MAX_VALUE);
+        nextSetup.setMaxWidth(200);
         nextSetup.setMaxHeight(Double.MAX_VALUE);
-
+        nextSetup.getStyleClass().add("nextButton");
+        GridPane.setHalignment(nextSetup, HPos.RIGHT);
     }
 
     private GridPane createPickingPane(){
@@ -355,6 +357,9 @@ public class PickShipMenu {
     private void marginInPickingPane(){
         pickship.setMargin(battleShip, new Insets(5,5,5,5));
         pickship.setMargin(cruiserShip, new Insets(5,5,5,5));
+
+        GridPane.setMargin(nextSetup, new Insets(0,10,10,10));
+        GridPane.setMargin(previous, new Insets(0,10,10,10));
     }
 
     public GridPane getPickship() {

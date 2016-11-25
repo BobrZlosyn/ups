@@ -155,4 +155,9 @@ public class GlobalVariables {
         errorMsg = "";
         sendMessageType = "";
     }
+
+
+    public static boolean isGameStartUp(){
+        return !shipDefinition.isEmpty();
+    }
 }
