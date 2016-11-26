@@ -1,13 +1,12 @@
 package client;
 import game.static_classes.GlobalVariables;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 
 import java.io.*;
 import java.net.*;
 
 
-public class TcpClient implements NetworkInterface{
+public class TcpClient{
 
     private Socket s;
     private BufferedReader reader;
@@ -22,7 +21,6 @@ public class TcpClient implements NetworkInterface{
         isConnected = new SimpleBooleanProperty(false);
     }
 
-    @Override
     public boolean open() {
 
         // create a socket to communicate to the specified host and port
@@ -67,7 +65,6 @@ public class TcpClient implements NetworkInterface{
         isConnected.set(!s.isClosed());
     }
 
-    @Override
     public void close(  ) {
         try {
             if(!GlobalVariables.isEmpty(reader)){
@@ -94,7 +91,6 @@ public class TcpClient implements NetworkInterface{
         }
     }
 
-    @Override
     public void putMessage( TcpMessage msg) {
         try {
     	    writer.println(msg.getMessage());
@@ -107,7 +103,6 @@ public class TcpClient implements NetworkInterface{
         }
     }
 
-    @Override
     public String getMessage(  ){
         String line = "";
 

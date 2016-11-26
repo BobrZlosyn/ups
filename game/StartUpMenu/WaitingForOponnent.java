@@ -10,7 +10,6 @@ import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -26,6 +25,7 @@ import java.util.ArrayList;
 
 /**
  * Created by BobrZlosyn on 17.10.2016.
+ * obrazovka ktera ma zabavit uzivatele nez se pripoji druhy hrac
  */
 public class WaitingForOponnent {
 
@@ -33,6 +33,7 @@ public class WaitingForOponnent {
     private Button cancel;
     private GridPane waitingPane;
     private Pane starMap;
+    private Timeline starAnimation;
 
     public static final String WAITING_FOR_OPONENT = "ČEKÁNÍ NA PROTIHRÁČE";
     public static final String CONNECTING_TO_SERVER = "PŘIPOJUJI SE K SEVERU";
@@ -87,8 +88,8 @@ public class WaitingForOponnent {
         waitingPane.getRowConstraints().get(0).setPercentHeight(15); //15
         waitingPane.getRowConstraints().get(1).setPercentHeight(1); //16
         waitingPane.getRowConstraints().get(2).setPercentHeight(1); //17
-        waitingPane.getRowConstraints().get(3).setPercentHeight(60); // 77
-        waitingPane.getRowConstraints().get(4).setPercentHeight(1); // 78
+        waitingPane.getRowConstraints().get(3).setPercentHeight(56); // 77
+        waitingPane.getRowConstraints().get(4).setPercentHeight(5); // 78
         waitingPane.getRowConstraints().get(5).setPercentHeight(7); // 85
         waitingPane.getRowConstraints().get(6).setPercentHeight(15); // 100
     }
@@ -144,9 +145,9 @@ public class WaitingForOponnent {
     }
 
 
-    public String pickRandomHint() {
+    private String pickRandomHint() {
 
-        ArrayList <String>hints = new ArrayList();
+        ArrayList <String> hints = new ArrayList <>();
         hints.add("RADA! Každý modul se štítem lze libovolně aktivovat a deaktiovat.");
         hints.add("RADA! Čím méně má loď života, tím méně odolná proti poškození.");
         hints.add("RADA! Pokud je zničeno vybavení na lodi, integrita trupu obdrží poškození též.");
@@ -161,9 +162,7 @@ public class WaitingForOponnent {
 
 
     public void setTitleText(String text){
-        Platform.runLater(() -> {
-            title.setText(text);
-        });
+        Platform.runLater(() -> title.setText(text));
     }
 
 
@@ -184,7 +183,7 @@ public class WaitingForOponnent {
         starsAnimeation();
     }
 
-    private Timeline starAnimation;
+
     private void starsAnimeation(){
         starAnimation = new Timeline(new KeyFrame(Duration.seconds(0.03), event -> {
             stars.forEach(circle -> {
@@ -216,7 +215,7 @@ class Star {
     private Line line;
     private float width, height;
 
-    public Star(float width, float height){
+    Star(float width, float height){
         star = new Circle(0.5);
         star.setTranslateX(width/2);
         star.setTranslateY(height/2);
@@ -231,7 +230,7 @@ class Star {
         pz = z;
     }
 
-    public void update(){
+    void update(){
         z = z - 25;
         if (z < 1) {
             z = width/2;
@@ -247,11 +246,10 @@ class Star {
     }
 
     private float map(float value, float istart, float istop, float ostart, float ostop) {
-        float pom = ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
-        return pom;
+        return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
     }
 
-    public void show() {
+    void show() {
 
         width = (float) ((Pane) star.getParent()).getWidth();
         height = (float) ((Pane) star.getParent()).getHeight();
@@ -276,11 +274,11 @@ class Star {
         line.setEndY(sy);
     }
 
-    public Circle getStar() {
+    Circle getStar() {
         return star;
     }
 
-    public Line getLine() {
+    Line getLine() {
         return line;
     }
 }

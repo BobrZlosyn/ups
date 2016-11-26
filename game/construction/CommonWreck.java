@@ -1,8 +1,6 @@
 package game.construction;
 
 
-import game.construction.CommonModel;
-import game.ships.CommonShip;
 import game.static_classes.GlobalVariables;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -12,7 +10,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
@@ -27,8 +24,8 @@ public abstract class CommonWreck {
     private Timeline flashAnimation;
     private Circle flashCircle;
     private boolean wrecksAdd, rotation;
-    protected int xIndex, yIndex;
-    protected int countOfMovements, maxCountOfMovements;
+    private int xIndex, yIndex;
+    private int countOfMovements, maxCountOfMovements;
     protected ArrayList<Shape> wrecks;
     protected double moveAddPoint [][];
     private int countOfShakes, maxCountOfShakes, marginOfShake;
