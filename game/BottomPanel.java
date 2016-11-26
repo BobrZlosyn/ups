@@ -42,7 +42,7 @@ public class BottomPanel {
     private final String SURRENDER = "UTÉCT Z BOJE";
     private final String SHIELD_OFF = "Deaktivovat štít";
     private final String SHIELD_ON = "Aktivovat štít";
-    private final String SEND_ATTACK = "DÁT ROZKAZ K ÚTOKU";
+    private final String SEND_ATTACK = "ZAÚTOČIT";
 
     private ProgressBar avaibleShieldProgress;
 
@@ -103,12 +103,19 @@ public class BottomPanel {
         sendOrders.setText(SEND_ATTACK);
         sendOrders.setMaxWidth(Double.MAX_VALUE);
         sendOrders.setMaxHeight(Double.MAX_VALUE);
+        sendOrders.getStyleClass().add("menuButtons");
+    }
+
+    private Button createButton(String text) {
+        Button button = new Button(text);
+        button.setMaxWidth(Double.MAX_VALUE);
+        button.setMaxHeight(Double.MAX_VALUE);
+        button.getStyleClass().add("menuButtons");
+        return button;
     }
 
     private void createActivationShield(){
-        activateShield = new Button(SHIELD_OFF);
-        activateShield.setMaxWidth(Double.MAX_VALUE);
-        activateShield.setMaxHeight(Double.MAX_VALUE);
+        activateShield = createButton(SHIELD_OFF);
         activateShield.setVisible(false);
         GlobalVariables.isSelected.addListener((observable, oldValue, newValue) -> {
             avaibleShieldProgress.progressProperty().unbind();
@@ -218,9 +225,7 @@ public class BottomPanel {
 
 
     private void createCancelTargetButton(){
-        cancelTarget = new Button(CANCEL_TARGET);
-        cancelTarget.setMaxWidth(Double.MAX_VALUE);
-        cancelTarget.setMaxHeight(Double.MAX_VALUE);
+        cancelTarget = createButton(CANCEL_TARGET);
         cancelTarget.setVisible(false);
         cancelTarget.setOnAction(event -> {
             CommonWeapon weapon = (CommonWeapon)GlobalVariables.getMarkedObject();
@@ -267,8 +272,7 @@ public class BottomPanel {
     }
 
     private void createButtonTargeting(){
-        targeting = new Button();
-        targeting.setText(SELECT_TARGET);
+        targeting = createButton(SELECT_TARGET);
         targeting.visibleProperty().bind(GlobalVariables.canTarget);
         targeting.visibleProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue.booleanValue()){
@@ -286,7 +290,7 @@ public class BottomPanel {
                 }
 
                 cancelTarget.setVisible(true);
-                targeting.setText("Změnit cíl");
+                targeting.setText(CHANGE_TARGET);
                 targeting.setDisable(false);
                 IMarkableObject equipment =(IMarkableObject) weapon.getTarget().getShipEquipment();
                 if(GlobalVariables.isEmpty(equipment)){ // cilem je lod
@@ -298,9 +302,6 @@ public class BottomPanel {
                 cancelTarget.setVisible(false);
             }
         });
-
-        targeting.setMaxWidth(Double.MAX_VALUE);
-        targeting.setMaxHeight(Double.MAX_VALUE);
 
         targeting.setOnAction(event -> {
             if(!setTarget){
@@ -378,9 +379,8 @@ public class BottomPanel {
     }
 
     private void createButtonQuit(){
-        quit = new Button(SURRENDER);
-        quit.setMaxWidth(Double.MAX_VALUE);
-        quit.setMaxHeight(Double.MAX_VALUE);
+        quit = createButton(SURRENDER);
+        quit.getStyleClass().add("exitButton");
     }
 
     private void createName(){

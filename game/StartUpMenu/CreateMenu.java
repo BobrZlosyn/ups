@@ -9,12 +9,19 @@ import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.InnerShadow;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 
 /**
  * Created by BobrZlosyn on 28.09.2016.
@@ -23,8 +30,16 @@ public class CreateMenu {
     private GridPane menu;
     private Button start, settings, about, exit;
     private Label connection;
+    private Text gameTitle;
     private Circle indicator;
-    ChangeListener <Boolean> connectionListener;
+    private ChangeListener <Boolean> connectionListener;
+    private final String CONNECT = "Připojeno";
+    private final String DISCONNECT = "Neřipojeno";
+    private final String START_GAME = "NOVÁ HRA";
+    private final String SETTING = "NASTAVENÍ";
+    private final String CLOSE = "ODEJÍT";
+    private final String ABOUT_GAME = "O HŘE";
+    private final String GAME_TITLE = "SPACE BATTLES";
 
     public CreateMenu(){
         menu = createGridpane();
@@ -35,6 +50,7 @@ public class CreateMenu {
 
         createStartButton();
         createStartAbout();
+        createGameTitle();
         createStartExit();
         createStartSettings();
         createConnectionIndicator();
@@ -43,6 +59,55 @@ public class CreateMenu {
         setConnectionListener();
     }
 
+
+    private void createGameTitle(){
+
+
+        gameTitle = new Text(GAME_TITLE);
+        gameTitle.setFont(Font.font(null, FontWeight.EXTRA_BOLD, 55));
+        gameTitle.setFill(Color.WHITE);
+
+        Blend blend = new Blend();
+        blend.setMode(BlendMode.MULTIPLY);
+
+        DropShadow ds = new DropShadow();
+        ds.setColor(Color.rgb(254, 235, 66, 0.3));
+        ds.setOffsetX(5);
+        ds.setOffsetY(5);
+        ds.setRadius(5);
+        ds.setSpread(0.2);
+
+        blend.setBottomInput(ds);
+
+        DropShadow ds1 = new DropShadow();
+        ds1.setColor(Color.web("#f13a00"));
+        ds1.setRadius(20);
+        ds1.setSpread(0.2);
+
+        Blend blend2 = new Blend();
+        blend2.setMode(BlendMode.MULTIPLY);
+
+        InnerShadow is = new InnerShadow();
+        is.setColor(Color.web("#feeb42"));
+        is.setRadius(9);
+        is.setChoke(0.8);
+        blend2.setBottomInput(is);
+
+        InnerShadow is1 = new InnerShadow();
+        is1.setColor(Color.web("#f13a00"));
+        is1.setRadius(5);
+        is1.setChoke(0.4);
+        blend2.setTopInput(is1);
+
+        Blend blend1 = new Blend();
+        blend1.setMode(BlendMode.MULTIPLY);
+        blend1.setBottomInput(ds1);
+        blend1.setTopInput(blend2);
+
+        blend.setTopInput(blend1);
+
+        gameTitle.setEffect(blend);
+    }
     private GridPane createGridpane(){
         GridPane menu = new GridPane();
         menu.setMaxWidth(Double.MAX_VALUE);
@@ -97,19 +162,19 @@ public class CreateMenu {
     }
 
     private void createStartButton(){
-        start = createButton("NOVÁ HRA");
+        start = createButton(START_GAME);
     }
 
     private void createStartSettings(){
-        settings = createButton("NASTAVENÍ");
+        settings = createButton(SETTING);
     }
 
     private void createStartAbout(){
-        about = createButton("O HŘE");
+        about = createButton(ABOUT_GAME);
     }
 
     private void createStartExit() {
-        exit = createButton("ODEJÍT");
+        exit = createButton(CLOSE);
         exit.getStyleClass().add("exitButton");
         exit.setOnAction(event -> {
             Platform.exit();
@@ -124,7 +189,7 @@ public class CreateMenu {
         return button;
     }
     private void createConnectionIndicator(){
-        connection = new Label("Neřipojeno");
+        connection = new Label(DISCONNECT);
         connection.setTextFill(Color.RED);
         connection.setStyle("-fx-background-color: rgba(0,0,0,0.75);");
         connection.setPadding(new Insets( 10, 0, 10, 0));
@@ -145,6 +210,7 @@ public class CreateMenu {
         menu.add(exit,2,5);
         menu.add(connection, 4, 7);
         menu.add(indicator, 4, 7);
+        menu.add(gameTitle,0,0,GridPane.REMAINING, 1);
 
     }
 
@@ -171,7 +237,6 @@ public class CreateMenu {
 
     private void setConnectionListener(){
         connectionListener = (observable, oldValue, newValue) -> {
-            System.out.println("listener "+ newValue);
             if(newValue.booleanValue()){
                 setSuccesfulConnection();
             }else{
@@ -181,13 +246,13 @@ public class CreateMenu {
     }
 
     private void setSuccesfulConnection(){
-        connection.setText("Připojeno");
+        connection.setText(CONNECT);
         connection.setTextFill(Color.GREEN);
         indicator.setFill(Color.GREEN);
     }
 
     private void setFailedConnection(){
-        connection.setText("Nepřipojeno");
+        connection.setText(DISCONNECT);
         connection.setTextFill(Color.RED);
         indicator.setFill(Color.RED);
     }

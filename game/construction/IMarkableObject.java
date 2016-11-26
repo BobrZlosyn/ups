@@ -1,12 +1,16 @@
 package game.construction;
 
 import game.static_classes.GlobalVariables;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
 /**
  * Created by BobrZlosyn on 28.09.2016.
  */
 public interface IMarkableObject {
+
+    Color MARKED_OBJECT_COLOR = Color.BLUE;
+    Color TARGET_OBJECT_COLOR = Color.RED;
 
     void markObject();
 

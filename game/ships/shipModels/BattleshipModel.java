@@ -1,8 +1,10 @@
 package game.ships.shipModels;
 
 import game.construction.CommonModel;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 

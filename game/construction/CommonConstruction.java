@@ -241,7 +241,7 @@ public abstract class CommonConstruction implements IMarkableObject{
         }
 
         getModel().getParts().forEach(shape -> {
-            shape.setStroke(Color.BLUE);
+            shape.setStroke(MARKED_OBJECT_COLOR);
             shape.setStrokeWidth(1.5);
         });
 
@@ -274,7 +274,7 @@ public abstract class CommonConstruction implements IMarkableObject{
         }
 
         getModel().getParts().forEach(shape -> {
-            shape.setStroke(Color.RED);
+            shape.setStroke(TARGET_OBJECT_COLOR);
             shape.setStrokeWidth(1.5);
         });
         GlobalVariables.setTargetObject(this);

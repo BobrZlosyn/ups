@@ -49,38 +49,23 @@ public abstract class CommonModel {
      */
     protected void strokeOnMouseOver() {
         getParts().forEach(shape -> {
-            shape.setOnMouseEntered(event -> getParts().forEach(shape1 -> {
-                if (GlobalVariables.isEmpty(GlobalVariables.getMarkedObject())
-                        || isNotMarkedObject()
-                        || isNotTargetObject()){
-
-                    shape1.setStroke(Color.YELLOW);
+            shape.setOnMouseEntered(event -> {
+                if (!hasAlredyStroke(shape)) {
+                    getParts().forEach(shape1 -> shape1.setStroke(Color.YELLOW));
                 }
-            }));
+            });
 
-            shape.setOnMouseExited(event -> getParts().forEach(shape1 -> {
-
-                if (GlobalVariables.isEmpty(GlobalVariables.getMarkedObject())
-                        || isNotMarkedObject()
-                        || isNotTargetObject()){
-
-                    shape1.setStroke(Color.TRANSPARENT);
+            shape.setOnMouseExited(event -> {
+                if (!hasAlredyStroke(shape)) {
+                    getParts().forEach(shape1 ->  shape1.setStroke(Color.TRANSPARENT));
                 }
-            }));
+            });
         });
-
-
     }
 
-    private boolean isNotMarkedObject(){
-        boolean isMarkedObject = GlobalVariables.isNotEmpty(GlobalVariables.getMarkedObject()) &&
-                                 !GlobalVariables.getMarkedObject().getModel().equals(this);
-        return isMarkedObject;
-    }
 
-    private boolean isNotTargetObject(){
-        boolean isTargetObject = GlobalVariables.isNotEmpty(GlobalVariables.getTargetObject()) &&
-                                 !GlobalVariables.getTargetObject().getModel().equals(this);
-        return isTargetObject;
+    private boolean hasAlredyStroke(Shape shape){
+        return IMarkableObject.MARKED_OBJECT_COLOR.equals(shape.getStroke())
+                || IMarkableObject.TARGET_OBJECT_COLOR.equals(shape.getStroke());
     }
 }

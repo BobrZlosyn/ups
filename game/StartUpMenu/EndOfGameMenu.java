@@ -65,12 +65,14 @@ public class EndOfGameMenu {
         newGame = new Button("Další bitva");
         newGame.setMaxWidth(Double.MAX_VALUE);
         newGame.setMaxHeight(100);
+        newGame.getStyleClass().add("menuButtons");
     }
 
     private void createBackToMenuButton(){
         backToMenu = new Button("Zpět do menu");
         backToMenu.setMaxWidth(Double.MAX_VALUE);
         backToMenu.setMaxHeight(100);
+        backToMenu.getStyleClass().add("exitButton");
     }
 
     public void setupWindow(GridPane window){
@@ -79,7 +81,6 @@ public class EndOfGameMenu {
         endWindow.getRowConstraints().addAll(generateRows(5));
         endWindow.setMaxWidth(Double.MAX_VALUE);
         endWindow.setMaxHeight(Double.MAX_VALUE);
-System.out.println("ahojkz" + this);
 
         pane = new Pane();
         pane.setStyle("-fx-background-color: rgba(0, 0, 0, 0.9);");

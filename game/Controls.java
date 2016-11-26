@@ -17,11 +17,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
 
@@ -67,8 +69,9 @@ public class Controls {
         messageToPlayer.setPrefWidth(MESSAGE_WIDTH);
         messageToPlayer.setTextFill(Color.GREEN);
         messageToPlayer.setAlignment(Pos.CENTER);
+        messageToPlayer.setTextAlignment(TextAlignment.CENTER);
         messageToUserAnimation = new Timeline(new KeyFrame(Duration.seconds(0.05), event -> {
-            double maxCount = 70;
+            double maxCount = 100;
             messageToPlayer.setOpacity( 1 - countOfTextView/maxCount);
             countOfTextView++;
 
@@ -231,7 +234,13 @@ public class Controls {
     public void showStatusBars(Pane gameArea){
         gameArea.getChildren().addAll(shipIntegrityProgress, shipPowerProgress, life, power,
                                         enemyshipIntegrityProgress, enemyLife, messageToPlayer);
-        setMessageToPlayer(WELCOME_MESSAGE);
+
+        if (GlobalVariables.isPlayingNow.get()){
+            setMessageToPlayer(WELCOME_MESSAGE + USER_IS_PLAYING);
+        } else {
+            setMessageToPlayer(WELCOME_MESSAGE + ENEMY_IS_PLAYING);
+        }
+
         life.setLayoutX(15);
         life.setLayoutY(17);
         life.getStyleClass().add("statusLabel");
@@ -288,9 +297,11 @@ public class Controls {
         circle.setStroke(Color.WHITE);
 
         progress = new ProgressIndicator(0);
+
         progress.setMinSize(100,100);
         progress.setLayoutY(10);
         progress.getStyleClass().add("timeIndicator");
+
 
         timeValue = new SimpleIntegerProperty(GameBalance.ROUND_TIME);
         timeValue.addListener((observable, oldValue, newValue) -> {
@@ -344,6 +355,11 @@ public class Controls {
             sendOrders.fire();
             resetAnimation();
         }
+
+        if(timeValue.get() == 15 ){
+            time.setTextFill(Color.RED);
+            progress.getStyleClass().add("lastSeconds");
+        }
     }
 
     public void stopAnimations(){
@@ -363,6 +379,8 @@ public class Controls {
         Platform.runLater(() -> {
             timeValue.set(GameBalance.ROUND_TIME);
             roundTimeAnimation.playFromStart();
+            progress.getStyleClass().remove("lastSeconds");
+            time.setTextFill(Color.WHITE);
         });
     }
 

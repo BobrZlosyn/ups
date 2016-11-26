@@ -33,6 +33,15 @@
     -fx-fill: null;
 }
 
+.timeIndicator {
+    -fx-progress-color: rgba(10,10,205,1) ;
+}
+
+.lastSeconds {
+    -fx-progress-color: rgba(255,0,0,1) ;
+}
+
+
 .button {
     -fx-cursor: hand;
 }
