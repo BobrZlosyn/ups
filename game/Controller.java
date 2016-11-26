@@ -269,6 +269,7 @@ public class Controller implements Initializable{
      */
     private void setupPickShipMenu(CreateMenu createMenu){
         createMenu.getStart().setOnAction(event -> {
+            grb.showSpacePort(window);
             createMenu.removeConnectionBinding(tcpConnection.isConnectedProperty());
             createMenu.clean();
             PickShipMenu pickShipMenu = new PickShipMenu();
@@ -360,7 +361,7 @@ public class Controller implements Initializable{
         createMenu.setConnectionBinding(tcpConnection.isConnectedProperty());
 
         setupPickShipMenu(createMenu);
-        grb.showSpacePort(window);
+        grb.showWelcomeImage(window);
         errorAlert.showErrorPane(window);
     }
 

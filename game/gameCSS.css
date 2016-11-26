@@ -47,22 +47,22 @@
 }
 
 .menuButtons, .nextButton, .prevButton, .exitButton {
-    -fx-background-color: rgba(24,58,168,0.8) ;
+    -fx-background-color: rgba(24,58,168,0.95) ;
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }
 
 
 .menuButtons:hover {
-    -fx-background-color: rgba(24,38,140,0.9) ;
+    -fx-background-color: rgba(24,38,140,0.99) ;
 }
 
 .exitButton {
-    -fx-background-color: rgba(214,0,0,0.7) ;
+    -fx-background-color: rgba(214,0,0,0.95) ;
 }
 
 .exitButton:hover {
-    -fx-background-color: rgba(154,0,0,0.9) ;
+    -fx-background-color: rgba(154,0,0,0.99) ;
 }
 
 .nextButton {

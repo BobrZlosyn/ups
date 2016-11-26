@@ -33,6 +33,8 @@ public class CreateMenu {
     private Text gameTitle;
     private Circle indicator;
     private ChangeListener <Boolean> connectionListener;
+    private SettingsMenu settingsMenu;
+
     private final String CONNECT = "Připojeno";
     private final String DISCONNECT = "Neřipojeno";
     private final String START_GAME = "NOVÁ HRA";
@@ -165,8 +167,13 @@ public class CreateMenu {
         start = createButton(START_GAME);
     }
 
+
     private void createStartSettings(){
         settings = createButton(SETTING);
+        settings.setOnAction(event -> {
+            settingsMenu = new SettingsMenu();
+            settingsMenu.showWindow((GridPane)settings.getParent());
+        });
     }
 
     private void createStartAbout(){
@@ -201,9 +208,6 @@ public class CreateMenu {
 
 
     private void fillMenuPane(){
-        Pane pane = new Pane();
-        pane.setStyle("-fx-background-color: rgba(0,0,0,0.8);");
-        menu.add(pane,1,1,3,6);
         menu.add(start,2,2);
         menu.add(settings,2,3);
         menu.add(about,2,4);

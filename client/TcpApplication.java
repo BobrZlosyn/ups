@@ -2,34 +2,39 @@ package client;
 
 import game.static_classes.GlobalVariables;
 import javafx.animation.Timeline;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 
-public class TcpApplication
-{
+public class TcpApplication {
 
-    private int userID;
     private TcpClient client;
     private TcpMessage message;
-    private int port, maxTryings;
-    private String server;
-    private Timeline setupConnection;
-    private SimpleBooleanProperty isConnected;
-    private boolean isWaiting;
     private Task readTask, connectTask, actionTask;
 
     public TcpApplication(){
-        server = "localhost";
-        port = 1234;
-        maxTryings = 5;
-        isConnected = new SimpleBooleanProperty(false);
+        String server = GlobalVariables.serverIPAdress.getValue();
+        int port = Integer.parseInt(GlobalVariables.serverPort.getValue());
         message = new TcpMessage();
-        isWaiting = false;
-        client = new TcpClient( server, port );
+        client = new TcpClient( server , port );
+
+
+        GlobalVariables.serverIPAdress.addListener((observable, oldValue, newValue) -> {
+            setUpNewConnection(newValue, Integer.parseInt(GlobalVariables.serverPort.getValue()));
+        });
+
+        GlobalVariables.serverPort.addListener((observable, oldValue, newValue) -> {
+            setUpNewConnection(GlobalVariables.serverIPAdress.getValue(), Integer.parseInt(newValue));
+        });
     }
 
-    public int getUserID() {
-        return userID;
+    private void setUpNewConnection(String server, int port){
+        endConnection();
+        closeConnection();
+        client.updateIsConnected();
+        client.setPort(port);
+        client.setHost(server);
+        connectThread();
     }
 
     public SimpleBooleanProperty isConnectedProperty() {
@@ -76,11 +81,16 @@ public class TcpApplication
             GlobalVariables.expectedMsg = TcpMessage.WAITING;
         }
 
+        if (GlobalVariables.isNotEmpty(actionTask)) {
+            return;
+        }
+
         actionTask = new Task() {
             @Override
             protected Object call() throws Exception {
 
                 while (true){
+
                     if(isCancelled()){
                         break;
                     }
@@ -169,13 +179,15 @@ public class TcpApplication
      * task pro cteni zprav ze serveru
      */
     private void readThread(){
-        if(!GlobalVariables.isEmpty(readTask) && !isConnected()){
+        if(GlobalVariables.isNotEmpty(readTask) && !isConnected()){
             return;
         }
+
 
         readTask = new Task<Void>() {
             @Override public Void call() {
                 while(true) {
+
                     if (isCancelled()) {
                         closeConnection();
                         break;
@@ -211,9 +223,7 @@ public class TcpApplication
      * task pro vytvoreni spojeni se serverem
      */
     public void connectThread(){
-
-
-        if(!GlobalVariables.isEmpty(connectTask) || isConnected()){
+        if(GlobalVariables.isNotEmpty(connectTask) || isConnected()){
             return;
         }
 
@@ -224,14 +234,13 @@ public class TcpApplication
                         closeConnection();
                         break;
                     }
-
                     if(sendConnectionMessage()){
                         message.removeID();
                         break;
                     }
 
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(100);
                     } catch (InterruptedException e) {
 
                         e.printStackTrace();

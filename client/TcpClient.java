@@ -21,6 +21,14 @@ public class TcpClient{
         isConnected = new SimpleBooleanProperty(false);
     }
 
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
     public boolean open() {
 
         // create a socket to communicate to the specified host and port
@@ -108,21 +116,18 @@ public class TcpClient{
 
         // read the response (a line) from the server
         try {
-            if(reader == null){
-                return line;
-            }
 
             do{
                 Thread.sleep(100);
-            } while(!GlobalVariables.isEmpty(reader) && (line = reader.readLine()).isEmpty());
-             return line;
+            } while(GlobalVariables.isNotEmpty(reader) && (line = reader.readLine()).isEmpty());
+
+            return line;
         }
         catch (IOException e) {
             System.err.println("Read error");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         return line;
     }
 
