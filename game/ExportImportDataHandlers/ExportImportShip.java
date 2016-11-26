@@ -1,4 +1,4 @@
-package game;
+package game.ExportImportDataHandlers;
 
 import game.construction.*;
 import game.ships.CommonShip;

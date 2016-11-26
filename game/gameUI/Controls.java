@@ -1,4 +1,4 @@
-package game;
+package game.gameUI;
 
 import game.ships.CommonShip;
 import game.static_classes.GameBalance;

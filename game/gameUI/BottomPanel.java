@@ -1,4 +1,4 @@
-package game;
+package game.gameUI;
 
 import game.construction.AShipEquipment;
 import game.construction.CommonConstruction;

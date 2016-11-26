@@ -1,13 +1,11 @@
 package game.background;
 
-import game.ExportImportShip;
 import game.static_classes.GlobalVariables;
 import javafx.scene.layout.GridPane;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 
 /**
  * Created by BobrZlosyn on 26.09.2016.
