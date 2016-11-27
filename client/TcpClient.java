@@ -70,7 +70,12 @@ public class TcpClient{
     }
 
     public void updateIsConnected(){
-        isConnected.set(!s.isClosed());
+        if (GlobalVariables.isNotEmpty(s)) {
+            isConnected.set(!s.isClosed());
+        }else {
+            isConnected.set(false);
+        }
+
     }
 
     public void close(  ) {
