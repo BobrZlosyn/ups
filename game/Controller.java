@@ -2,9 +2,9 @@ package game;
 
 import client.TcpApplication;
 import client.TcpMessage;
-import game.ExportImportDataHandlers.DamageHandler;
-import game.ExportImportDataHandlers.ExportImportShip;
-import game.StartUpMenu.*;
+import game.exportImportDataHandlers.DamageHandler;
+import game.exportImportDataHandlers.ExportImportShip;
+import game.startUpMenu.*;
 import game.background.GeneratRandomBackground;
 import game.construction.Placement;
 import game.gameUI.BottomPanel;
@@ -44,6 +44,7 @@ public class Controller implements Initializable{
     private WaitingForOponnent waitingForOponnent;
     private ErrorAlert errorAlert;
     private BottomPanel bottomPanel;
+    private CreateMenu createMenu;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -114,6 +115,10 @@ public class Controller implements Initializable{
 
         if (!GlobalVariables.isEmpty(tcpConnection)) {
             tcpConnection.endConnection();
+        }
+
+        if (GlobalVariables.isNotEmpty(createMenu)) {
+            createMenu.stopAnimation();
         }
 
         sendingTask = stopTask(sendingTask); // ukoncuji odesilaci vlakno
@@ -329,6 +334,7 @@ public class Controller implements Initializable{
      * @param endOfGame
      */
     private void endWindowSetting(EndOfGameMenu endOfGame, CommonShip usersShip,CommonShip enemyShip){
+        sendDataButton.setDisable(true);
         Timeline delay = new Timeline(new KeyFrame(Duration.seconds(3.5), event1 -> {
             endOfGame.setupWindow(window);
             controls.stopAnimations();
@@ -356,7 +362,7 @@ public class Controller implements Initializable{
 
     private void createMainPage(){
         window.getChildren().clear();
-        CreateMenu createMenu = new CreateMenu();
+        createMenu = new CreateMenu();
         window.add(createMenu.getMenu(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
         createMenu.setConnectionBinding(tcpConnection.isConnectedProperty());
 

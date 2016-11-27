@@ -65,9 +65,7 @@ public class CruisershipModel extends CommonModel {
 
     @Override
     public void setDefaultSkin() {
-        System.out.println("ahojkz");
-        ship.setStyle("-fx-background-image: url('game/ships/shipModels/pokus.png')");
-        //ship.setFill(Color.BLACK);
+        ship.setFill(Color.BLACK);
     }
 
     @Override

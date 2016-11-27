@@ -7,6 +7,7 @@ import game.shields.CommonShield;
 import game.ships.CommonShip;
 import game.static_classes.ConstructionTypes;
 import game.static_classes.GlobalVariables;
+import game.static_classes.StyleClasses;
 import game.weapons.CommonWeapon;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -68,7 +69,7 @@ public class BottomPanel {
 
     private void createEnergyCostLabel(){
         energyCostLabel = new Label();
-        energyCostLabel.getStyleClass().add("statusLabel");
+        energyCostLabel.getStyleClass().add(StyleClasses.STATUS_LABEL);
         energyCostLabel.setMaxWidth(Double.MAX_VALUE);
         energyCostLabel.setMaxHeight(Double.MAX_VALUE);
         energyCostLabel.setAlignment(Pos.CENTER);
@@ -84,7 +85,7 @@ public class BottomPanel {
 
     private void createStrengthLabel(){
         strenghtLabel = new Label();
-        strenghtLabel.getStyleClass().add("statusLabel");
+        strenghtLabel.getStyleClass().add(StyleClasses.STATUS_LABEL);
         strenghtLabel.setVisible(false);
         strenghtLabel.setMaxWidth(Double.MAX_VALUE);
         strenghtLabel.setMaxHeight(Double.MAX_VALUE);
@@ -103,14 +104,14 @@ public class BottomPanel {
         sendOrders.setText(SEND_ATTACK);
         sendOrders.setMaxWidth(Double.MAX_VALUE);
         sendOrders.setMaxHeight(Double.MAX_VALUE);
-        sendOrders.getStyleClass().add("menuButtons");
+        sendOrders.getStyleClass().add(StyleClasses.MENU_BUTTONS);
     }
 
     private Button createButton(String text) {
         Button button = new Button(text);
         button.setMaxWidth(Double.MAX_VALUE);
         button.setMaxHeight(Double.MAX_VALUE);
-        button.getStyleClass().add("menuButtons");
+        button.getStyleClass().add(StyleClasses.MENU_BUTTONS);
         return button;
     }
 
@@ -184,12 +185,12 @@ public class BottomPanel {
             }
         });
 
-        avaibleShieldProgress.getStyleClass().add("shieldStatus");
+        avaibleShieldProgress.getStyleClass().add(StyleClasses.SHIELD_STATUS);
         avaibleShieldProgress.setMaxWidth(Double.MAX_VALUE);
         avaibleShieldProgress.setMaxHeight(Double.MAX_VALUE);
         shieldLabel = new Label();
         shieldLabel.visibleProperty().bind(avaibleShieldProgress.visibleProperty());
-        shieldLabel.getStyleClass().add("statusLabel");
+        shieldLabel.getStyleClass().add(StyleClasses.STATUS_LABEL);
         shieldLabel.setMaxWidth(Double.MAX_VALUE);
         shieldLabel.setAlignment(Pos.CENTER);
 
@@ -243,11 +244,11 @@ public class BottomPanel {
         lifeProgress = new ProgressBar(1);
         lifeProgress.setMaxWidth(Double.MAX_VALUE);
         lifeProgress.setMaxHeight(Double.MAX_VALUE);
-        lifeProgress.getStyleClass().add("lifeStatus");
+        lifeProgress.getStyleClass().add(StyleClasses.LIFE_STATUS);
         lifeProgress.setVisible(false);
 
         lifeLabel = new Label();
-        lifeLabel.getStyleClass().add("statusLabel");
+        lifeLabel.getStyleClass().add(StyleClasses.STATUS_LABEL);
         lifeLabel.setMaxWidth(Double.MAX_VALUE);
         lifeLabel.setAlignment(Pos.CENTER);
         lifeProgress.visibleProperty().bind(GlobalVariables.isSelected);
@@ -328,10 +329,12 @@ public class BottomPanel {
         int cost = commonConstruction.getEnergyCost();
         if(energy < cost){
             button.setText(NO_ENERGY);
+            button.setTextFill(Color.RED);
             button.setDisable(true);
         }else{
             button.setText(textIfFalse);
             button.setDisable(false);
+            button.setTextFill(Color.WHITE);
         }
     }
 
@@ -380,20 +383,20 @@ public class BottomPanel {
 
     private void createButtonQuit(){
         quit = createButton(SURRENDER);
-        quit.getStyleClass().add("exitButton");
+        quit.getStyleClass().add(StyleClasses.EXIT_BUTTON);
     }
 
     private void createName(){
         name = new Label();
         name.textProperty().bind(GlobalVariables.name);
         name.visibleProperty().bind(GlobalVariables.isSelected);
-        name.getStyleClass().add("statusLabel");
+        name.getStyleClass().add(StyleClasses.STATUS_LABEL);
     }
 
     private void createPanel(Button sendOrders){
         panel = new GridPane();
         panel.setMaxWidth(Double.MAX_VALUE);
-        panel.getStyleClass().add("bottomPanel");
+        panel.getStyleClass().add(StyleClasses.BOTTOM_PANEL);
 
         RowConstraints rowConstraints1 = new RowConstraints(50);
         RowConstraints rowConstraints2 = new RowConstraints(50);
@@ -460,7 +463,7 @@ public class BottomPanel {
         name.setMaxHeight(35);
         name.setMinHeight(35);
         name.setAlignment(Pos.CENTER);
-        name.getStyleClass().add("bottomPanel");
+        name.getStyleClass().add(StyleClasses.BOTTOM_PANEL);
         name.setStyle("-fx-border-radius: 100 100 0 0;" +
                         "-fx-background-radius: 100 100 0 0;");
     }

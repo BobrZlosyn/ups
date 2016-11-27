@@ -1,4 +1,4 @@
-package game.StartUpMenu;
+package game.startUpMenu;
 
 import game.static_classes.GlobalVariables;
 import javafx.geometry.Insets;
@@ -86,6 +86,9 @@ public class CommonMenu {
 
     public void clean() {
         menuPane.getChildren().clear();
-        ((GridPane) menuPane.getParent()).getChildren().remove(menuPane);
+        GridPane parent = (GridPane) menuPane.getParent();
+        if (GlobalVariables.isNotEmpty(parent)) {
+            parent.getChildren().remove(menuPane);
+        }
     }
 }

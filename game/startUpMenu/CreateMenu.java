@@ -1,8 +1,14 @@
-package game.StartUpMenu;
+package game.startUpMenu;
 
+import game.static_classes.GlobalVariables;
+import game.static_classes.StyleClasses;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.concurrent.Task;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,9 +25,13 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
+
+import java.util.ArrayList;
 
 /**
  * Created by BobrZlosyn on 28.09.2016.
@@ -34,6 +44,8 @@ public class CreateMenu {
     private Circle indicator;
     private ChangeListener <Boolean> connectionListener;
     private SettingsMenu settingsMenu;
+    private ArrayList <FallingStar> fallingStars;
+    private Task starFall;
 
     private final String CONNECT = "Připojeno";
     private final String DISCONNECT = "Neřipojeno";
@@ -56,9 +68,11 @@ public class CreateMenu {
         createStartExit();
         createStartSettings();
         createConnectionIndicator();
+        starFall();
         fillMenuPane();
         marginInMenuPane();
         setConnectionListener();
+
     }
 
 
@@ -186,7 +200,7 @@ public class CreateMenu {
 
     private void createStartExit() {
         exit = createButton(CLOSE);
-        exit.getStyleClass().add("exitButton");
+        exit.getStyleClass().add(StyleClasses.EXIT_BUTTON);
         exit.setOnAction(event -> {
             Platform.exit();
         });
@@ -196,7 +210,7 @@ public class CreateMenu {
         Button button = new Button(text);
         button.setMaxWidth(Double.MAX_VALUE);
         button.setMaxHeight(Double.MAX_VALUE);
-        button.getStyleClass().add("menuButtons");
+        button.getStyleClass().add(StyleClasses.MENU_BUTTONS);
         return button;
     }
     private void createConnectionIndicator(){
@@ -212,6 +226,11 @@ public class CreateMenu {
 
 
     private void fillMenuPane(){
+        Pane pane = new Pane();
+        pane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        fallingStars.forEach(fallingStar -> pane.getChildren().add(fallingStar.getStar()));
+
+        menu.add(pane, 0, 0, GridPane.REMAINING, GridPane.REMAINING);
         menu.add(start,2,2);
         menu.add(settings,2,3);
         menu.add(about,2,4);
@@ -241,6 +260,7 @@ public class CreateMenu {
     public void clean() {
         menu.setVisible(false);
         ((GridPane) menu.getParent()).getChildren().remove(menu);
+        stopAnimation();
     }
 
     private void setConnectionListener(){
@@ -275,6 +295,98 @@ public class CreateMenu {
 
     public void removeConnectionBinding(SimpleBooleanProperty connectionStatus) {
         connectionStatus.removeListener(connectionListener);
+    }
+
+    private void starFall() {
+        fallingStars = new ArrayList<>();
+        fallingStars.add(new FallingStar(400, -5, 0, 10, 5));
+        fallingStars.add(new FallingStar(400, -5, 600, 10, 5));
+        fallingStars.add(new FallingStar(600, -5, 0, 20, 4));
+        fallingStars.add(new FallingStar(100, -5, 300, 10, 4));
+        fallingStars.add(new FallingStar(500, 50, 800, 10, 4));
+        fallingStars.add(new FallingStar(900, 50, 0, 10, 2));
+
+        starFall = new Task(){
+
+            @Override
+            protected Object call() throws Exception {
+                while (true){
+                    if (isCancelled()){
+                        break;
+                    }
+
+                    fallingStars.forEach(fallingStar -> fallingStar.falling());
+                    Thread.sleep(20);
+                }
+                return null;
+            }
+        };
+        new Thread(starFall).start();
+
+    }
+
+    public void stopAnimation() {
+        if (GlobalVariables.isNotEmpty(starFall)) {
+            starFall.cancel();
+        }
+    }
+}
+
+class FallingStar {
+    private double startX;
+    private double startY;
+    private double endX;
+    private double fallX;
+    private double fallY;
+    private int wait, waitMax;
+    private Circle star;
+
+    public FallingStar(double startX, double startY, double endX, double fallX, double fallY ) {
+        this.startX = startX;
+        this.startY = startY;
+        this.endX = endX;
+        this.fallX = fallX;
+        this.fallY = fallY;
+        star = new Circle(0.4, Color.WHITE);
+        waitMax = randomWaitMax();
+    }
+
+    public Circle getStar() {
+        return star;
+    }
+
+    public void falling(){
+        if (wait == waitMax){
+
+            if (endX > startX) {
+                star.setCenterX(star.getCenterX() + fallX);
+            }else {
+                star.setCenterX(star.getCenterX() - fallX);
+            }
+
+            star.setCenterY(star.getCenterY() + fallY);
+
+            if (finalQuestion()) {
+                wait = 0;
+                waitMax = randomWaitMax();
+                star.setCenterX(startX);
+                star.setCenterY(startY);
+            }
+        } else {
+            wait ++;
+        }
+    }
+
+    private boolean finalQuestion(){
+        if(endX <= 0) {
+            return star.getCenterX() < endX;
+        } else {
+            return star.getCenterX() > endX;
+        }
+    }
+
+    private int randomWaitMax(){
+        return (int) Math.random() * 5000 + 200;
     }
 
 }

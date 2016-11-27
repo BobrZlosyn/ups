@@ -1,4 +1,4 @@
-package game.StartUpMenu;
+package game.startUpMenu;
 
 import game.static_classes.GlobalVariables;
 import javafx.animation.Animation;
@@ -175,7 +175,7 @@ public class WaitingForOponnent {
 
         int width = (int) ((GridPane)starMap.getParent().getParent()).getWidth();
         int height = (int)((GridPane)starMap.getParent().getParent()).getHeight();
-        for(int i = 0; i < 1000; i++) {
+        for(int i = 0; i < 2000; i++) {
             Star star = new Star(width, height);
             starMap.getChildren().addAll(star.getStar(), star.getLine());
             stars.add(star);
@@ -223,15 +223,27 @@ class Star {
         star.setCenterX( randomNumberBetween(-width, width));
         star.setCenterY( randomNumberBetween(-height, height));
         line = new Line();
-
+        line.setTranslateX(width/2);
+        line.setTranslateY(height/2);
+        line.setStrokeWidth(0.1);
+        line.setStroke(Color.WHITE);
+        //randomColors();
         this.x = (float) star.getCenterX();
         this.y = (float) star.getCenterY();
         this.z = randomNumberBetween(0, width);
         pz = z;
     }
 
+    private void randomColors() {
+        int red = (int) (Math.random() * 255);
+        int green = (int) (Math.random() * 255);
+        int blue = (int) (Math.random() * 255);
+        line.setStroke(Color.rgb(red, green, blue));
+        star.setFill(Color.rgb(red, green, blue));
+    }
+
     void update(){
-        z = z - 25;
+        z = z - 35;
         if (z < 1) {
             z = width/2;
             x = randomNumberBetween(-width, width);
@@ -257,15 +269,15 @@ class Star {
         float sx = map(x / z, 0, 1, 0, width/2);
         float sy = map(y / z, 0, 1, 0, height/2);
 
-        float r = map(z, 0, width/2, 2, 0);
+        float r = map(z, 0, width/2, 1, 0);
         star.setRadius(r);
 
         star.setCenterX(sx);
         star.setCenterY(sy);
 
+
         float px = map(x / pz, 0, 1, 0, width/2);
         float py = map(y / pz, 0, 1, 0, height/2);
-
         pz = z;
 
         line.setStartX(px);

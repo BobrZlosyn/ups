@@ -1,4 +1,4 @@
-package game.ExportImportDataHandlers;
+package game.exportImportDataHandlers;
 
 import client.TcpMessage;
 import game.construction.CommonConstruction;

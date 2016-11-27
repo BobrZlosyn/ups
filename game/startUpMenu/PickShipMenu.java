@@ -1,4 +1,4 @@
-package game.StartUpMenu;
+package game.startUpMenu;
 
 import game.ships.AdmiralShip;
 import game.static_classes.GameBalance;
@@ -6,6 +6,7 @@ import game.static_classes.GlobalVariables;
 import game.ships.BattleShip;
 import game.ships.CommonShip;
 import game.ships.CruiserShip;
+import game.static_classes.StyleClasses;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -76,7 +77,7 @@ public class PickShipMenu {
         previous = new Button("Zpět");
         previous.setMaxHeight(Double.MAX_VALUE);
         previous.setMaxWidth(200);
-        previous.getStyleClass().add("prevButton");
+        previous.getStyleClass().add(StyleClasses.EXIT_BUTTON);
     }
 
     private void createTitleLabel(){
@@ -99,47 +100,47 @@ public class PickShipMenu {
     }
 
     private void createBattleShipButton(){
-        battleShip = new Button(GameBalance.BATTLE_SHIP_NAME);
-
-        battleShip.setMaxWidth(Double.MAX_VALUE);
-        battleShip.setMaxHeight(Double.MAX_VALUE);
-        battleShip.setMinHeight(70);
-        battleShip.setOnAction(event -> {
-            BattleShip ship = new BattleShip(false);
-            double x = showArea.getWidth() / 2;
-            double y = showArea.getHeight() / 2 - battleShip.getHeight() / 2;
-            createShip(ship, x, y);
-        });
+        battleShip = createShipButton2(GameBalance.BATTLE_SHIP_NAME,new BattleShip(false));
     }
 
     private void createAdmiralShipButton(){
-        admiralShip = new Button(GameBalance.ADMIRAL_SHIP_NAME);
-
-        admiralShip.setMaxWidth(Double.MAX_VALUE);
-        admiralShip.setMaxHeight(Double.MAX_VALUE);
-        admiralShip.setMinHeight(70);
-        admiralShip.setOnAction(event -> {
-            AdmiralShip ship = new AdmiralShip(false);
-            double x = showArea.getWidth() / 2;
-            double y = showArea.getHeight() / 2 - admiralShip.getHeight() / 2;
-            createShip(ship, x, y);
-        });
+        admiralShip = createShipButton2(GameBalance.ADMIRAL_SHIP_NAME, new AdmiralShip(false));
     }
 
     private void createCruiserShipButton(){
+        cruiserShip = createShipButton(GameBalance.CRUISER_SHIP_NAME, new CruiserShip(false));
+    }
 
-        cruiserShip = new Button(GameBalance.CRUISER_SHIP_NAME);
+    private Button createShipButton2(String text, CommonShip ship) {
+        Button button = new Button(text);
 
-        cruiserShip.setMaxWidth(Double.MAX_VALUE);
-        cruiserShip.setMaxHeight(Double.MAX_VALUE);
-        cruiserShip.setMinHeight(70);
-        cruiserShip.setOnAction(event -> {
-            CruiserShip ship = new CruiserShip(false);
+        button.setMaxWidth(Double.MAX_VALUE);
+        button.setMaxHeight(Double.MAX_VALUE);
+        button.setMinHeight(70);
+        button.getStyleClass().add(StyleClasses.MENU_BUTTONS);
+        button.setOnAction(event -> {
+            double x = showArea.getWidth()/2;
+            double y = showArea.getHeight()/2 ;
+            createShip(ship, x, y);
+        });
+        return button;
+    }
+
+    private Button createShipButton(String text, CommonShip ship) {
+        Button button = new Button(text);
+
+        button.setMaxWidth(Double.MAX_VALUE);
+        button.setMaxHeight(Double.MAX_VALUE);
+        button.setMinHeight(70);
+        button.getStyleClass().add(StyleClasses.MENU_BUTTONS);
+        button.setOnAction(event -> {
             double x = showArea.getWidth()/2  - ship.getWidth()/2;
             double y = showArea.getHeight()/2 - ship.getHeight()/2;
             createShip(ship, x, y);
         });
+        return button;
     }
+
 
     private void createShip(CommonShip newShip, double x, double y){
 
@@ -165,16 +166,17 @@ public class PickShipMenu {
     }
 
     private void createVBox(){
-        menuVBox = new VBox(5);
+        menuVBox = new VBox(10);
         menuVBox.setStyle("-fx-background-color: rgba(0,0,0,0.8)");
         menuVBox.getChildren().addAll(battleShip, cruiserShip, admiralShip);
+
     }
 
     private void createNextSetupButton(){
         nextSetup = new Button("Pokračovat");
         nextSetup.setMaxWidth(200);
         nextSetup.setMaxHeight(Double.MAX_VALUE);
-        nextSetup.getStyleClass().add("nextButton");
+        nextSetup.getStyleClass().add(StyleClasses.MENU_BUTTONS);
         GridPane.setHalignment(nextSetup, HPos.RIGHT);
     }
 
@@ -355,9 +357,7 @@ public class PickShipMenu {
     }
 
     private void marginInPickingPane(){
-        pickship.setMargin(battleShip, new Insets(5,5,5,5));
-        pickship.setMargin(cruiserShip, new Insets(5,5,5,5));
-
+        menuVBox.setPadding(new Insets(10, 10 ,10 ,10 ));
         GridPane.setMargin(nextSetup, new Insets(0,10,10,10));
         GridPane.setMargin(previous, new Insets(0,10,10,10));
     }

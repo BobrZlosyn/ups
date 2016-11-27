@@ -74,8 +74,8 @@ public class SimpleShieldModel extends CommonModel {
     @Override
     public void setDefaultSkin() {
         shield.setFill(Color.ORANGE);
-        shield.setFill(new ImagePattern(
-                new Image(getClass().getResource("/game/background/textures/shield1.jpg").toExternalForm()), 0, 0, 1, 1, true));
+        //shield.setFill(new ImagePattern(
+          //      new Image(getClass().getResource("/game/background/textures/shield1.jpg").toExternalForm()), 0, 0, 1, 1, true));
 
     }
 

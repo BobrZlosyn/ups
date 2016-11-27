@@ -1,25 +1,18 @@
-package game.StartUpMenu;
+package game.startUpMenu;
 
 import game.static_classes.GlobalVariables;
+import game.static_classes.StyleClasses;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.RowConstraints;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
-
-import java.util.ArrayList;
 
 /**
  * Created by BobrZlosyn on 28.09.2016.
@@ -38,7 +31,9 @@ public class SettingsMenu extends CommonMenu{
 
     public SettingsMenu(){
         ipAdressLabel = createLabel(IP_ADRESS);
+        ipAdressLabel.setFont(Font.font("Arial", FontWeight.BOLD, 13));
         portLabel = createLabel(PORT);
+        portLabel.setFont(Font.font("Arial", FontWeight.BOLD, 13));
         ipAdressTF = createTextField(GlobalVariables.serverIPAdress.get());
         portTF = createTextField(GlobalVariables.serverPort.get());
         paneTitle = createLabel(TITLE);
@@ -50,7 +45,7 @@ public class SettingsMenu extends CommonMenu{
     }
 
     private void createButtonConfirm(){
-        confirm = createButton(SAVE_CHANGES, "menuButtons");
+        confirm = createButton(SAVE_CHANGES, StyleClasses.MENU_BUTTONS);
         confirm.setOnAction(event -> {
             if(checkIPAdress()){
                 Platform.runLater(() -> GlobalVariables.serverIPAdress.set(ipAdressTF.getText().trim()));
@@ -69,7 +64,7 @@ public class SettingsMenu extends CommonMenu{
     }
 
     private void createButtonBack(){
-        backToMenu = createButton(BACK_TO_MENU, "exitButton");
+        backToMenu = createButton(BACK_TO_MENU, StyleClasses.EXIT_BUTTON);
         backToMenu.setOnAction(event -> clean());
     }
 
@@ -152,13 +147,13 @@ public class SettingsMenu extends CommonMenu{
 
         GridPane.setHalignment(confirm, HPos.RIGHT);
 
-        setMargin(confirm,      10, 10, 10, 10);
-        setMargin(backToMenu,   10, 10, 10, 10);
+        setMargin(confirm,      10, 10, 10, 0);
+        setMargin(backToMenu,   10, 10, 10, 0);
 
-        setMargin(ipAdressLabel,0, 30, 0 , 30);
-        setMargin(ipAdressTF,   0, 30, 0 , 30);
-        setMargin(portLabel,    0, 30, 0 , 30);
-        setMargin(portTF,       0, 30, 0 , 30);
+        setMargin(ipAdressLabel,0, 60, 0 , 0);
+        setMargin(ipAdressTF,   0, 60, 0 , 0);
+        setMargin(portLabel,    0, 60, 0 , 0);
+        setMargin(portTF,       0, 60, 0 , 0);
     }
 
 }

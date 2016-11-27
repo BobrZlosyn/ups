@@ -95,9 +95,7 @@ public class AdmiralshipModel extends CommonModel {
     public void setDefaultSkin() {
         ship.setFill(Color.BLACK);
 
-        ship.setFill(new ImagePattern(
-                new Image(getClass().getResource("/game/background/textures/skin7.jpg").toExternalForm()), 200, 200, 1, 1, true));
-    }
+        }
 
     @Override
     public boolean containsPosition(double x, double y) {

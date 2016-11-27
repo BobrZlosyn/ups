@@ -1,4 +1,4 @@
-package game.StartUpMenu;
+package game.startUpMenu;
 
 import game.shields.draggableShileds.DraggableStrongerShield;
 import game.shields.shieldModels.StrongerShieldModel;
@@ -11,6 +11,7 @@ import game.construction.CommonModel;
 import game.shields.draggableShileds.DraggableSimpleShield;
 import game.shields.shieldModels.SimpleShieldModel;
 import game.ships.CommonShip;
+import game.static_classes.StyleClasses;
 import game.weapons.draggableWeapons.DraggableCannon;
 import game.weapons.draggableWeapons.DraggableDoubleCannon;
 import game.weapons.draggableWeapons.DraggableSimpleLaser;
@@ -96,13 +97,13 @@ public class GunsToShipMenu {
         previous = new Button("Zpět");
         previous.setMaxHeight(Double.MAX_VALUE);
         previous.setMaxWidth(200);
-        previous.getStyleClass().add("prevButton");
+        previous.getStyleClass().add(StyleClasses.EXIT_BUTTON);
     }
 
     private void createNextButton(){
         next = new Button("Pokračovat");
         next.setMaxHeight(Double.MAX_VALUE);
-        next.getStyleClass().add("nextButton");
+        next.getStyleClass().add(StyleClasses.MENU_BUTTONS);
         next.setMaxWidth(200);
     }
 

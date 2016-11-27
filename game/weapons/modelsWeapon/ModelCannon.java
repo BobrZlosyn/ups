@@ -65,9 +65,7 @@ public class ModelCannon extends CommonModel{
     public void setDefaultSkin() {
 
         room.setFill(Color.ORANGE);
-        room.setFill(new ImagePattern(
-                new Image(getClass().getResource("/game/background/textures/pokus.png").toExternalForm()), 0, 0, 1, 1, true));
-        head.setFill(Color.YELLOW);
+         head.setFill(Color.YELLOW);
         cannon.setFill(Color.RED);
     }
 

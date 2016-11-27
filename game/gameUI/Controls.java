@@ -295,6 +295,7 @@ public class Controls {
         circle = new Circle(32);
         circle.setCenterY(circle.getRadius() + 19);
         circle.setStroke(Color.WHITE);
+        circle.setFill(Color.rgb(0, 0, 0, 0.8));
 
         progress = new ProgressIndicator(0);
 

@@ -34,7 +34,13 @@
 }
 
 .timeIndicator {
-    -fx-progress-color: rgba(10,10,205,1) ;
+    -fx-progress-color: rgba(33,136,244,0.9) ;
+}
+
+.progress-indicator .indicator {
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-border-width: 1 1 1 1;
+    -fx-border-color: rgba(255 , 255, 255, 0.8);
 }
 
 .lastSeconds {
@@ -47,7 +53,7 @@
 }
 
 .menuButtons, .nextButton, .prevButton, .exitButton {
-    -fx-background-color: rgba(24,58,168,0.95) ;
+    -fx-background-color: rgba(24,58,168,0.90) ;
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }
@@ -58,36 +64,13 @@
 }
 
 .exitButton {
-    -fx-background-color: rgba(214,0,0,0.95) ;
+    -fx-background-color: rgba(214,0,0,0.90) ;
 }
 
 .exitButton:hover {
     -fx-background-color: rgba(154,0,0,0.99) ;
 }
 
-.nextButton {
-    -fx-background-color: rgba(24,58,168,0.95) ;
-}
-
-.nextButton:hover {
-    -fx-background-color: rgba(24,38,140,0.99) ;
-}
-
-.prevButton {
-    -fx-background-color: rgba(214,0,0,0.95) ;
-}
-
-.prevButton:hover {
-    -fx-background-color: rgba(154,0,0,0.99) ;
-}
-
 .hand-cursor{
     -fx-cursor: hand;
-}
-
-.shipPokus {
-    -fx-background-image: url('/game/ships/shipModels/pokus.png');
-    -fx-background-repeat: stretch;
-    -fx-background-size: 900 506;
-    -fx-background-position: center center;
 }

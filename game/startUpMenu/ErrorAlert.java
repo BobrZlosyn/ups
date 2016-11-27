@@ -1,10 +1,9 @@
-package game.StartUpMenu;
+package game.startUpMenu;
 
 import game.static_classes.GlobalVariables;
-import javafx.application.Platform;
+import game.static_classes.StyleClasses;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.print.Collation;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
@@ -18,9 +17,8 @@ import javafx.scene.text.TextAlignment;
 /**
  * Created by Kanto on 07.11.2016.
  */
-public class ErrorAlert {
+public class ErrorAlert extends CommonMenu {
 
-    private GridPane windowError;
     private Label errorLabel;
     public static final String NOT_CONNECTED_TO_SERVER = "Omlouváme se, ale nastala chyba s připojením na server";
     public static final String NO_PLAYER_WAS_FOUND = "Omlouváme se, ale v současné chvíli se nedáří nalézt volného hráče. " +
@@ -32,10 +30,7 @@ public class ErrorAlert {
     }
 
     private void createErrorPane(){
-        windowError = new GridPane();
-        windowError.setStyle("-fx-background-color: rgba(0, 0, 0, 0.7);");
-        windowError.setMaxWidth(Double.MAX_VALUE);
-        windowError.setMaxHeight(Double.MAX_VALUE);
+        menuPane.setStyle("-fx-background-color: rgba(0, 0, 0, 0.7);");
 
         ColumnConstraints left = new ColumnConstraints();
         left.setPercentWidth(30);
@@ -54,8 +49,8 @@ public class ErrorAlert {
         RowConstraints bottom = new RowConstraints();
         bottom.setPercentHeight(35);
 
-        windowError.getColumnConstraints().addAll(left, center, right);
-        windowError.getRowConstraints().addAll(top, error, button, bottom);
+        menuPane.getColumnConstraints().addAll(left, center, right);
+        menuPane.getRowConstraints().addAll(top, error, button, bottom);
 
         errorLabel = new Label("empty");
         errorLabel.setTextFill(Color.RED);
@@ -65,20 +60,18 @@ public class ErrorAlert {
         errorLabel.setFont(Font.font(16));
         errorLabel.setWrapText(true);
 
-        Button closeButton = new Button("OK");
-        closeButton.setMaxWidth(Double.MAX_VALUE);
-        closeButton.setMaxHeight(Double.MAX_VALUE);
-        closeButton.setOnAction(event -> hideErrorAlert());
+        Button closeButton = createButton("Zavřít",StyleClasses.EXIT_BUTTON );
+        closeButton.setOnAction(event -> clean());
 
         Pane pane = new Pane();
-        pane.setStyle("-fx-background-color: rgb(0, 0, 0, 0.95);");
+        pane.setStyle("-fx-background-color: rgb(0, 0, 0, 0.5);");
 
-        windowError.add(pane, 1, 1, 1, 2);
-        windowError.add(errorLabel, 1, 1);
-        windowError.add(closeButton, 1, 2);
+        menuPane.add(pane, 1, 1, 1, 2);
+        menuPane.add(errorLabel, 1, 1);
+        menuPane.add(closeButton, 1, 2);
 
-        windowError.setMargin(errorLabel, new Insets(10, 20, 10, 20));
-        windowError.setMargin(closeButton, new Insets(10, 20, 10, 20));
+        setMargin(errorLabel, 10, 20, 10, 20);
+        setMargin(closeButton, 10, 20, 10, 20);
     }
 
 
@@ -92,20 +85,11 @@ public class ErrorAlert {
             return;
         }
 
-        if(!GlobalVariables.isEmpty(window) && !window.getChildren().contains(windowError)){
+        if(!GlobalVariables.isEmpty(window) && !window.getChildren().contains(menuPane)){
             errorLabel.setText(GlobalVariables.errorMsg);
-            window.add(windowError,0,0, GridPane.REMAINING, GridPane.REMAINING);
+            window.add(menuPane,0,0, GridPane.REMAINING, GridPane.REMAINING);
         }
 
         GlobalVariables.errorMsg = "";
     }
-
-    private void hideErrorAlert(){
-        GridPane parent = (GridPane) windowError.getParent();
-        if (!GlobalVariables.isEmpty(parent)){
-            parent.getChildren().remove(windowError);
-        }
-    }
-
-
 }

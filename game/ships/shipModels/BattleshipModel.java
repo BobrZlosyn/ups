@@ -70,8 +70,6 @@ public class BattleshipModel extends CommonModel{
     public void setDefaultSkin() {
 
         ship.setFill(Color.BLACK);
-        ship.setFill(new ImagePattern(
-                new Image(getClass().getResource("/game/background/textures/skin2.jpg").toExternalForm()), 0, 0, 1, 1, true));
     }
 
     @Override
