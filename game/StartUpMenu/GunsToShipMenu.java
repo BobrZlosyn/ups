@@ -453,7 +453,7 @@ public class GunsToShipMenu {
             }
         }else{
             statuses.setLayoutX(statuses.getLayoutX()-5);
-            if(statuses.getLayoutX() < 0){
+            if(statuses.getLayoutX() < 12){
                 isStatusShowedUp = true;
                 animationOfStatus.stop();
             }

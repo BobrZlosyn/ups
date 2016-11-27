@@ -19,7 +19,7 @@ import java.util.ArrayList;
 /**
  * Created by BobrZlosyn on 10.10.2016.
  */
-public abstract class CommonWreck {
+public abstract class CommonWreck extends WrecksModels {
 
     private Timeline flashAnimation;
     private Circle flashCircle;
@@ -85,7 +85,6 @@ public abstract class CommonWreck {
 
     }
 
-
     public void explosion(double x, double y, double radiusMax, double addToRadius, CommonModel model){
         if (GlobalVariables.isNotEmpty(flashAnimation)) {
             return;
@@ -134,7 +133,6 @@ public abstract class CommonWreck {
         pane.getChildren().removeAll(wrecks);
     }
 
-
     private void shakeOfShip(){
         if(countOfShakes <= maxCountOfShakes){
             if(countOfShakes%2 == 0){
@@ -161,6 +159,13 @@ public abstract class CommonWreck {
     protected abstract void createMovementPoints();
 
     public abstract void addWrecksToPane(Pane gameArea, double x, double y);
+
+    protected ArrayList <double []> getModelsOfWreck(){
+        ArrayList <double []> wrecks = new ArrayList<>();
+        wrecks.add(wreckModel1());
+        wrecks.add(wreckModel2());
+        return wrecks;
+    }
 
 
 }

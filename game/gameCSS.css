@@ -84,3 +84,10 @@
 .hand-cursor{
     -fx-cursor: hand;
 }
+
+.shipPokus {
+    -fx-background-image: url('/game/ships/shipModels/pokus.png');
+    -fx-background-repeat: stretch;
+    -fx-background-size: 900 506;
+    -fx-background-position: center center;
+}

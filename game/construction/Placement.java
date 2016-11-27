@@ -20,7 +20,7 @@ public class Placement {
     private final Color WARNING = Color.color(1,0.2,0.2,0.9);
     private final Color FULL_PLACE = Color.rgb(14,100,160,0.9);
 
-    private final Color EMPTY_PLACE = Color.color(1,1,1,0.15);
+    private final Color EMPTY_PLACE = Color.color(1,1,1,0.35);
 
     public Placement (double x, double y, double size, CommonShip ship, int row, int column) {
         setX(x);

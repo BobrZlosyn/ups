@@ -1,8 +1,10 @@
 package game.weapons.modelsWeapon;
 
 import game.construction.CommonModel;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
@@ -17,7 +19,6 @@ public class ModelCannon extends CommonModel{
 
     public ModelCannon(){
         createCannon();
-
         addCursorHandClass();
         strokeOnMouseOver();
     }
@@ -64,6 +65,8 @@ public class ModelCannon extends CommonModel{
     public void setDefaultSkin() {
 
         room.setFill(Color.ORANGE);
+        room.setFill(new ImagePattern(
+                new Image(getClass().getResource("/game/background/textures/pokus.png").toExternalForm()), 0, 0, 1, 1, true));
         head.setFill(Color.YELLOW);
         cannon.setFill(Color.RED);
     }

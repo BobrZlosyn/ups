@@ -13,6 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 
 /**
  * Created by Kanto on 07.11.2016.
@@ -59,6 +60,7 @@ public class ErrorAlert {
         errorLabel = new Label("empty");
         errorLabel.setTextFill(Color.RED);
         errorLabel.setAlignment(Pos.CENTER);
+        errorLabel.setTextAlignment(TextAlignment.CENTER);
         errorLabel.setMaxWidth(Double.MAX_VALUE);
         errorLabel.setFont(Font.font(16));
         errorLabel.setWrapText(true);
@@ -69,7 +71,7 @@ public class ErrorAlert {
         closeButton.setOnAction(event -> hideErrorAlert());
 
         Pane pane = new Pane();
-        pane.setStyle("-fx-background-color: rgb(0, 0, 0);");
+        pane.setStyle("-fx-background-color: rgb(0, 0, 0, 0.95);");
 
         windowError.add(pane, 1, 1, 1, 2);
         windowError.add(errorLabel, 1, 1);

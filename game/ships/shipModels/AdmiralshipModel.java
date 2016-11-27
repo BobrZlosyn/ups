@@ -1,8 +1,10 @@
 package game.ships.shipModels;
 
 import game.construction.CommonModel;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 
@@ -22,6 +24,7 @@ public class AdmiralshipModel extends CommonModel {
         createShip();
         addCursorHandClass();
         strokeOnMouseOver();
+        setDefaultSkin();
     }
 
     private void createShip(){
@@ -91,6 +94,9 @@ public class AdmiralshipModel extends CommonModel {
     @Override
     public void setDefaultSkin() {
         ship.setFill(Color.BLACK);
+
+        ship.setFill(new ImagePattern(
+                new Image(getClass().getResource("/game/background/textures/skin7.jpg").toExternalForm()), 200, 200, 1, 1, true));
     }
 
     @Override

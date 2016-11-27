@@ -1,8 +1,10 @@
 package game.weapons.modelsWeapon;
 
 import game.construction.CommonModel;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
@@ -20,7 +22,7 @@ public class ModelSimpleLaserWeapon extends CommonModel {
 
     public ModelSimpleLaserWeapon () {
         createCannon();
-
+        setDefaultSkin();
         addCursorHandClass();
         strokeOnMouseOver();
     }
@@ -45,8 +47,6 @@ public class ModelSimpleLaserWeapon extends CommonModel {
 
         tower1 = new Polygon(points1);
         tower2 = new Polygon(points2);
-
-        setDefaultSkin();
     }
 
     @Override
@@ -105,9 +105,17 @@ public class ModelSimpleLaserWeapon extends CommonModel {
     public void setDefaultSkin() {
 
         room.setFill(Color.ORANGE);
+        room.setFill(new ImagePattern(
+                new Image(getClass().getResource("/game/background/textures/skin2.jpg").toExternalForm()), 0, 0, 1, 1, true));
         room2.setFill(Color.GREEN);
+        room2.setFill(new ImagePattern(
+                new Image(getClass().getResource("/game/background/textures/skin6.jpg").toExternalForm()), 0, 0, 1, 1, true));
         tower1.setFill(Color.YELLOW);
+        tower1.setFill(new ImagePattern(
+                new Image(getClass().getResource("/game/background/textures/skin4.jpg").toExternalForm()), 0, 0, 1, 1, true));
         tower2.setFill(Color.RED);
+        tower2.setFill(new ImagePattern(
+                new Image(getClass().getResource("/game/background/textures/skin4.jpg").toExternalForm()), 0, 0, 1, 1, true));
     }
 
     @Override

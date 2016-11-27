@@ -60,12 +60,14 @@ public class CruisershipModel extends CommonModel {
 
     @Override
     public double getCenterY() {
-        return ship.getY() - getHeight()/2;
+        return ship.getY() + getHeight()/2;
     }
 
     @Override
     public void setDefaultSkin() {
-        ship.setFill(Color.BLACK);
+        System.out.println("ahojkz");
+        ship.setStyle("-fx-background-image: url('game/ships/shipModels/pokus.png')");
+        //ship.setFill(Color.BLACK);
     }
 
     @Override

@@ -178,6 +178,10 @@ public class CreateMenu {
 
     private void createStartAbout(){
         about = createButton(ABOUT_GAME);
+        about.setOnAction(event -> {
+            AboutGameMenu aboutGameMenu = new AboutGameMenu();
+            aboutGameMenu.showWindow((GridPane) about.getParent());
+        });
     }
 
     private void createStartExit() {

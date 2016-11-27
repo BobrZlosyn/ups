@@ -335,7 +335,7 @@ public class PickShipMenu {
             }
         }else{
             statuses.setLayoutX(statuses.getLayoutX()-5);
-            if(statuses.getLayoutX() < 0){
+            if(statuses.getLayoutX() < 10){
                 isStatusShowedUp = true;
                 animationOfStatus.stop();
             }

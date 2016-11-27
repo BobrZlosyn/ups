@@ -2,8 +2,10 @@ package game.shields.shieldModels;
 
 import game.construction.CommonModel;
 import javafx.animation.Timeline;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
@@ -72,6 +74,9 @@ public class SimpleShieldModel extends CommonModel {
     @Override
     public void setDefaultSkin() {
         shield.setFill(Color.ORANGE);
+        shield.setFill(new ImagePattern(
+                new Image(getClass().getResource("/game/background/textures/shield1.jpg").toExternalForm()), 0, 0, 1, 1, true));
+
     }
 
     @Override

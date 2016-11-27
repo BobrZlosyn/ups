@@ -4,6 +4,9 @@ import game.construction.CommonConstruction;
 import game.construction.CommonWreck;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Line;
 
 /**
@@ -19,9 +22,9 @@ public class LaserShot extends CommonShot {
         shot = new Line();
         countHit = 0;
         setXY();
-        shot.setStrokeWidth(2.5);
+        shot.setStrokeWidth(3);
         shot.setFill(Color.RED);
-        shot.setStroke(Color.RED);
+        shot.setStroke(Color.rgb(255,0,0,0.7));
     }
 
     public void setXY(){

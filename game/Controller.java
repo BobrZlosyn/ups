@@ -230,7 +230,6 @@ public class Controller implements Initializable{
         endWindowShowUp(GlobalVariables.choosenShip, enemyShip);
 
         //pozadi
-        grb.findImages();
         grb.chooseImage((GridPane) gameAreaPane.getParent(), GlobalVariables.startingID);
 
         //horni prvky
