@@ -2,14 +2,12 @@ package game.startUpMenu;
 
 import game.static_classes.GlobalVariables;
 import game.static_classes.StyleClasses;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -64,12 +62,13 @@ public class ErrorAlert extends CommonMenu {
         closeButton.setOnAction(event -> clean());
 
         Pane pane = new Pane();
-        pane.setStyle("-fx-background-color: rgb(0, 0, 0, 0.5);");
+        pane.setStyle("-fx-background-color: rgb(0, 0, 0, 0.75);");
 
         menuPane.add(pane, 1, 1, 1, 2);
         menuPane.add(errorLabel, 1, 1);
         menuPane.add(closeButton, 1, 2);
 
+        GridPane.setHalignment(closeButton, HPos.CENTER);
         setMargin(errorLabel, 10, 20, 10, 20);
         setMargin(closeButton, 10, 20, 10, 20);
     }
