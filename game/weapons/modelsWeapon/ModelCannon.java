@@ -65,7 +65,7 @@ public class ModelCannon extends CommonModel{
     public void setDefaultSkin() {
 
         room.setFill(Color.ORANGE);
-         head.setFill(Color.YELLOW);
+        head.setFill(Color.YELLOW);
         cannon.setFill(Color.RED);
     }
 

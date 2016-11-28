@@ -11,6 +11,7 @@ import game.gameUI.BottomPanel;
 import game.gameUI.Controls;
 import game.ships.CommonShip;
 import game.static_classes.GlobalVariables;
+import game.static_classes.StyleClasses;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -18,6 +19,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -51,6 +53,7 @@ public class Controller implements Initializable{
 
         errorAlert = new ErrorAlert();
         tcpConnection = new TcpApplication();
+        window.setCursor(StyleClasses.NORMAL_CURSOR);
 
         grb = new GeneratRandomBackground();
         createMainPage();
@@ -121,10 +124,15 @@ public class Controller implements Initializable{
             createMenu.stopAnimation();
         }
 
+        if (GlobalVariables.isNotEmpty(controls)) {
+            controls.stopAnimations();
+        }
+
         sendingTask = stopTask(sendingTask); // ukoncuji odesilaci vlakno
         tcpConnection.closeReadThread(); // ukoncuji cteci vlakno
         tcpConnection.closeConnectThread(); // ukoncuji hledani pripojeni
         tcpConnection.closeActionThread();
+
     }
 
 
@@ -207,7 +215,7 @@ public class Controller implements Initializable{
         waitingForOponnent.showWaitingForOponnent(window);
         waitingForOponnent.getCancel().setOnAction(event -> {
             GlobalVariables.enemyshipDefinition = "";
-            waitingForOponnent.removePane();
+            waitingForOponnent.clean();
             GlobalVariables.sendMessageType = TcpMessage.QUIT;
 
         });
@@ -252,7 +260,7 @@ public class Controller implements Initializable{
             GlobalVariables.setGameIsFinished(true);
             GlobalVariables.sendMessageType = TcpMessage.LOST;
             ((Button)event1.getSource()).setDisable(true);
-            GlobalVariables.choosenShip.takeDamage((int)GlobalVariables.choosenShip.getActualLife());
+            GlobalVariables.choosenShip.takeDamage((int)GlobalVariables.choosenShip.getActualLife() + GlobalVariables.choosenShip.getArmorActualValue());
             GlobalVariables.choosenShip.damageToShield(GlobalVariables.choosenShip.getShieldActualLife());
         });
 
@@ -321,8 +329,7 @@ public class Controller implements Initializable{
         GlobalVariables.enemyLost.addListener((observable, oldValue, newValue) -> {
             if(newValue && !GlobalVariables.gameIsFinished.get()){
                 Platform.runLater(() -> {
-
-                    enemyShip.takeDamage((int) enemyShip.getActualLife());
+                    enemyShip.takeDamage((int) enemyShip.getActualLife() + enemyShip.getArmorActualValue());
                     GlobalVariables.enemyLost.set(false);
                 });
             }

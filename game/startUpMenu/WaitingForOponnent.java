@@ -1,6 +1,7 @@
 package game.startUpMenu;
 
 import game.static_classes.GlobalVariables;
+import game.static_classes.StyleClasses;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -27,13 +28,13 @@ import java.util.ArrayList;
  * Created by BobrZlosyn on 17.10.2016.
  * obrazovka ktera ma zabavit uzivatele nez se pripoji druhy hrac
  */
-public class WaitingForOponnent {
+public class WaitingForOponnent extends CommonMenu{
 
     private Label title, hint;
     private Button cancel;
-    private GridPane waitingPane;
     private Pane starMap;
     private Timeline starAnimation;
+    private ArrayList<Star> stars ;
 
     public static final String WAITING_FOR_OPONENT = "ČEKÁNÍ NA PROTIHRÁČE";
     public static final String CONNECTING_TO_SERVER = "PŘIPOJUJI SE K SEVERU";
@@ -46,12 +47,9 @@ public class WaitingForOponnent {
     }
 
     private void createPane(){
-        waitingPane = new GridPane();
-        waitingPane.setMaxWidth(Double.MAX_VALUE);
-        waitingPane.setMaxHeight(Double.MAX_VALUE);
-        waitingPane.setStyle("-fx-background-color:black;");
-        waitingPane.getColumnConstraints().addAll(generateColumns(3));
-        waitingPane.getRowConstraints().addAll(generateRows(7));
+        menuPane.setStyle("-fx-background-color:black;");
+        menuPane.getColumnConstraints().addAll(generateColumns(3, null));
+        menuPane.getRowConstraints().addAll(generateRows(7, null));
 
         title = new Label(WAITING_FOR_OPONENT);
         title.setTextFill(Color.WHITE);
@@ -62,10 +60,7 @@ public class WaitingForOponnent {
         title.setWrapText(true);
         title.setFont(Font.font(18));
 
-        cancel = new Button(CANCEL_SEARCH);
-        cancel.setMaxWidth(200);
-        cancel.setMinHeight(40);
-        cancel.getStyleClass().add("exitButton");
+        cancel = createButton(CANCEL_SEARCH, StyleClasses.EXIT_BUTTON);
 
         hint = new Label();
         hint.setTextFill(Color.WHITE);
@@ -76,74 +71,44 @@ public class WaitingForOponnent {
         starMap = new Pane();
         starMap.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
-        waitingPane.add(starMap, 0, 0, GridPane.REMAINING, GridPane.REMAINING);
-        waitingPane.add(cancel, 1, 6);
-        waitingPane.add(title, 0, 3, GridPane.REMAINING, 1);
-        waitingPane.add(hint, 0, 5, GridPane.REMAINING, 1);
-        waitingPane.getColumnConstraints().get(1).setHalignment(HPos.CENTER);
+        menuPane.add(starMap, 0, 0, GridPane.REMAINING, GridPane.REMAINING);
+        menuPane.add(cancel, 1, 6);
+        menuPane.add(title, 0, 3, GridPane.REMAINING, 1);
+        menuPane.add(hint, 0, 5, GridPane.REMAINING, 1);
+        menuPane.getColumnConstraints().get(1).setHalignment(HPos.CENTER);
         GridPane.setValignment(cancel, VPos.TOP);
         GridPane.setHalignment(title, HPos.CENTER);
         GridPane.setValignment(title, VPos.CENTER);
 
-        waitingPane.getRowConstraints().get(0).setPercentHeight(15); //15
-        waitingPane.getRowConstraints().get(1).setPercentHeight(1); //16
-        waitingPane.getRowConstraints().get(2).setPercentHeight(1); //17
-        waitingPane.getRowConstraints().get(3).setPercentHeight(56); // 77
-        waitingPane.getRowConstraints().get(4).setPercentHeight(5); // 78
-        waitingPane.getRowConstraints().get(5).setPercentHeight(7); // 85
-        waitingPane.getRowConstraints().get(6).setPercentHeight(15); // 100
+        menuPane.getRowConstraints().get(0).setPercentHeight(15); //15
+        menuPane.getRowConstraints().get(1).setPercentHeight(1); //16
+        menuPane.getRowConstraints().get(2).setPercentHeight(1); //17
+        menuPane.getRowConstraints().get(3).setPercentHeight(56); // 77
+        menuPane.getRowConstraints().get(4).setPercentHeight(5); // 78
+        menuPane.getRowConstraints().get(5).setPercentHeight(7); // 85
+        menuPane.getRowConstraints().get(6).setPercentHeight(15); // 100
     }
 
 
     public void showWaitingForOponnent(GridPane window) {
         if(GlobalVariables.isEmpty(window)
-                || GlobalVariables.isEmpty(waitingPane)){
+                || GlobalVariables.isEmpty(menuPane)){
             return;
         }
 
-        if(window.getChildren().contains(waitingPane)) {
+        if(window.getChildren().contains(menuPane)) {
             return;
         }
 
-        window.add(waitingPane, 0, 0, GridPane.REMAINING, GridPane.REMAINING);
+        window.add(menuPane, 0, 0, GridPane.REMAINING, GridPane.REMAINING);
         hint.setText(pickRandomHint());
         createStar();
     }
 
-    private ArrayList<RowConstraints> generateRows(int rowsCount){
-        ArrayList<RowConstraints> rows = new ArrayList<>();
-
-        for (int i = 0; i < rowsCount; i++){
-
-            rows.add(new RowConstraints());
-            rows.get(i).setPercentHeight(100 / rowsCount);
-        }
-
-        return rows;
-    }
-
-    private ArrayList<ColumnConstraints> generateColumns(int columnsCount){
-        ArrayList<ColumnConstraints> columns = new ArrayList<>();
-
-        for (int i = 0; i < columnsCount; i++){
-            columns.add(new ColumnConstraints());
-            columns.get(i).setPercentWidth(100.0 / columnsCount);
-        }
-
-        return columns;
-    }
 
     public Button getCancel() {
         return cancel;
     }
-
-    public void removePane(){
-        GridPane parent = (GridPane)waitingPane.getParent();
-        if(!GlobalVariables.isEmpty(parent)){
-            parent.getChildren().removeAll(waitingPane);
-        }
-    }
-
 
     private String pickRandomHint() {
 
@@ -166,26 +131,33 @@ public class WaitingForOponnent {
     }
 
 
-    private ArrayList<Star> stars = new ArrayList<>();
     private void createStar(){
-
-        if(!stars.isEmpty()){
-            return;
+        if (GlobalVariables.isEmpty(stars)) {
+            stars = new ArrayList<>();
+            int width = (int) ((GridPane)starMap.getParent().getParent()).getWidth();
+            int height = (int)((GridPane)starMap.getParent().getParent()).getHeight();
+            for(int i = 0; i < 2000; i++) {
+                Star star = new Star(width, height);
+                starMap.getChildren().addAll(star.getStar(), star.getLine());
+                stars.add(star);
+            }
+            starsAnimeation();
         }
 
-        int width = (int) ((GridPane)starMap.getParent().getParent()).getWidth();
-        int height = (int)((GridPane)starMap.getParent().getParent()).getHeight();
-        for(int i = 0; i < 2000; i++) {
-            Star star = new Star(width, height);
-            starMap.getChildren().addAll(star.getStar(), star.getLine());
-            stars.add(star);
-        }
-        starsAnimeation();
     }
 
+    @Override
+    public void clean() {
+        ((GridPane)menuPane.getParent()).getChildren().remove(menuPane);
+    }
 
     private void starsAnimeation(){
         starAnimation = new Timeline(new KeyFrame(Duration.seconds(0.03), event -> {
+            if (stars.isEmpty()) {
+                starAnimation.stop();
+                return;
+            }
+
             stars.forEach(circle -> {
 
                 circle.show();

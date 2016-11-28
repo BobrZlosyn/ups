@@ -30,7 +30,7 @@ import java.util.ArrayList;
 /**
  * Created by BobrZlosyn on 28.09.2016.
  */
-public class PickShipMenu {
+public class PickShipMenu extends CommonMenu{
     private GridPane pickship;
     private Pane showArea;
     private Button battleShip, cruiserShip, admiralShip, nextSetup, previous;
@@ -74,10 +74,7 @@ public class PickShipMenu {
     }
 
     private void createPreviousButton(){
-        previous = new Button("Zpět");
-        previous.setMaxHeight(Double.MAX_VALUE);
-        previous.setMaxWidth(200);
-        previous.getStyleClass().add(StyleClasses.EXIT_BUTTON);
+        previous = createButton("Zpět",StyleClasses.EXIT_BUTTON );
     }
 
     private void createTitleLabel(){
@@ -118,6 +115,7 @@ public class PickShipMenu {
         button.setMaxHeight(Double.MAX_VALUE);
         button.setMinHeight(70);
         button.getStyleClass().add(StyleClasses.MENU_BUTTONS);
+        button.setCursor(StyleClasses.HAND_CURSOR);
         button.setOnAction(event -> {
             double x = showArea.getWidth()/2;
             double y = showArea.getHeight()/2 ;
@@ -133,6 +131,7 @@ public class PickShipMenu {
         button.setMaxHeight(Double.MAX_VALUE);
         button.setMinHeight(70);
         button.getStyleClass().add(StyleClasses.MENU_BUTTONS);
+        button.setCursor(StyleClasses.HAND_CURSOR);
         button.setOnAction(event -> {
             double x = showArea.getWidth()/2  - ship.getWidth()/2;
             double y = showArea.getHeight()/2 - ship.getHeight()/2;
@@ -173,10 +172,7 @@ public class PickShipMenu {
     }
 
     private void createNextSetupButton(){
-        nextSetup = new Button("Pokračovat");
-        nextSetup.setMaxWidth(200);
-        nextSetup.setMaxHeight(Double.MAX_VALUE);
-        nextSetup.getStyleClass().add(StyleClasses.MENU_BUTTONS);
+        nextSetup = createButton("Pokračovat", StyleClasses.MENU_BUTTONS);
         GridPane.setHalignment(nextSetup, HPos.RIGHT);
     }
 

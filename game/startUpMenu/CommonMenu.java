@@ -1,6 +1,7 @@
 package game.startUpMenu;
 
 import game.static_classes.GlobalVariables;
+import game.static_classes.StyleClasses;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -41,6 +42,7 @@ public class CommonMenu {
         Button button = new Button(text);
         button.setMaxSize(200, 50);
         button.getStyleClass().add(styleClass);
+        button.setCursor(StyleClasses.HAND_CURSOR);
         return button;
     }
 

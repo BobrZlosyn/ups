@@ -5,6 +5,7 @@ import game.construction.CommonConstruction;
 import game.construction.IMarkableObject;
 import game.shields.CommonShield;
 import game.ships.CommonShip;
+import game.startUpMenu.CommonMenu;
 import game.static_classes.ConstructionTypes;
 import game.static_classes.GlobalVariables;
 import game.static_classes.StyleClasses;
@@ -25,7 +26,7 @@ import javafx.scene.paint.Color;
 /**
  * Created by BobrZlosyn on 26.09.2016.
  */
-public class BottomPanel {
+public class BottomPanel extends CommonMenu{
 
     private Button quit, activateShield;
     private Button targeting, cancelTarget;
@@ -104,19 +105,13 @@ public class BottomPanel {
         sendOrders.setText(SEND_ATTACK);
         sendOrders.setMaxWidth(Double.MAX_VALUE);
         sendOrders.setMaxHeight(Double.MAX_VALUE);
+        sendOrders.setCursor(StyleClasses.HAND_CURSOR);
         sendOrders.getStyleClass().add(StyleClasses.MENU_BUTTONS);
     }
 
-    private Button createButton(String text) {
-        Button button = new Button(text);
-        button.setMaxWidth(Double.MAX_VALUE);
-        button.setMaxHeight(Double.MAX_VALUE);
-        button.getStyleClass().add(StyleClasses.MENU_BUTTONS);
-        return button;
-    }
 
     private void createActivationShield(){
-        activateShield = createButton(SHIELD_OFF);
+        activateShield = createButton(SHIELD_OFF, StyleClasses.MENU_BUTTONS);
         activateShield.setVisible(false);
         GlobalVariables.isSelected.addListener((observable, oldValue, newValue) -> {
             avaibleShieldProgress.progressProperty().unbind();
@@ -226,7 +221,7 @@ public class BottomPanel {
 
 
     private void createCancelTargetButton(){
-        cancelTarget = createButton(CANCEL_TARGET);
+        cancelTarget = createButton(CANCEL_TARGET, StyleClasses.MENU_BUTTONS);
         cancelTarget.setVisible(false);
         cancelTarget.setOnAction(event -> {
             CommonWeapon weapon = (CommonWeapon)GlobalVariables.getMarkedObject();
@@ -273,7 +268,7 @@ public class BottomPanel {
     }
 
     private void createButtonTargeting(){
-        targeting = createButton(SELECT_TARGET);
+        targeting = createButton(SELECT_TARGET, StyleClasses.MENU_BUTTONS);
         targeting.visibleProperty().bind(GlobalVariables.canTarget);
         targeting.visibleProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue.booleanValue()){
@@ -382,8 +377,7 @@ public class BottomPanel {
     }
 
     private void createButtonQuit(){
-        quit = createButton(SURRENDER);
-        quit.getStyleClass().add(StyleClasses.EXIT_BUTTON);
+        quit = createButton(SURRENDER, StyleClasses.EXIT_BUTTON);
     }
 
     private void createName(){

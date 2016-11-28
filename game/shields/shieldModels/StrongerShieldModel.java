@@ -17,5 +17,7 @@ public class StrongerShieldModel extends SimpleShieldModel {
     public void setDefaultSkin() {
 
         getShield().setFill(Color.GREEN);
+        //getShield().setFill(new ImagePattern(
+        //        new Image(getClass().getResource("/game/background/textures/shield2.jpg").toExternalForm()), 0, 0, 1, 1, true));
     }
 }

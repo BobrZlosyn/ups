@@ -36,7 +36,7 @@ import java.util.ArrayList;
 /**
  * Created by BobrZlosyn on 28.09.2016.
  */
-public class CreateMenu {
+public class CreateMenu extends CommonMenu{
     private GridPane menu;
     private Button start, settings, about, exit;
     private Label connection;
@@ -178,12 +178,12 @@ public class CreateMenu {
     }
 
     private void createStartButton(){
-        start = createButton(START_GAME);
+        start = createButton(START_GAME, StyleClasses.MENU_BUTTONS);
     }
 
 
     private void createStartSettings(){
-        settings = createButton(SETTING);
+        settings = createButton(SETTING, StyleClasses.MENU_BUTTONS);
         settings.setOnAction(event -> {
             settingsMenu = new SettingsMenu();
             settingsMenu.showWindow((GridPane)settings.getParent());
@@ -191,7 +191,7 @@ public class CreateMenu {
     }
 
     private void createStartAbout(){
-        about = createButton(ABOUT_GAME);
+        about = createButton(ABOUT_GAME, StyleClasses.MENU_BUTTONS);
         about.setOnAction(event -> {
             AboutGameMenu aboutGameMenu = new AboutGameMenu();
             aboutGameMenu.showWindow((GridPane) about.getParent());
@@ -199,20 +199,14 @@ public class CreateMenu {
     }
 
     private void createStartExit() {
-        exit = createButton(CLOSE);
+        exit = createButton(CLOSE, StyleClasses.EXIT_BUTTON);
         exit.getStyleClass().add(StyleClasses.EXIT_BUTTON);
         exit.setOnAction(event -> {
             Platform.exit();
         });
     }
 
-    private Button createButton(String text){
-        Button button = new Button(text);
-        button.setMaxWidth(Double.MAX_VALUE);
-        button.setMaxHeight(Double.MAX_VALUE);
-        button.getStyleClass().add(StyleClasses.MENU_BUTTONS);
-        return button;
-    }
+
     private void createConnectionIndicator(){
         connection = new Label(DISCONNECT);
         connection.setTextFill(Color.RED);

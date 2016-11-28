@@ -108,7 +108,7 @@ public class ModelSimpleLaserWeapon extends CommonModel {
         room2.setFill(Color.GREEN);
         tower1.setFill(Color.YELLOW);
         tower2.setFill(Color.RED);
-      }
+    }
 
     @Override
     public boolean containsPosition(double x, double y) {

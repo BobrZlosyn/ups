@@ -1,6 +1,8 @@
 package game.construction;
 
 import game.static_classes.GlobalVariables;
+import game.static_classes.StyleClasses;
+import javafx.scene.Cursor;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
@@ -41,7 +43,7 @@ public abstract class CommonModel {
      * priradi novy styl na cursor
      */
     protected void addCursorHandClass() {
-        getParts().forEach(shape -> shape.getStyleClass().add("hand-cursor"));
+        getParts().forEach(shape -> shape.setCursor(StyleClasses.HAND_CURSOR));
     }
 
     /**

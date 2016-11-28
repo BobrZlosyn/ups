@@ -47,11 +47,6 @@
     -fx-progress-color: rgba(255,0,0,1) ;
 }
 
-
-.button {
-    -fx-cursor: hand;
-}
-
 .menuButtons, .nextButton, .prevButton, .exitButton {
     -fx-background-color: rgba(24,58,168,0.90) ;
     -fx-text-fill: white;

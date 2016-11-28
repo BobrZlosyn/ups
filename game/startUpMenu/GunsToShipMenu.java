@@ -39,7 +39,7 @@ import java.util.ArrayList;
 /**
  * Created by Kanto on 29.09.2016.
  */
-public class GunsToShipMenu {
+public class GunsToShipMenu extends CommonMenu{
 
     private CommonShip ship;
     private SimpleStringProperty nameOfEquipment;
@@ -94,17 +94,11 @@ public class GunsToShipMenu {
     }
 
     private void createPreviousButton(){
-        previous = new Button("Zpět");
-        previous.setMaxHeight(Double.MAX_VALUE);
-        previous.setMaxWidth(200);
-        previous.getStyleClass().add(StyleClasses.EXIT_BUTTON);
+        previous = createButton("Zpět", StyleClasses.EXIT_BUTTON);
     }
 
     private void createNextButton(){
-        next = new Button("Pokračovat");
-        next.setMaxHeight(Double.MAX_VALUE);
-        next.getStyleClass().add(StyleClasses.MENU_BUTTONS);
-        next.setMaxWidth(200);
+        next = createButton("Pokračovat", StyleClasses.MENU_BUTTONS);
     }
 
     private void createShowArea(){
@@ -272,8 +266,12 @@ public class GunsToShipMenu {
             draggableObject.removeModel(paneOnTop);
         });
 
-        overPane.setOnMouseEntered(event -> item.setStyle("-fx-background-color: rgba(0,0,0,0.9);  -fx-cursor: hand;"));
-        overPane.setOnMouseExited(event -> item.setStyle("-fx-background-color: rgba(0,0,0,0); -fx-cursor: pointer;"));
+        overPane.setOnMouseEntered(event -> {
+            item.setStyle("-fx-background-color: rgba(0,0,0,0.9);");
+            item.setCursor(StyleClasses.HAND_CURSOR);
+        });
+
+        overPane.setOnMouseExited(event -> item.setStyle("-fx-background-color: rgba(0,0,0,0);"));
         item.getChildren().addAll(overPane);
         return item;
     }
