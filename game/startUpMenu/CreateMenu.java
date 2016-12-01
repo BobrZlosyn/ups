@@ -165,6 +165,7 @@ public class CreateMenu extends CommonMenu{
         columnConstraints.setPercentWidth(5);
         ColumnConstraints columnConstraints2 = new ColumnConstraints();
         columnConstraints2.setPercentWidth(25);
+        columnConstraints2.setHalignment(HPos.CENTER);
         ColumnConstraints columnConstraints3 = new ColumnConstraints();
         columnConstraints3.setPercentWidth(5);
         ColumnConstraints columnConstraints4 = new ColumnConstraints();

@@ -1,5 +1,6 @@
 package game.startUpMenu;
 
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -87,6 +88,7 @@ public class EndOfGameMenu extends CommonMenu{
 
         setMargin(newGame, 15, 15, 15, 15);
         setMargin(backToMenu, 15, 15, 15, 15);
+        GridPane.setHalignment(backToMenu, HPos.RIGHT);
 
         showWindow(window);
     }

@@ -28,7 +28,7 @@ import javafx.scene.paint.Color;
  */
 public class BottomPanel extends CommonMenu{
 
-    private Button quit, activateShield;
+    private Button quit, activateShield, sendData;
     private Button targeting, cancelTarget;
     private GridPane panel;
     private Label name, lifeLabel, shieldLabel, energyCostLabel, strenghtLabel;
@@ -49,9 +49,9 @@ public class BottomPanel extends CommonMenu{
     private ProgressBar avaibleShieldProgress;
 
 
-    public BottomPanel(Button sendOrders){
+    public BottomPanel(){
         createButtonQuit();
-        createButtonSend(sendOrders);
+        createButtonSend();
         createName();
         createActivationShield();
         createButtonTargeting();
@@ -59,9 +59,13 @@ public class BottomPanel extends CommonMenu{
         createCancelTargetButton();
         createEnergyCostLabel();
         createStrengthLabel();
-        createPanel(sendOrders);
+        createPanel();
         createNamePane();
 
+    }
+
+    public Button getSendData() {
+        return sendData;
     }
 
     public Button getQuit() {
@@ -101,12 +105,10 @@ public class BottomPanel extends CommonMenu{
 
     }
 
-    private void createButtonSend(Button sendOrders){
-        sendOrders.setText(SEND_ATTACK);
-        sendOrders.setMaxWidth(Double.MAX_VALUE);
-        sendOrders.setMaxHeight(Double.MAX_VALUE);
-        sendOrders.setCursor(StyleClasses.HAND_CURSOR);
-        sendOrders.getStyleClass().add(StyleClasses.MENU_BUTTONS);
+    private void createButtonSend(){
+        sendData = createButton(SEND_ATTACK, StyleClasses.MENU_BUTTONS);
+        sendData.setDisable(!GlobalVariables.isPlayingNow.getValue());
+
     }
 
 
@@ -387,7 +389,7 @@ public class BottomPanel extends CommonMenu{
         name.getStyleClass().add(StyleClasses.STATUS_LABEL);
     }
 
-    private void createPanel(Button sendOrders){
+    private void createPanel(){
         panel = new GridPane();
         panel.setMaxWidth(Double.MAX_VALUE);
         panel.getStyleClass().add(StyleClasses.BOTTOM_PANEL);
@@ -412,7 +414,7 @@ public class BottomPanel extends CommonMenu{
         panel.getColumnConstraints().addAll(columnConstraints, columnConstraints1, columnConstraints2, columnConstraints3, columnConstraints4);
         panel.getRowConstraints().addAll(rowConstraints1, rowConstraints2);
 
-        panel.add(sendOrders, 4, 0);
+        panel.add(sendData, 4, 0);
         panel.add(quit, 4, 1);
         panel.add(targeting, 3, 1);
         panel.add(activateShield, 3, 1);
@@ -424,7 +426,7 @@ public class BottomPanel extends CommonMenu{
         panel.add(energyCostLabel, 1,1);
         panel.add(strenghtLabel, 0,1);
 
-        panel.setMargin(sendOrders, new Insets(15, 10, 5, 10));
+        panel.setMargin(sendData, new Insets(15, 10, 5, 10));
         panel.setMargin(cancelTarget, new Insets(15,10,5,10));
         panel.setMargin(quit, new Insets(10,10,10,10));
         panel.setMargin(targeting, new Insets(10,10,10,10));

@@ -6,6 +6,7 @@ import game.static_classes.ConstructionTypes;
 import game.static_classes.GameBalance;
 import game.static_classes.GlobalVariables;
 import game.ships.wrecksShips.BattleShipWreck;
+import game.weapons.SimpleLaserWeapon;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.layout.GridPane;
@@ -111,17 +112,14 @@ public class BattleShip extends CommonShip{
         setPlacements(shipMapping);
     }
 
-    private double countX(double radius, double size, int i){
+    protected double countX(double radius, double size, int i){
         return getCenterX() - radius + size*i + 13*i + 30;
     }
 
-    private double countY(double radius, double size, int j){
+    protected double countY(double radius, double size, int j){
         return getCenterY() - radius + size*j + 10*j + 35;
     }
 
-    public Placement getPosition(int row, int column){
-        return getPlacementPositions()[row][column];
-    }
 
     @Override
     public double getX() {
@@ -173,7 +171,7 @@ public class BattleShip extends CommonShip{
 
         double centerX = (widthEnd - widthStart)/2 + widthStart;
         double centerY = (heightEnd - heightStart)/2 + heightStart;
-        model.setModelXY(centerX, centerY);
+        getModel().setModelXY(centerX, centerY);
         Placement placements [][] = getPlacementPositions();
 
         for(int i = 0; i < placements.length; i++){
@@ -183,7 +181,14 @@ public class BattleShip extends CommonShip{
                     continue;
                 }
 
-                placement.resize(countX(model.getShip().getRadius(), placement.getSize(), i), countY(model.getShip().getRadius(), placement.getSize(), j));
+                placement.resize(countX(getModel().getWidth()/2, placement.getSize(), i), countY(getModel().getHeight()/2, placement.getSize(), j));
+
+                if (GlobalVariables.isNotEmpty(placement.getShipEquipment())) {
+
+                    double x = placement.getX() + placement.getSize()/2;
+                    double y = placement.getY() + placement.getSize()/2;
+                    placement.getShipEquipment().getModel().setModelXY(x, y);
+                }
 
             }
         }

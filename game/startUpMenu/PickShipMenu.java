@@ -97,31 +97,15 @@ public class PickShipMenu extends CommonMenu{
     }
 
     private void createBattleShipButton(){
-        battleShip = createShipButton2(GameBalance.BATTLE_SHIP_NAME,new BattleShip(false));
+        battleShip = createShipButton(GameBalance.BATTLE_SHIP_NAME,new BattleShip(false));
     }
 
     private void createAdmiralShipButton(){
-        admiralShip = createShipButton2(GameBalance.ADMIRAL_SHIP_NAME, new AdmiralShip(false));
+        admiralShip = createShipButton(GameBalance.ADMIRAL_SHIP_NAME, new AdmiralShip(false));
     }
 
     private void createCruiserShipButton(){
         cruiserShip = createShipButton(GameBalance.CRUISER_SHIP_NAME, new CruiserShip(false));
-    }
-
-    private Button createShipButton2(String text, CommonShip ship) {
-        Button button = new Button(text);
-
-        button.setMaxWidth(Double.MAX_VALUE);
-        button.setMaxHeight(Double.MAX_VALUE);
-        button.setMinHeight(70);
-        button.getStyleClass().add(StyleClasses.MENU_BUTTONS);
-        button.setCursor(StyleClasses.HAND_CURSOR);
-        button.setOnAction(event -> {
-            double x = showArea.getWidth()/2;
-            double y = showArea.getHeight()/2 ;
-            createShip(ship, x, y);
-        });
-        return button;
     }
 
     private Button createShipButton(String text, CommonShip ship) {
@@ -133,13 +117,12 @@ public class PickShipMenu extends CommonMenu{
         button.getStyleClass().add(StyleClasses.MENU_BUTTONS);
         button.setCursor(StyleClasses.HAND_CURSOR);
         button.setOnAction(event -> {
-            double x = showArea.getWidth()/2  - ship.getWidth()/2;
-            double y = showArea.getHeight()/2 - ship.getHeight()/2;
+            double x = showArea.getWidth()/2;
+            double y = showArea.getHeight()/2;
             createShip(ship, x, y);
         });
         return button;
     }
-
 
     private void createShip(CommonShip newShip, double x, double y){
 
@@ -152,7 +135,9 @@ public class PickShipMenu extends CommonMenu{
 
         begin = showArea.getChildren().size();
         choosenShip = newShip;
+
         newShip.positionOfShip(x, y, showArea);
+
         end = showArea.getChildren().size();
 
         titleOfShip.setValue(choosenShip.getName());
@@ -198,6 +183,7 @@ public class PickShipMenu extends CommonMenu{
         columnConstraints1.setHalignment(HPos.LEFT);
         ColumnConstraints columnConstraints2 = new ColumnConstraints();
         columnConstraints2.setPercentWidth(30);
+        columnConstraints2.setMaxWidth(200);
         columnConstraints2.setHalignment(HPos.CENTER);
 
         pickship.getColumnConstraints().addAll(columnConstraints, columnConstraints1,columnConstraints2);
@@ -349,6 +335,7 @@ public class PickShipMenu extends CommonMenu{
         pickship.add(shipStatus, 2, 1);
         pickship.add(previous, 1, 2);
 
+        GridPane.setHalignment(shipStatus, HPos.RIGHT);
         pickship.setHalignment(nameOfShip, HPos.CENTER);
     }
 

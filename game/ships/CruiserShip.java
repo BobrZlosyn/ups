@@ -93,8 +93,8 @@ public class CruiserShip extends CommonShip{
                 Pane parent = model.getParent();
                 parent.getChildren().add(place);
 
-                place.setY(countY(size, j));
-                place.setX(countX(size, i));
+                place.setY(countY(0, size, j));
+                place.setX(countX(0, size, i));
                 shipMapping[i][j] = new Placement(place.getX(), place.getY(), place.getWidth(), this, i, j);
                 shipMapping[i][j].setField(place);
             }
@@ -102,16 +102,12 @@ public class CruiserShip extends CommonShip{
         setPlacements(shipMapping);
     }
 
-    private double countX(double size, int i){
+    protected double countX(double radius, double size, int i){
         return model.getShip().getX() + size*i + 13*i + 12;
     }
 
-    private double countY(double size, int j){
+    protected double countY(double radius, double size, int j){
         return model.getShip().getY() + size*j + 10*j + 25;
-    }
-
-    public Placement getPosition(int row, int column){
-        return getPlacementPositions()[row][column];
     }
 
     @Override
@@ -132,28 +128,6 @@ public class CruiserShip extends CommonShip{
     @Override
     public CommonModel getModel() {
         return model;
-    }
-
-    @Override
-    public void resize(double widthStart, double widthEnd, double heightStart, double heightEnd){
-
-        double centerX = (widthEnd - widthStart)/2 + widthStart - model.getWidth()/2;
-        double centerY = (heightEnd - heightStart)/2 + heightStart - model.getShip().getHeight()/2;
-        model.setModelXY(centerX, centerY);
-
-        Placement placements [][] = getPlacementPositions();
-
-        for(int i = 0; i < placements.length; i++){
-            for(int j = 0; j < placements[i].length; j++){
-                Placement placement = getPosition(i,j);
-                if(GlobalVariables.isEmpty(placement)){
-                    continue;
-                }
-
-                placement.resize(countX(placement.getSize(), i), countY(placement.getSize(), j));
-
-            }
-        }
     }
 
     @Override

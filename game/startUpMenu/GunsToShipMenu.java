@@ -305,7 +305,7 @@ public class GunsToShipMenu extends CommonMenu{
 
             double width = newValue.intValue();
             double height = showArea.getHeight()/2 + ship.getHeight()/2;
-            ship.resize(0, width, 0, height);
+            ship.resize(0, width,  0, height);
         });
 
         showArea.heightProperty().addListener((observable, oldValue, newValue) -> {

@@ -39,8 +39,8 @@ public class CruisershipModel extends CommonModel {
 
     @Override
     public void setModelXY(double x, double y) {
-        ship.setX(x);
-        ship.setY(y);
+        ship.setX(x - ship.getWidth()/2);
+        ship.setY(y - ship.getHeight()/2);
     }
 
     @Override

@@ -200,9 +200,6 @@ public abstract class CommonConstruction implements IMarkableObject{
         hit.playFromStart();
     }
 
-    public void resize(double widthStart, double widthEnd, double heightStart, double heightEnd){
-        return;
-    }
 
     public boolean containsPosition(double x, double y){
         return getModel().containsPosition(x, y);

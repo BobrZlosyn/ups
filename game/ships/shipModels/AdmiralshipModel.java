@@ -66,6 +66,7 @@ public class AdmiralshipModel extends CommonModel {
 
     @Override
     public void setModelXY(double x, double y) {
+
         ship.setLayoutX(x - getWidth()/2);
         ship.setLayoutY(y - getHeight()/2);
     }

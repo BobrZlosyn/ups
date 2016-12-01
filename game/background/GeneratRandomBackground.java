@@ -113,7 +113,6 @@ public class GeneratRandomBackground {
                 myPath = Paths.get(uri);
             }
 
-
             walk = Files.walk(myPath, 1);
             Iterator<Path> it = walk.iterator();
 

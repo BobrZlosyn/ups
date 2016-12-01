@@ -8,6 +8,8 @@ public interface IShipEquipment {
 
     void displayEquipment(Placement place, boolean isEnemy);
 
+    CommonModel getModel ();
+
     default double calculationForRotation(double x, double y, double centerX, double centerY, boolean isEnemy){
         double countCx = (x - centerX)*(x - centerX);
         double countAx = (x - centerX)*(x - centerX);

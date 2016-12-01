@@ -108,20 +108,16 @@ public class AdmiralShip extends CommonShip{
         setPlacements(shipMapping);
     }
 
-    public Placement getPosition(int row, int column){
-        return getPlacementPositions()[row][column];
-    }
-
     @Override
     public Placement getPlacement() {
         return new Placement(getCenterX(), getCenterY(), getWidth(), this, -1, -1);
     }
 
-    private double countX(double radius, double size, int i){
+    protected double countX(double radius, double size, int i){
         return model.getCenterX() - radius + size*i + 13*i + 15;
     }
 
-    private double countY(double radius, double size, int j){
+    protected double countY(double radius, double size, int j){
         return model.getCenterY() - radius + size*j + 10*j + 35;
     }
 
@@ -151,12 +147,13 @@ public class AdmiralShip extends CommonShip{
     }
 
 
+
     @Override
     public void resize(double widthStart, double widthEnd, double heightStart, double heightEnd){
 
         double centerX = (widthEnd - widthStart)/2 + widthStart;
         double centerY = (heightEnd - heightStart)/2 + heightStart;
-        model.setModelXY(centerX, centerY);
+        getModel().setModelXY(centerX, centerY);
         Placement placements [][] = getPlacementPositions();
 
         for(int i = 0; i < placements.length; i++){
@@ -166,7 +163,8 @@ public class AdmiralShip extends CommonShip{
                     continue;
                 }
 
-                placement.resize(countX(model.getWidth()/2, placement.getSize(), i), countY(model.getHeight()/2, placement.getSize(), j));
+                placement.resize(countX(getModel().getWidth()/2, placement.getSize(), i), countY(getModel().getHeight()/2, placement.getSize(), j));
+                placement.resize(countX(getModel().getWidth()/2, placement.getSize(), i), countY(getModel().getHeight()/2, placement.getSize(), j));
 
             }
         }

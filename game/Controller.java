@@ -245,16 +245,9 @@ public class Controller implements Initializable{
         //pozadi
         grb.chooseImage((GridPane) gameAreaPane.getParent(), GlobalVariables.startingID);
 
-        //horni prvky
-        sendDataButton = new Button();
-        sendDataButton.setDisable(!GlobalVariables.isPlayingNow.getValue());
-        controls = new Controls(GlobalVariables.choosenShip, enemyShip, sendDataButton);
-        controls.showStatusBars(gameAreaPane);
-
-
-
         //dolni prvky
-        bottomPanel = new BottomPanel(sendDataButton);
+        bottomPanel = new BottomPanel();
+        sendDataButton = bottomPanel.getSendData();
         bottomPanel.showPanel(window, gameAreaPane);
         bottomPanel.getQuit().setOnAction(event1 -> {
             GlobalVariables.setGameIsFinished(true);
@@ -263,6 +256,10 @@ public class Controller implements Initializable{
             GlobalVariables.choosenShip.takeDamage((int)GlobalVariables.choosenShip.getActualLife() + GlobalVariables.choosenShip.getArmorActualValue());
             GlobalVariables.choosenShip.damageToShield(GlobalVariables.choosenShip.getShieldActualLife());
         });
+
+
+        controls = new Controls(GlobalVariables.choosenShip, enemyShip, sendDataButton);
+        controls.showStatusBars(gameAreaPane);
 
         damageHandler = new DamageHandler(GlobalVariables.choosenShip, enemyShip, gameAreaPane, sendDataButton);
         sendDataButton.setOnAction(event1 -> {

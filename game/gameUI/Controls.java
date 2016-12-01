@@ -36,7 +36,7 @@ public class Controls {
     private double shipPower;
     private ProgressBar shipIntegrityProgress, shipPowerProgress, shipShieldProgress, enemyshipShieldProgress, enemyshipIntegrityProgress;
     private Label life, power, shield, enemyShield, enemyLife, messageToPlayer;
-    private Button settings;
+    private Button settings,sendData;
     private Circle circle;
     private Label time;
     private SimpleIntegerProperty timeValue;
