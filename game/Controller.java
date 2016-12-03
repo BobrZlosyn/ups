@@ -4,6 +4,7 @@ import client.TcpApplication;
 import client.TcpMessage;
 import game.exportImportDataHandlers.DamageHandler;
 import game.exportImportDataHandlers.ExportImportShip;
+import game.gameUI.OpponentLostMenu;
 import game.startUpMenu.*;
 import game.background.GeneratRandomBackground;
 import game.construction.Placement;
@@ -47,6 +48,8 @@ public class Controller implements Initializable{
     private ErrorAlert errorAlert;
     private BottomPanel bottomPanel;
     private CreateMenu createMenu;
+    private OpponentLostMenu opponentLostMenu;
+    private EndOfGameMenu endOfGame;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -54,7 +57,10 @@ public class Controller implements Initializable{
         errorAlert = new ErrorAlert();
         tcpConnection = new TcpApplication();
         window.setCursor(StyleClasses.NORMAL_CURSOR);
+        endOfGame = new EndOfGameMenu(false);
+        setupEndOfGameMenu();
 
+        opponentLostMenu = new OpponentLostMenu(OpponentLostMenu.WAIT_FOR_OPONNENT_RECONNECTION);
         grb = new GeneratRandomBackground();
         createMainPage();
         windowResize();
@@ -120,30 +126,7 @@ public class Controller implements Initializable{
             tcpConnection.endConnection();
         }
 
-        if (GlobalVariables.isNotEmpty(createMenu)) {
-            createMenu.stopAnimation();
-        }
-
-        if (GlobalVariables.isNotEmpty(controls)) {
-            controls.stopAnimations();
-        }
-
-        sendingTask = stopTask(sendingTask); // ukoncuji odesilaci vlakno
-        tcpConnection.closeReadThread(); // ukoncuji cteci vlakno
-        tcpConnection.closeConnectThread(); // ukoncuji hledani pripojeni
-        tcpConnection.closeActionThread();
-
-    }
-
-
-    private Task stopTask(Task task){
-        if(!GlobalVariables.isEmpty(task)){
-            if(task.isRunning()){
-                task.cancel();
-            }
-        }
-
-        return null;
+        GlobalVariables.APLICATION_EXIT = true;
     }
 
     /**
@@ -227,6 +210,10 @@ public class Controller implements Initializable{
      * nastavi vse potrebne pro zobrazeni hry a jeji ovladani
      */
     private void startGame(){
+        if (GlobalVariables.isNotEmpty(waitingForOponnent)) {
+            waitingForOponnent.stopAnimation();
+        }
+
         GlobalVariables.setGameIsFinished(false);
         window.getChildren().clear();
         gameAreaPane = new Pane();
@@ -300,8 +287,8 @@ public class Controller implements Initializable{
 
             if(newValue.doubleValue() <= 0){
                 GlobalVariables.setGameIsFinished(true);
-                EndOfGameMenu endOfGame = new EndOfGameMenu(false);
-                endWindowSetting(endOfGame, usersShip, enemyShip);
+                endOfGame.setUserIsWinner(false, false);
+                endWindowSetting(usersShip, enemyShip);
                 if(GlobalVariables.isNotEmpty(bottomPanel)){
                     bottomPanel.getQuit().setDisable(true);
                 }
@@ -313,8 +300,8 @@ public class Controller implements Initializable{
 
             if (newValue.doubleValue() <= 0) {
                 GlobalVariables.setGameIsFinished(true);
-                EndOfGameMenu endOfGame = new EndOfGameMenu(true);
-                endWindowSetting(endOfGame, usersShip, enemyShip);
+                endOfGame.setUserIsWinner(true, false);
+                endWindowSetting(usersShip, enemyShip);
                 if(GlobalVariables.isNotEmpty(bottomPanel)){
                     bottomPanel.getQuit().setDisable(true);
                 }
@@ -335,41 +322,52 @@ public class Controller implements Initializable{
 
     /**
      * nastavuje tlacitka na obrazovce s ukoncenou hrou
-     * @param endOfGame
      */
-    private void endWindowSetting(EndOfGameMenu endOfGame, CommonShip usersShip,CommonShip enemyShip){
+    private void endWindowSetting(CommonShip usersShip,CommonShip enemyShip){
         sendDataButton.setDisable(true);
         Timeline delay = new Timeline(new KeyFrame(Duration.seconds(3.5), event1 -> {
-            endOfGame.setupWindow(window);
+            endOfGame.showWindow(window);
             controls.stopAnimations();
             usersShip.getActualLifeBinding().removeListener(userLost);
             enemyShip.getActualLifeBinding().removeListener(userWin);
             GlobalVariables.enemyshipDefinition = "";
             GlobalVariables.setDefaultValues();
-
-            endOfGame.getBackToMenu().setOnAction(event -> {
-                tcpConnection.endConnection();
-                GlobalVariables.shipDefinition = "";
-                createMainPage();
-            });
-
-            endOfGame.getNewGame().setOnAction(event -> {
-                GlobalVariables.choosenShip.restartValues();
-                GlobalVariables.choosenShip.unmarkObject();
-                exportImportShip.setFirstExport(false);
-                prepareGame();
-            });
         }));
         delay.setCycleCount(1);
         delay.playFromStart();
     }
 
+    private void setupEndOfGameMenu() {
+        endOfGame.getBackToMenu().setOnAction(event -> {
+            tcpConnection.endConnection();
+            GlobalVariables.shipDefinition = "";
+            createMainPage();
+        });
+
+        endOfGame.getNewGame().setOnAction(event -> {
+            GlobalVariables.choosenShip.restartValues();
+            GlobalVariables.choosenShip.unmarkObject();
+            exportImportShip.setFirstExport(false);
+            prepareGame();
+        });
+    }
+
     private void createMainPage(){
+
         window.getChildren().clear();
-        createMenu = new CreateMenu();
-        window.add(createMenu.getMenu(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
+        if (GlobalVariables.isEmpty(createMenu)) {
+            createMenu = new CreateMenu();
+        }
+
+        createMenu.showWindow(window);
         createMenu.setConnectionBinding(tcpConnection.isConnectedProperty());
 
+       /* opponentLostMenu.showWindow(window);
+        opponentLostMenu.getQuit().setOnAction(event -> {
+            opponentLostMenu.clean();
+            endOfGame.setUserIsWinner(false, true);
+            endOfGame.showWindow(window);
+        });*/
         setupPickShipMenu(createMenu);
         grb.showWelcomeImage(window);
         errorAlert.showErrorPane(window);
@@ -379,7 +377,7 @@ public class Controller implements Initializable{
      * vlakno pro odesilani zprav
      */
     private void sendingThread(){
-        if (!GlobalVariables.isEmpty(sendingTask)) {
+        if (!GlobalVariables.isEmpty(sendingTask) || GlobalVariables.APLICATION_EXIT) {
             return;
         }
 
@@ -387,7 +385,8 @@ public class Controller implements Initializable{
             @Override
             protected Boolean call() throws InterruptedException{
                 while (true){
-                    if (isCancelled() && GlobalVariables.sendMessageType.isEmpty()) {
+
+                    if (GlobalVariables.APLICATION_EXIT && GlobalVariables.sendMessageType.isEmpty()) {
                         return false;
                     }
 
@@ -400,7 +399,7 @@ public class Controller implements Initializable{
                             GlobalVariables.sendMessageType = "";
                         }
 
-                        if (isCancelled()) return false;
+                        if (GlobalVariables.APLICATION_EXIT) return false;
                         Thread.sleep(1000);
                         continue;
                     }
@@ -426,7 +425,7 @@ public class Controller implements Initializable{
                             waitingForOponnent.setTitleText(WaitingForOponnent.WAITING_FOR_OPONENT);
                             while (!TcpMessage.END_WAITING.equals(GlobalVariables.receivedMsg)){
 
-                                if(isCancelled()){
+                                if(GlobalVariables.APLICATION_EXIT){
                                     return false;
                                 }
 
@@ -475,5 +474,25 @@ public class Controller implements Initializable{
         new Thread(sendingTask).start();
     }
 
+
+    private void resizeGameArea(){
+        gameAreaPane.widthProperty().addListener((observable, oldValue, newValue) -> {
+            CommonShip usersShip = GlobalVariables.choosenShip;
+
+            if(GlobalVariables.isEmpty(usersShip)){
+                return;
+            }
+            usersShip.resize(0, newValue.doubleValue()/2, 0, gameAreaPane.getHeight());
+        });
+
+        gameAreaPane.heightProperty().addListener((observable, oldValue, newValue) -> {
+            CommonShip usersShip = GlobalVariables.choosenShip;
+
+            if(GlobalVariables.isEmpty(usersShip)){
+                return;
+            }
+            usersShip.resize(0, gameAreaPane.getWidth()/2, 0, newValue.doubleValue());
+        });
+    }
 
 }

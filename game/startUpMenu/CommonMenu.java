@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 
@@ -28,7 +29,9 @@ public class CommonMenu {
 
 
     public void showWindow(GridPane window){
-        window.add(menuPane, 0, 0, GridPane.REMAINING, GridPane.REMAINING);
+        if(!window.getChildren().contains(menuPane)) {
+            window.add(menuPane, 0, 0, GridPane.REMAINING, GridPane.REMAINING);
+        }
     }
 
     protected Label createLabel(String text) {
@@ -86,8 +89,13 @@ public class CommonMenu {
         return columns;
     }
 
+    protected Pane createBackgroundPane() {
+        Pane pane = new Pane();
+        pane.setStyle("-fx-background-color: rgba(0,0,0,0.8)");
+        return pane;
+    }
+
     public void clean() {
-        menuPane.getChildren().clear();
         GridPane parent = (GridPane) menuPane.getParent();
         if (GlobalVariables.isNotEmpty(parent)) {
             parent.getChildren().remove(menuPane);

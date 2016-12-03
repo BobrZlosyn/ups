@@ -82,7 +82,7 @@ public class BattleShip extends CommonShip{
 
     public void createMapOfShip(){
         int size = 50;
-        int countOfPlaces = (int)(model.getShip().getRadius()*2 - 50 )/50 -1;
+        int countOfPlaces = (int)(getModel().getWidth() - 50 )/50 -1;
         Placement[][] shipMapping = new Placement[countOfPlaces][4];
 
         double radius = model.getShip().getRadius();
@@ -164,34 +164,6 @@ public class BattleShip extends CommonShip{
     @Override
     public CommonModel getModel() {
         return model;
-    }
-
-    @Override
-    public void resize(double widthStart, double widthEnd, double heightStart, double heightEnd){
-
-        double centerX = (widthEnd - widthStart)/2 + widthStart;
-        double centerY = (heightEnd - heightStart)/2 + heightStart;
-        getModel().setModelXY(centerX, centerY);
-        Placement placements [][] = getPlacementPositions();
-
-        for(int i = 0; i < placements.length; i++){
-            for(int j = 0; j < placements[i].length; j++){
-                Placement placement = getPosition(i,j);
-                if(GlobalVariables.isEmpty(placement)){
-                    continue;
-                }
-
-                placement.resize(countX(getModel().getWidth()/2, placement.getSize(), i), countY(getModel().getHeight()/2, placement.getSize(), j));
-
-                if (GlobalVariables.isNotEmpty(placement.getShipEquipment())) {
-
-                    double x = placement.getX() + placement.getSize()/2;
-                    double y = placement.getY() + placement.getSize()/2;
-                    placement.getShipEquipment().getModel().setModelXY(x, y);
-                }
-
-            }
-        }
     }
 
 }

@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <semaphore.h>
 
 #include "players.h"
 #include "room.h"
@@ -29,9 +30,11 @@
 /*----- Defines ---------------------------------------------------------------*/
 #define  PORT_NUM   1234    /* Arbitrary port number for the server*/
 
-
+sem_t listInFirst;
+sem_t listInRoom;
 PLAYERS *first = NULL;
 ROOMS *firstRoom = NULL;
+
 struct data_for_thread {
 	int 				 connect_s;
 	struct sockaddr_in   client_addr;     
@@ -165,154 +168,167 @@ int attack_action(PLAYERS *first, MESSAGE *msg, char *sendMsg) {
 	return 0;
 }
 
-int doActionByMessage(struct message *msg, char *ip_client, char *sendMsg, int socket) {
+int quit_action(PLAYERS *player, char *sendMsg){
+	printf("ukonceni \n");	
+	
+	if(player == NULL){
+		printf("hrac nenalezen \n");
+		sprintf(sendMsg, "<E; hrac nebyl nalezen>");
+		return -1;
+	}
+	
+	ROOM *room = player->room;
+	if (room != NULL) {
+		PLAYERS *player1 = room->player1;
+		if (player1 != NULL && player1->player->playerID != player->player->playerID){	
+			sprintf(sendMsg, "<R;%d>\n", player1->player->playerID);
+			sendMessage(sendMsg, room->player1->player->socket);
+			room->player2 = NULL;
+		}else{
+			PLAYERS *player2 = room->player2;
+			if (player2 != NULL && player2->player->playerID != player->player->playerID) {
+				sprintf(sendMsg, "<R;%d>\n", player2->player->playerID);
+				sendMessage(sendMsg, room->player2->player->socket);
+				room->player1 = NULL;	
+			}
+		}
+	}
+	
+	first = remove_player(first, player->player->playerID);				
+	return -1;
+	
+}
+
+int start_game(PLAYERS *player, char *sendMsg) {
+	if (player == NULL) {
+		printf("chyba ve vytvoreni hry");
+		return 1;
+	}
+	
+	printf("game \n");
+	ROOM *room = find_free_room(first, player->player->playerID);
+	if (room == NULL) {
+		if(player == NULL){
+			printf("hrace %d nelze nalezt \n",player->player->playerID);
+			sprintf(sendMsg, "<E;hrace nelze najit>\n");
+			return 1;
+		}
+						
+		room = create_room(player);
+		sprintf(sendMsg, "<W; cekani na hrace>\n");
+	} else {
+		if(player == NULL){
+			printf("hrace %d nelze nalezt \n", player->player->playerID);
+			sprintf(sendMsg, "<E;hrace nelze najit>\n");
+			return 1;
+		}
+		
+		add_second_player(player, room);
+		
+		/*order sending*/
+		generate_starting_id(room); 
+		sprintf(sendMsg, "<O;%d>\n", room->isPlayingID);
+		sendMessage(sendMsg, room->player1->player->socket);
+		sendMessage(sendMsg, room->player2->player->socket);
+		
+		/* ship info sending*/
+		sprintf(sendMsg, "<S;%s>\n", room->player2->player->shipInfo);
+		sendMessage(sendMsg, room->player1->player->socket);
+		
+		sprintf(sendMsg, "<S;%s>\n", room->player1->player->shipInfo);
+	}
+	return 0;
+}
+
+int lost_game(PLAYERS *player, char *sendMsg) {
+	if(player == NULL){
+		printf("hrac nenalezen \n");
+		sprintf(sendMsg, "<E; hrac nebyl nalezen>");
+		return 1;
+	}
+	
+	
+	ROOM *room = player->room;
+	if (room != NULL) {
+		PLAYERS *player1 = room->player1;
+		printf("id msg %d", player->player->playerID);
+		
+		/*posle zpravu hraci na prvni pozici*/					
+		if (player1 != NULL && player1->player->playerID != player->player->playerID){	
+			sprintf(sendMsg, "<R;%d>\n", player1->player->playerID);
+			sendMessage(sendMsg, player1->player->socket);
+			free(player1->room);
+			player1->room = NULL;
+		} else{
+			PLAYERS *player2 = room->player2;
+			if (player2 != NULL && player2->player->playerID != player->player->playerID) {
+				sprintf(sendMsg, "<R;%d>\n", player2->player->playerID);
+				free(player2->room);
+				player2->room = NULL;
+				sendMessage(sendMsg, player2->player->socket);	
+			}
+		}
+		free(room);
+		player->room = NULL;
+	}
+	return 0;
+}
+
+int modul_status(PLAYERS *player, char *sendMsg, MESSAGE *msg){
+	if(player == NULL){
+		printf("hrace nelze nalezt \n");
+		sprintf(sendMsg, "<E;hrace nelze najit>\n");
+		return 1;
+	}
+	
+	ROOM *room = player->room;
+	if (room == NULL){
+		return 1;
+	}
+	
+	if(room->player1 != NULL && room->player1->player->playerID == msg->playerID){
+		if(room->player2 != NULL){
+			sprintf(sendMsg, "<M;%s>\n", msg->data);
+			sendMessage(sendMsg, room->player2->player->socket);
+			sprintf(sendMsg, " ");
+		}
+		return 1;			
+	}
+	
+	if(room->player2 != NULL && room->player2->player->playerID == msg->playerID){
+		if(room->player1 != NULL){
+			sprintf(sendMsg, "<M;%s>\n", msg->data);
+			sendMessage(sendMsg, room->player1->player->socket);
+			sprintf(sendMsg, " ");
+		}
+		return 1;
+	}
+	
+	return 0;
+}
+
+int doActionByMessage(struct message *msg, char *ip_client, char *sendMsg, int socket, struct players *player) {
 	sprintf(sendMsg, " ");
-	PLAYERS *player = find_player(first, msg->playerID);
+	if (player == NULL) {
+		player = find_player(first, msg->playerID);
+	}
 	
 	switch(msg->action){
 		case 'C':{
 			first = add_player(first, ip_client, socket);
 			strcpy(first->player->shipInfo, msg->data);	
 			sprintf(sendMsg, "<I;%d>\n", first->player->playerID);
-			
 		} break;
 		
-		case 'M':{
-			if(player == NULL){
-				printf("hrace %d nelze nalezt \n", msg->playerID);
-				sprintf(sendMsg, "<E;hrace nelze najit>\n");
-				break;
-			}
-			
-			ROOM *room = player->room;
-			if (room == NULL){
-				break;
-			}
-			
-			if(room->player1 != NULL && room->player1->player->playerID == msg->playerID){
-				if(room->player2 != NULL){
-					sprintf(sendMsg, "<M;%s>\n", msg->data);
-					sendMessage(sendMsg, room->player2->player->socket);
-					sprintf(sendMsg, " ");
-				}
-				break;				
-			}
-			
-			if(room->player2 != NULL && room->player2->player->playerID == msg->playerID){
-				if(room->player1 != NULL){
-					sprintf(sendMsg, "<M;%s>\n", msg->data);
-					sendMessage(sendMsg, room->player1->player->socket);
-					sprintf(sendMsg, " ");
-				}
-				break;
-			}
-			
-		} break;
+		case 'M': modul_status(player, sendMsg, msg); break;
 		
-		case 'Q':{
-			printf("ukonceni \n");	
-			
-			if(player == NULL){
-				printf("hrac nenalezen %d \n", msg->playerID);
-				sprintf(sendMsg, "<E; hrac nebyl nalezen>");
-				return -1;
-			}
-			
-			ROOM *room = player->room;
-			if (room != NULL) {
-				PLAYERS *player1 = room->player1;
-				if (player1 != NULL && player1->player->playerID != msg->playerID){	
-					sprintf(sendMsg, "<R;%d>\n", player1->player->playerID);
-					sendMessage(sendMsg, room->player1->player->socket);
-					room->player2 = NULL;
-				}else{
-					PLAYERS *player2 = room->player2;
-					if (player2 != NULL && player2->player->playerID != msg->playerID) {
-						sprintf(sendMsg, "<R;%d>\n", player2->player->playerID);
-						sendMessage(sendMsg, room->player2->player->socket);
-						room->player1 = NULL;	
-					}
-				}
-			}
-			
-			first = remove_player(first, msg->playerID);				
-			return -1;
-		} break;
+		case 'Q': return quit_action(player, sendMsg);
 		
-		case 'G':{
-			printf("game \n");
-			ROOM *room = find_free_room(first, msg->playerID);
-			if (room == NULL) {
-				if(player == NULL){
-					printf("hrace %d nelze nalezt \n", msg->playerID);
-					sprintf(sendMsg, "<E;hrace nelze najit>\n");
-					break;
-				}
-								
-				room = create_room(player);
-				sprintf(sendMsg, "<W; cekani na hrace>\n");
-			} else {
-				if(player == NULL){
-					printf("hrace %d nelze nalezt \n", msg->playerID);
-					sprintf(sendMsg, "<E;hrace nelze najit>\n");
-					break;
-				}
-				
-				add_second_player(player, room);
-				
-				/*order sending*/
-				generate_starting_id(room); 
-				sprintf(sendMsg, "<O;%d>\n", room->isPlayingID);
-				sendMessage(sendMsg, room->player1->player->socket);
-				sendMessage(sendMsg, room->player2->player->socket);
-				
-				/* ship info sending*/
-				sprintf(sendMsg, "<S;%s>\n", room->player2->player->shipInfo);
-				sendMessage(sendMsg, room->player1->player->socket);
-				
-				sprintf(sendMsg, "<S;%s>\n", room->player1->player->shipInfo);
-			}
-			
-		} break;
+		case 'G': start_game(player, sendMsg); break;
 		
-		case 'A':attack_action(first, msg, sendMsg); break;
+		case 'A': attack_action(first, msg, sendMsg); break;
 		
-		case 'L':{
-			printf("lost - surrrender %d \n", msg->playerID);	
-			
-			if(player == NULL){
-				printf("hrac nenalezen %d \n", msg->playerID);
-				sprintf(sendMsg, "<E; hrac nebyl nalezen>");
-				break;
-			}
-			
-			
-			ROOM *room = player->room;
-			if (room != NULL) {
-				PLAYERS *player1 = room->player1;
-				printf("id msg %d", msg->playerID);
-				
-				/*posle zpravu hraci na prvni pozici*/					
-				if (player1 != NULL && player1->player->playerID != msg->playerID){	
-					sprintf(sendMsg, "<R;%d>\n", player1->player->playerID);
-					sendMessage(sendMsg, player1->player->socket);
-					free(player1->room);
-					player1->room = NULL;
-				} else{
-					PLAYERS *player2 = room->player2;
-					if (player2 != NULL && player2->player->playerID != msg->playerID) {
-						sprintf(sendMsg, "<R;%d>\n", player2->player->playerID);
-						free(player2->room);
-						player2->room = NULL;
-						sendMessage(sendMsg, player2->player->socket);	
-					}
-				}
-				free(room);
-				player->room = NULL;
-			}
-			
-			
-		} break;
+		case 'L': lost_game(player, sendMsg); break;
 		
 		default :{
 			printf("nenalezeno \n");
@@ -348,6 +364,7 @@ void *user_thread(void *t_param){
 	struct data_for_thread *param = (struct data_for_thread *)t_param;	
 	int retcode;
 	int 				 socket = param->connect_s;
+	struct players *players = NULL;
 	
 	while(1){
 		MESSAGE *message = (MESSAGE *)malloc(sizeof(MESSAGE));
@@ -355,6 +372,10 @@ void *user_thread(void *t_param){
 		retcode = recv(socket, in_buf, sizeof(in_buf), 0);
 		if (retcode < 0) {
 			printf("*** ERROR - recv() failed \n");
+			sem_wait(&listInFirst);
+				quit_action(players, out_buf);
+				players = NULL;
+			sem_post(&listInFirst);
 			break;
 		}
 	
@@ -363,17 +384,32 @@ void *user_thread(void *t_param){
 			free(message);
 			continue;	
 		}	  
-		printf("player %d received %c --- %s \n", message->playerID, message->action, message->data);
 		
-		retcode = doActionByMessage(message, inet_ntoa(param->client_ip_addr), out_buf, socket);
+		printf("recv %d \n", socket);
+		
+		sem_wait(&listInFirst);
+		retcode = doActionByMessage(message, inet_ntoa(param->client_ip_addr), out_buf, socket, players);
+		if (players == NULL && !message->action == 'Q') {
+			players = first;
+		}
+		sem_post(&listInFirst);
+		
+		if(message->action == 'Q') {
+			players = NULL;
+		}
+		
 		if(retcode == 0) {
 			printf("send %s \n", out_buf);
-			sendMessage(out_buf, socket);
+			retcode = sendMessage(out_buf, socket);
 		}
 		
 		free(message);
 		
 		if(retcode < 0){
+			sem_wait(&listInFirst);
+				quit_action(players, out_buf);
+				players = NULL;
+			sem_post(&listInFirst);
 			break;
 		}	  	
 	}
@@ -405,6 +441,9 @@ int main() {
 		
 		WSAStartup(wVersionRequested, &wsaData);
 	#endif
+	
+	sem_init(&listInFirst,0,1);
+	
 	
 	/* >>> Step #2 <<<
 	Fill-in server (my) address information and bind the welcome socket*/

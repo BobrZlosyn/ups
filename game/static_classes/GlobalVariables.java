@@ -36,6 +36,7 @@ public class GlobalVariables {
     public static String sendMessageType = "";
     public static SimpleStringProperty serverIPAdress = new SimpleStringProperty("127.0.0.1");
     public static SimpleStringProperty serverPort = new SimpleStringProperty("1234");
+    public static boolean APLICATION_EXIT = false;
 
     public static void setMarkedObject(CommonConstruction markedObject) {
         if(!isEmpty(markedObject) && !isEmpty(GlobalVariables.markedObject)){

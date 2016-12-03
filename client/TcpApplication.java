@@ -81,7 +81,7 @@ public class TcpApplication {
             GlobalVariables.expectedMsg = TcpMessage.WAITING;
         }
 
-        if (GlobalVariables.isNotEmpty(actionTask)) {
+        if (GlobalVariables.isNotEmpty(actionTask) || GlobalVariables.APLICATION_EXIT) {
             return;
         }
 
@@ -91,7 +91,7 @@ public class TcpApplication {
 
                 while (true){
 
-                    if(isCancelled()){
+                    if(GlobalVariables.APLICATION_EXIT){
                         break;
                     }
 
@@ -179,7 +179,7 @@ public class TcpApplication {
      * task pro cteni zprav ze serveru
      */
     private void readThread(){
-        if(GlobalVariables.isNotEmpty(readTask) && !isConnected()){
+        if(GlobalVariables.isNotEmpty(readTask) && !isConnected() || GlobalVariables.APLICATION_EXIT){
             return;
         }
 
@@ -188,7 +188,7 @@ public class TcpApplication {
             @Override public Void call() {
                 while(true) {
 
-                    if (isCancelled()) {
+                    if (GlobalVariables.APLICATION_EXIT) {
                         closeConnection();
                         break;
                     }
@@ -223,14 +223,14 @@ public class TcpApplication {
      * task pro vytvoreni spojeni se serverem
      */
     public void connectThread(){
-        if(GlobalVariables.isNotEmpty(connectTask) || isConnected()){
+        if(GlobalVariables.isNotEmpty(connectTask) || isConnected() || GlobalVariables.APLICATION_EXIT){
             return;
         }
 
         connectTask = new Task<Boolean>() {
             @Override public Boolean call() {
                 while(true) {
-                    if (isCancelled()) {
+                     if (GlobalVariables.APLICATION_EXIT) {
                         closeConnection();
                         break;
                     }

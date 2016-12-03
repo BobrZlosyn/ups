@@ -117,9 +117,11 @@ public class PickShipMenu extends CommonMenu{
         button.getStyleClass().add(StyleClasses.MENU_BUTTONS);
         button.setCursor(StyleClasses.HAND_CURSOR);
         button.setOnAction(event -> {
-            double x = showArea.getWidth()/2;
-            double y = showArea.getHeight()/2;
+            double x = showArea.getWidth();
+            double y = showArea.getHeight()/2 +ship.getHeight()/2;
             createShip(ship, x, y);
+
+
         });
         return button;
     }
@@ -136,8 +138,8 @@ public class PickShipMenu extends CommonMenu{
         begin = showArea.getChildren().size();
         choosenShip = newShip;
 
-        newShip.positionOfShip(x, y, showArea);
-
+        choosenShip.positionOfShip(x, y, showArea);
+        choosenShip.resize(0, x, 0, y);
         end = showArea.getChildren().size();
 
         titleOfShip.setValue(choosenShip.getName());
@@ -374,8 +376,9 @@ public class PickShipMenu extends CommonMenu{
                 return;
             }
 
-            double width = newValue.intValue();
+            double width = newValue.doubleValue();
             double height = showArea.getHeight()/2 + choosenShip.getHeight()/2;
+
             choosenShip.resize(0, width, 0, height);
         });
 
@@ -385,7 +388,8 @@ public class PickShipMenu extends CommonMenu{
             }
 
             double width = showArea.getWidth();
-            double height = newValue.intValue()/2 + choosenShip.getHeight()/2;
+            double height = newValue.doubleValue()/2 + choosenShip.getHeight()/2;
+
             choosenShip.resize(0, width, 0, height);
         });
     }

@@ -44,6 +44,7 @@ public class WaitingForOponnent extends CommonMenu{
 
     public WaitingForOponnent(){
         createPane();
+        stars = new ArrayList<>();
     }
 
     private void createPane(){
@@ -102,7 +103,11 @@ public class WaitingForOponnent extends CommonMenu{
 
         window.add(menuPane, 0, 0, GridPane.REMAINING, GridPane.REMAINING);
         hint.setText(pickRandomHint());
-        createStar();
+        if (stars.isEmpty()) {
+            createStar();
+        }
+
+        starsAnimeation();
     }
 
 
@@ -132,28 +137,30 @@ public class WaitingForOponnent extends CommonMenu{
 
 
     private void createStar(){
-        if (GlobalVariables.isEmpty(stars)) {
-            stars = new ArrayList<>();
-            int width = (int) ((GridPane)starMap.getParent().getParent()).getWidth();
-            int height = (int)((GridPane)starMap.getParent().getParent()).getHeight();
-            for(int i = 0; i < 2000; i++) {
-                Star star = new Star(width, height);
-                starMap.getChildren().addAll(star.getStar(), star.getLine());
-                stars.add(star);
-            }
-            starsAnimeation();
+        int width = (int) ((GridPane)starMap.getParent().getParent()).getWidth();
+        int height = (int)((GridPane)starMap.getParent().getParent()).getHeight();
+        for(int i = 0; i < 1500; i++) {
+            Star star = new Star(width, height);
+            starMap.getChildren().addAll(star.getStar(), star.getLine());
+            stars.add(star);
         }
-
     }
 
     @Override
     public void clean() {
         ((GridPane)menuPane.getParent()).getChildren().remove(menuPane);
+        stopAnimation();
     }
 
     private void starsAnimeation(){
+        if (GlobalVariables.isNotEmpty(starAnimation)) {
+            starAnimation.playFromStart();
+            return;
+        }
+
         starAnimation = new Timeline(new KeyFrame(Duration.seconds(0.03), event -> {
-            if (stars.isEmpty()) {
+
+             if (stars.isEmpty() || GlobalVariables.APLICATION_EXIT) {
                 starAnimation.stop();
                 return;
             }
@@ -167,7 +174,6 @@ public class WaitingForOponnent extends CommonMenu{
 
             if(GlobalVariables.isEmpty(stars.get(0).getStar().getParent())){
                 starAnimation.stop();
-                starAnimation = null;
             }
 
         }));
@@ -176,7 +182,11 @@ public class WaitingForOponnent extends CommonMenu{
 
     }
 
+    public void stopAnimation(){
+        starAnimation.stop();
+    }
 }
+
 
 
 class Star {

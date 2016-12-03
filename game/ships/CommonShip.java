@@ -453,9 +453,6 @@ public abstract class CommonShip extends CommonConstruction {
         getModel().setModelXY(centerX, centerY);
         Placement placements [][] = getPlacementPositions();
 
-        System.out.println(centerX + " aaaaaaaaaaahoj");
-        System.out.println(centerY + " oooooooooooooo");
-
         for(int i = 0; i < placements.length; i++){
             for(int j = 0; j < placements[i].length; j++){
                 Placement placement = getPosition(i,j);

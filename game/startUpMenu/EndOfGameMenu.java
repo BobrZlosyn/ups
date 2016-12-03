@@ -1,5 +1,6 @@
 package game.startUpMenu;
 
+import game.static_classes.StyleClasses;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -22,42 +23,75 @@ public class EndOfGameMenu extends CommonMenu{
     private Pane pane;
 
     private final String VICTORY = "Vítězství!";
+    private final String EVEN = "Remíza!";
     private final String LOST = "Porážka!";
     private final String NEXT_GAME = "Další bitva";
     private final String BACK_TO_MENU = "Zpět do menu";
 
     public EndOfGameMenu(boolean isUserWinner){
-        createLabel(isUserWinner);
+        createLabel();
         createBackToMenuButton();
         createNewGameButton();
-        createText(isUserWinner);
+        createText();
+        setUserIsWinner(isUserWinner, false);
+        setupWindow();
     }
 
-    private void createLabel(boolean isUserWinner){
+    public EndOfGameMenu(boolean isUserWinner, boolean isEven){
+        createLabel();
+        createBackToMenuButton();
+        createNewGameButton();
+        createText();
+        setUserIsWinner(isUserWinner, isEven);
+        setupWindow();
+    }
 
-        if (isUserWinner) {
-            result = new Label(VICTORY);
-            result.setTextFill(Color.GREEN);
-        }else {
-            result = new Label(LOST);
-            result.setTextFill(Color.RED);
+    public void setUserIsWinner(boolean isWinner, boolean isEven) {
+        if (isEven) {
+            evenSetting();
+            return;
         }
 
+        if (isWinner) {
+            winnerSetting();
+        }else {
+            lostSetting();
+        }
+    }
+
+    private void winnerSetting() {
+        result.setText(VICTORY);
+        result.setTextFill(Color.GREEN);
+        text.setText(getRandomTextToWinner());
+        text.setTextFill(Color.GREEN);
+    }
+
+    private void lostSetting() {
+        result.setText(LOST);
+        result.setTextFill(Color.RED);
+        text.setText(getRandomTextToLoser());
+        text.setTextFill(Color.RED);
+    }
+
+    private void evenSetting() {
+        result.setText(EVEN);
+        result.setTextFill(Color.YELLOW);
+        text.setText(getRandomTextToLoser());
+        text.setTextFill(Color.YELLOW);
+    }
+
+    private void createLabel(){
+
+        result = new Label();
         result.setMaxWidth(Double.MAX_VALUE);
         result.setAlignment(Pos.CENTER);
         result.setFont(Font.font(45));
     }
 
 
-    private void createText(boolean isUserWinner){
-        if(isUserWinner){
-            text = new Label(getRandomTextToWinner());
-            text.setTextFill(Color.GREEN);
-        }else{
-            text = new Label(getRandomTextToLoser());
-            text.setTextFill(Color.RED);
-        }
+    private void createText(){
 
+        text = new Label();
         text.setMaxWidth(Double.MAX_VALUE);
         text.setAlignment(Pos.CENTER);
         text.setTextAlignment(TextAlignment.CENTER);
@@ -66,14 +100,14 @@ public class EndOfGameMenu extends CommonMenu{
     }
 
     private void createNewGameButton(){
-        newGame = createButton(NEXT_GAME,"menuButtons");
+        newGame = createButton(NEXT_GAME, StyleClasses.MENU_BUTTONS);
     }
 
     private void createBackToMenuButton(){
-        backToMenu = createButton(BACK_TO_MENU, "exitButton");
+        backToMenu = createButton(BACK_TO_MENU, StyleClasses.EXIT_BUTTON);
     }
 
-    public void setupWindow(GridPane window){
+    public void setupWindow(){
         menuPane.getColumnConstraints().addAll(generateColumns(4, null));
         menuPane.getRowConstraints().addAll(generateRows(5, null));
 
@@ -90,7 +124,6 @@ public class EndOfGameMenu extends CommonMenu{
         setMargin(backToMenu, 15, 15, 15, 15);
         GridPane.setHalignment(backToMenu, HPos.RIGHT);
 
-        showWindow(window);
     }
 
 
@@ -124,7 +157,5 @@ public class EndOfGameMenu extends CommonMenu{
     public Button getNewGame() {
         return newGame;
     }
-
-
 
 }

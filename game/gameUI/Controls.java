@@ -350,6 +350,11 @@ public class Controls {
 
     private void roundTimeAnimation(Button sendOrders){
 
+        if (GlobalVariables.APLICATION_EXIT) {
+            roundTimeAnimation.stop();
+            roundTimeAnimation = null;
+        }
+
         if(timeValue.get() > 1){
             timeValue.set(timeValue.get() - 1);
         }else {

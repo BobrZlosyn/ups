@@ -2,9 +2,6 @@ package game.startUpMenu;
 
 import game.static_classes.GlobalVariables;
 import game.static_classes.StyleClasses;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -25,11 +22,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 
 import java.util.ArrayList;
 
@@ -37,7 +32,6 @@ import java.util.ArrayList;
  * Created by BobrZlosyn on 28.09.2016.
  */
 public class CreateMenu extends CommonMenu{
-    private GridPane menu;
     private Button start, settings, about, exit;
     private Label connection;
     private Text gameTitle;
@@ -56,7 +50,7 @@ public class CreateMenu extends CommonMenu{
     private final String GAME_TITLE = "SPACE BATTLES";
 
     public CreateMenu(){
-        menu = createGridpane();
+        menuPane = createGridpane();
         init();
     }
 
@@ -225,27 +219,27 @@ public class CreateMenu extends CommonMenu{
         pane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         fallingStars.forEach(fallingStar -> pane.getChildren().add(fallingStar.getStar()));
 
-        menu.add(pane, 0, 0, GridPane.REMAINING, GridPane.REMAINING);
-        menu.add(start,2,2);
-        menu.add(settings,2,3);
-        menu.add(about,2,4);
-        menu.add(exit,2,5);
-        menu.add(connection, 4, 7);
-        menu.add(indicator, 4, 7);
-        menu.add(gameTitle,0,0,GridPane.REMAINING, 1);
+        menuPane.add(pane, 0, 0, GridPane.REMAINING, GridPane.REMAINING);
+        menuPane.add(start,2,2);
+        menuPane.add(settings,2,3);
+        menuPane.add(about,2,4);
+        menuPane.add(exit,2,5);
+        menuPane.add(connection, 4, 7);
+        menuPane.add(indicator, 4, 7);
+        menuPane.add(gameTitle,0,0,GridPane.REMAINING, 1);
 
     }
 
     private void marginInMenuPane(){
-        menu.setMargin(start, new Insets(5, 0, 5, 0));
-        menu.setMargin(settings, new Insets(5, 0, 5, 0));
-        menu.setMargin(about, new Insets(5, 0, 5, 0));
-        menu.setMargin(exit, new Insets(5, 0, 5, 0));
-        menu.setMargin(indicator, new Insets(0, 100, 15, 0));
+        menuPane.setMargin(start, new Insets(5, 0, 5, 0));
+        menuPane.setMargin(settings, new Insets(5, 0, 5, 0));
+        menuPane.setMargin(about, new Insets(5, 0, 5, 0));
+        menuPane.setMargin(exit, new Insets(5, 0, 5, 0));
+        menuPane.setMargin(indicator, new Insets(0, 100, 15, 0));
     }
 
-    public GridPane getMenu() {
-        return menu;
+    public GridPane getMenuPane() {
+        return menuPane;
     }
 
     public Button getStart() {
@@ -253,8 +247,7 @@ public class CreateMenu extends CommonMenu{
     }
 
     public void clean() {
-        menu.setVisible(false);
-        ((GridPane) menu.getParent()).getChildren().remove(menu);
+        super.clean();
         stopAnimation();
     }
 
@@ -293,6 +286,7 @@ public class CreateMenu extends CommonMenu{
     }
 
     private void starFall() {
+
         fallingStars = new ArrayList<>();
         fallingStars.add(new FallingStar(400, -5, 0, 10, 5));
         fallingStars.add(new FallingStar(400, -5, 600, 10, 5));
@@ -301,16 +295,27 @@ public class CreateMenu extends CommonMenu{
         fallingStars.add(new FallingStar(500, 50, 800, 10, 4));
         fallingStars.add(new FallingStar(900, 50, 0, 10, 2));
 
+        if (GlobalVariables.APLICATION_EXIT) {
+            return;
+        }
+
         starFall = new Task(){
 
             @Override
             protected Object call() throws Exception {
                 while (true){
-                    if (isCancelled()){
+
+                    if (GlobalVariables.APLICATION_EXIT){
                         break;
                     }
 
-                    fallingStars.forEach(fallingStar -> fallingStar.falling());
+                    fallingStars.forEach(fallingStar -> {
+                        if (isCancelled()){
+                            return;
+                        }
+
+                        fallingStar.falling();
+                    });
                     Thread.sleep(20);
                 }
                 return null;
@@ -323,6 +328,7 @@ public class CreateMenu extends CommonMenu{
     public void stopAnimation() {
         if (GlobalVariables.isNotEmpty(starFall)) {
             starFall.cancel();
+            starFall = null;
         }
     }
 }
