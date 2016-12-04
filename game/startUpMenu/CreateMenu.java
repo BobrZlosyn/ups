@@ -197,6 +197,7 @@ public class CreateMenu extends CommonMenu{
         exit = createButton(CLOSE, StyleClasses.EXIT_BUTTON);
         exit.getStyleClass().add(StyleClasses.EXIT_BUTTON);
         exit.setOnAction(event -> {
+            CommonMenu.clickSound();
             Platform.exit();
         });
     }

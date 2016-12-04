@@ -1,5 +1,6 @@
 package game.background;
 
+import game.startUpMenu.CommonMenu;
 import game.static_classes.GlobalVariables;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -90,7 +91,6 @@ public class GeneratRandomBackground {
         Platform.runLater(() -> {
             double width = pane.getWidth();
             double height = pane.getHeight();
-
             Image image = new Image(getClass().getResource(activeImage).toExternalForm(), width, height, false ,true);
             BackgroundImage myBI= new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
                     BackgroundPosition.CENTER, BackgroundSize.DEFAULT);

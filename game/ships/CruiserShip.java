@@ -67,10 +67,12 @@ public class CruiserShip extends CommonShip{
     public void displayShip( Pane gameArea){
 
         double width = ((GridPane)gameArea.getParent()).getWidth() / 2;
+        double height = ((GridPane)gameArea.getParent()).getHeight() / 2 - 20;
+
         if(isEnemy()){
-            positionOfShip(width + width/2 - model.getShip().getWidth()/2, 80, gameArea);
+            positionOfShip(width + width/2, height, gameArea);
         }else {
-            positionOfShip(width - width/2 - model.getShip().getWidth()/2, 80, gameArea);
+            positionOfShip(width - width/2, height, gameArea);
         }
     }
 

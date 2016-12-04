@@ -74,40 +74,6 @@ public class TcpApplication {
         return true;
     }
 
-
-    private void actionThread(){
-
-        if(GlobalVariables.expectedMsg.isEmpty()){
-            GlobalVariables.expectedMsg = TcpMessage.WAITING;
-        }
-
-        if (GlobalVariables.isNotEmpty(actionTask) || GlobalVariables.APLICATION_EXIT) {
-            return;
-        }
-
-        actionTask = new Task() {
-            @Override
-            protected Object call() throws Exception {
-
-                while (true){
-
-                    if(GlobalVariables.APLICATION_EXIT){
-                        break;
-                    }
-
-                    doAction();
-
-
-                    Thread.sleep(100);
-                }
-
-                return null;
-            }
-        };
-
-        new Thread(actionTask).start();
-    }
-
     private void doAction() throws InterruptedException{
         //pridat cekani na acknowledge
 
@@ -185,7 +151,7 @@ public class TcpApplication {
 
 
         readTask = new Task<Void>() {
-            @Override public Void call() {
+            @Override public Void call() throws InterruptedException {
                 while(true) {
 
                     if (GlobalVariables.APLICATION_EXIT) {
@@ -199,6 +165,8 @@ public class TcpApplication {
                             break;
                         }
                         System.out.println("read "+message.getMessage());
+                        doAction();
+
                     }else{
                         break;
                     }
@@ -254,7 +222,6 @@ public class TcpApplication {
         connectTask.setOnSucceeded(event -> {
             client.updateIsConnected();
             readThread();
-            actionThread();
             connectTask = null;
         });
 

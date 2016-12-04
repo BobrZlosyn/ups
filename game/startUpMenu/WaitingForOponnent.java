@@ -207,7 +207,7 @@ class Star {
         line = new Line();
         line.setTranslateX(width/2);
         line.setTranslateY(height/2);
-        line.setStrokeWidth(0.1);
+        line.setStrokeWidth(0.25);
         line.setStroke(Color.WHITE);
         //randomColors();
         this.x = (float) star.getCenterX();

@@ -36,7 +36,10 @@ public class AboutGameMenu extends CommonMenu {
 
     private void createButtonBack(){
         backToMenu = createButton(BACK_TO_MENU, StyleClasses.EXIT_BUTTON);
-        backToMenu.setOnAction(event -> clean());
+        backToMenu.setOnAction(event -> {
+            clean();
+            CommonMenu.clickSound();
+        });
     }
 
     private void createText(){

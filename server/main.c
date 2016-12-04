@@ -169,7 +169,6 @@ int attack_action(PLAYERS *first, MESSAGE *msg, char *sendMsg) {
 }
 
 int quit_action(PLAYERS *player, char *sendMsg){
-	printf("ukonceni \n");	
 	
 	if(player == NULL){
 		printf("hrac nenalezen \n");
@@ -192,6 +191,14 @@ int quit_action(PLAYERS *player, char *sendMsg){
 				room->player1 = NULL;	
 			}
 		}
+		
+		if (player1 != NULL) {
+			player1->room = NULL;
+		}
+		
+		if (room->player2 != NULL) {
+			room->player2->room = NULL;
+		}
 	}
 	
 	first = remove_player(first, player->player->playerID);				
@@ -205,7 +212,6 @@ int start_game(PLAYERS *player, char *sendMsg) {
 		return 1;
 	}
 	
-	printf("game \n");
 	ROOM *room = find_free_room(first, player->player->playerID);
 	if (room == NULL) {
 		if(player == NULL){
@@ -251,7 +257,6 @@ int lost_game(PLAYERS *player, char *sendMsg) {
 	ROOM *room = player->room;
 	if (room != NULL) {
 		PLAYERS *player1 = room->player1;
-		printf("id msg %d", player->player->playerID);
 		
 		/*posle zpravu hraci na prvni pozici*/					
 		if (player1 != NULL && player1->player->playerID != player->player->playerID){	
@@ -268,6 +273,7 @@ int lost_game(PLAYERS *player, char *sendMsg) {
 				sendMessage(sendMsg, player2->player->socket);	
 			}
 		}
+		
 		free(room);
 		player->room = NULL;
 	}
@@ -385,11 +391,11 @@ void *user_thread(void *t_param){
 			continue;	
 		}	  
 		
-		printf("recv %d \n", socket);
+		
 		
 		sem_wait(&listInFirst);
 		retcode = doActionByMessage(message, inet_ntoa(param->client_ip_addr), out_buf, socket, players);
-		if (players == NULL && !message->action == 'Q') {
+		if (players == NULL && message->action != 'Q') {
 			players = first;
 		}
 		sem_post(&listInFirst);

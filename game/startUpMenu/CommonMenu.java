@@ -4,6 +4,7 @@ import game.static_classes.GlobalVariables;
 import game.static_classes.StyleClasses;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -11,8 +12,13 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 /**
@@ -46,7 +52,15 @@ public class CommonMenu {
         button.setMaxSize(200, 50);
         button.getStyleClass().add(styleClass);
         button.setCursor(StyleClasses.HAND_CURSOR);
+        button.setOnMouseClicked(event -> {
+            clickSound();
+        });
         return button;
+    }
+
+    public static void clickSound() {
+        AudioClip audioClip = new AudioClip(CommonMenu.class.getResource("/game/resources/sounds/click3.wav").toExternalForm());
+        audioClip.play();
     }
 
     protected TextField createTextField(String text) {

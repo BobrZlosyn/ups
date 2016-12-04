@@ -152,11 +152,13 @@ public class Controller implements Initializable{
      */
     private void setupGunsToShipMenu(PickShipMenu pickShipMenu){
         pickShipMenu.getPrevious().setOnAction(event1 -> {
+            CommonMenu.clickSound();
             pickShipMenu.clean();
             createMainPage();
         });
 
         pickShipMenu.getNextSetup().setOnAction(event -> {
+            CommonMenu.clickSound();
             GlobalVariables.choosenShip = pickShipMenu.getChoosenShip();
             pickShipMenu.clean();
 
@@ -173,6 +175,7 @@ public class Controller implements Initializable{
      */
     private void setupStartButton(GunsToShipMenu gunsToShipMenu){
         gunsToShipMenu.getPrevious().setOnAction(event1 -> {
+            CommonMenu.clickSound();
             gunsToShipMenu.clean();
             PickShipMenu pickShipMenu = new PickShipMenu();
             window.add(pickShipMenu.getPickship(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
@@ -180,6 +183,7 @@ public class Controller implements Initializable{
         });
 
         gunsToShipMenu.getNextButton().setOnAction(event -> {
+            CommonMenu.clickSound();
             exportImportShip.setFirstExport(true);
             prepareGame();
         });
@@ -197,6 +201,7 @@ public class Controller implements Initializable{
 
         waitingForOponnent.showWaitingForOponnent(window);
         waitingForOponnent.getCancel().setOnAction(event -> {
+            CommonMenu.clickSound();
             GlobalVariables.enemyshipDefinition = "";
             waitingForOponnent.clean();
             GlobalVariables.sendMessageType = TcpMessage.QUIT;
@@ -216,6 +221,9 @@ public class Controller implements Initializable{
 
         GlobalVariables.setGameIsFinished(false);
         window.getChildren().clear();
+        // pozadi
+        grb.chooseImage(window, GlobalVariables.startingID);
+
         gameAreaPane = new Pane();
         window.add(gameAreaPane, 0, 0, GridPane.REMAINING, 1);
 
@@ -229,14 +237,14 @@ public class Controller implements Initializable{
 
         endWindowShowUp(GlobalVariables.choosenShip, enemyShip);
 
-        //pozadi
-        grb.chooseImage((GridPane) gameAreaPane.getParent(), GlobalVariables.startingID);
+
 
         //dolni prvky
         bottomPanel = new BottomPanel();
         sendDataButton = bottomPanel.getSendData();
         bottomPanel.showPanel(window, gameAreaPane);
         bottomPanel.getQuit().setOnAction(event1 -> {
+            CommonMenu.clickSound();
             GlobalVariables.setGameIsFinished(true);
             GlobalVariables.sendMessageType = TcpMessage.LOST;
             ((Button)event1.getSource()).setDisable(true);
@@ -251,6 +259,7 @@ public class Controller implements Initializable{
         damageHandler = new DamageHandler(GlobalVariables.choosenShip, enemyShip, gameAreaPane, sendDataButton);
         sendDataButton.setOnAction(event1 -> {
             if(GlobalVariables.isPlayingNow.get()){
+                CommonMenu.clickSound();
                 sendDataButton.setDisable(true);
                 String status = damageHandler.exportEquipmentStatus(GlobalVariables.choosenShip.getPlacementPositions());
                 tcpConnection.sendMessageToServer(TcpMessage.EQUIPMENT_STATUS, status, TcpMessage.WAITING);
@@ -266,6 +275,7 @@ public class Controller implements Initializable{
      */
     private void setupPickShipMenu(CreateMenu createMenu){
         createMenu.getStart().setOnAction(event -> {
+            CommonMenu.clickSound();
             grb.showSpacePort(window);
             createMenu.removeConnectionBinding(tcpConnection.isConnectedProperty());
             createMenu.clean();
@@ -339,12 +349,14 @@ public class Controller implements Initializable{
 
     private void setupEndOfGameMenu() {
         endOfGame.getBackToMenu().setOnAction(event -> {
+            CommonMenu.clickSound();
             tcpConnection.endConnection();
             GlobalVariables.shipDefinition = "";
             createMainPage();
         });
 
         endOfGame.getNewGame().setOnAction(event -> {
+            CommonMenu.clickSound();
             GlobalVariables.choosenShip.restartValues();
             GlobalVariables.choosenShip.unmarkObject();
             exportImportShip.setFirstExport(false);
@@ -354,6 +366,7 @@ public class Controller implements Initializable{
 
     private void createMainPage(){
 
+        grb.showWelcomeImage(window);
         window.getChildren().clear();
         if (GlobalVariables.isEmpty(createMenu)) {
             createMenu = new CreateMenu();
@@ -369,7 +382,6 @@ public class Controller implements Initializable{
             endOfGame.showWindow(window);
         });*/
         setupPickShipMenu(createMenu);
-        grb.showWelcomeImage(window);
         errorAlert.showErrorPane(window);
     }
 

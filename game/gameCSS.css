@@ -48,6 +48,7 @@
 }
 
 .menuButtons, .nextButton, .prevButton, .exitButton {
+
     -fx-background-color: rgba(24,58,168,0.90) ;
     -fx-text-fill: white;
     -fx-font-weight: bold;

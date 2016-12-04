@@ -55,6 +55,7 @@ public class SettingsMenu extends CommonMenu{
     private void createButtonConfirm(){
         confirm = createButton(SAVE_CHANGES, StyleClasses.MENU_BUTTONS);
         confirm.setOnAction(event -> {
+            CommonMenu.clickSound();
             boolean error = false;
             if(checkIPAdress()){
                 Platform.runLater(() -> GlobalVariables.serverIPAdress.set(ipAdressTF.getText().trim()));
@@ -85,7 +86,10 @@ public class SettingsMenu extends CommonMenu{
 
     private void createButtonBack(){
         backToMenu = createButton(BACK_TO_MENU, StyleClasses.EXIT_BUTTON);
-        backToMenu.setOnAction(event -> clean());
+        backToMenu.setOnAction(event -> {
+            clean();
+            CommonMenu.clickSound();
+        });
     }
 
     private boolean checkIPAdress(){
