@@ -35,7 +35,7 @@ public class CommonMenu {
 
 
     public void showWindow(GridPane window){
-        if(!window.getChildren().contains(menuPane)) {
+        if(GlobalVariables.isNotEmpty(window) && !window.getChildren().contains(menuPane)) {
             window.add(menuPane, 0, 0, GridPane.REMAINING, GridPane.REMAINING);
         }
     }
@@ -60,6 +60,7 @@ public class CommonMenu {
 
     public static void clickSound() {
         AudioClip audioClip = new AudioClip(CommonMenu.class.getResource("/game/resources/sounds/click3.wav").toExternalForm());
+        audioClip.volumeProperty().bind(GlobalVariables.volumeSound);
         audioClip.play();
     }
 

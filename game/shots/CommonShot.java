@@ -27,6 +27,7 @@ public abstract class CommonShot {
         this.damage = damage;
         this.intoShields = intoShields;
         shotFiredStatusInterval = 0;
+        soundOfShot();
     }
 
     public void setShotFiredStatus(boolean shotFiredStatus) {
@@ -101,4 +102,6 @@ public abstract class CommonShot {
     public abstract boolean pocitatTrasu();
 
     public abstract CommonWreck getWreck();
+
+    public abstract void soundOfShot();
 }

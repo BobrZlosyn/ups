@@ -3,6 +3,7 @@ package game.static_classes;
 import game.construction.CommonConstruction;
 import game.ships.CommonShip;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.paint.Color;
 
@@ -37,6 +38,8 @@ public class GlobalVariables {
     public static SimpleStringProperty serverIPAdress = new SimpleStringProperty("127.0.0.1");
     public static SimpleStringProperty serverPort = new SimpleStringProperty("1234");
     public static boolean APLICATION_EXIT = false;
+    public static SimpleDoubleProperty volumeSound = new SimpleDoubleProperty(1);
+
 
     public static void setMarkedObject(CommonConstruction markedObject) {
         if(!isEmpty(markedObject) && !isEmpty(GlobalVariables.markedObject)){

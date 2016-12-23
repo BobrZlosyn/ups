@@ -33,6 +33,7 @@ import java.util.ArrayList;
  */
 public class CreateMenu extends CommonMenu{
     private Button start, settings, about, exit;
+    private Button volumeSettings;
     private Label connection;
     private Text gameTitle;
     private Circle indicator;
@@ -48,9 +49,23 @@ public class CreateMenu extends CommonMenu{
     private final String CLOSE = "ODEJÍT";
     private final String ABOUT_GAME = "O HŘE";
     private final String GAME_TITLE = "SPACE BATTLES";
+    private final String SOUND_ON = "ztlumit zvuk";
+    private final String SOUND_OFF = "zapnout zvuk";
 
     public CreateMenu(){
         menuPane = createGridpane();
+
+        volumeSettings = createButton(SOUND_ON, StyleClasses.MENU_BUTTONS);
+        volumeSettings.setOnAction(event -> {
+            if (GlobalVariables.volumeSound.get() > 0) {
+                GlobalVariables.volumeSound.set(0);
+                volumeSettings.setText(SOUND_OFF);
+
+            }else {
+                GlobalVariables.volumeSound.set(1);
+                volumeSettings.setText(SOUND_ON);
+            }
+        } );
         init();
     }
 
@@ -227,6 +242,7 @@ public class CreateMenu extends CommonMenu{
         menuPane.add(exit,2,5);
         menuPane.add(connection, 4, 7);
         menuPane.add(indicator, 4, 7);
+        menuPane.add(volumeSettings, 0, 7);
         menuPane.add(gameTitle,0,0,GridPane.REMAINING, 1);
 
     }

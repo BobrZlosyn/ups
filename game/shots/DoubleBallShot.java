@@ -4,9 +4,12 @@ import game.construction.CommonConstruction;
 import game.construction.Placement;
 import game.shots.wrecksShot.DoubleShotWreck;
 import game.shots.wrecksShot.SimpleShotWreck;
+import game.startUpMenu.CommonMenu;
+import game.static_classes.GlobalVariables;
 import game.weapons.CommonWeapon;
 import javafx.application.Platform;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
@@ -73,5 +76,12 @@ public class DoubleBallShot extends CommonShot{
         DoubleShotWreck shotWreck = new DoubleShotWreck(x1, y1 -5, x1 + 2, y1 + 5, attacker.isEnemy());
         shotWreck.addWrecksToPane((Pane)shot1.getParent(), x1, y1);
         return shotWreck;
+    }
+
+    @Override
+    public void soundOfShot() {
+        AudioClip audioClip = new AudioClip(getClass().getResource("/game/resources/sounds/cannon_gun.wav").toExternalForm());
+        audioClip.volumeProperty().bind(GlobalVariables.volumeSound);
+        audioClip.play();
     }
 }

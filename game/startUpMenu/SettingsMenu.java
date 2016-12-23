@@ -182,4 +182,11 @@ public class SettingsMenu extends CommonMenu{
         setMargin(portTF,       0, 60, 0 , 0);
     }
 
+    @Override
+    public void showWindow(GridPane window) {
+        if(GlobalVariables.isNotEmpty(window) && !window.getChildren().contains(menuPane)) {
+
+            window.add(menuPane, 0, 0, GridPane.REMAINING, GridPane.REMAINING );
+        }
+    }
 }

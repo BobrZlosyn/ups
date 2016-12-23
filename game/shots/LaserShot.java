@@ -2,7 +2,10 @@ package game.shots;
 
 import game.construction.CommonConstruction;
 import game.construction.CommonWreck;
+import game.startUpMenu.CommonMenu;
+import game.static_classes.GlobalVariables;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -91,5 +94,12 @@ public class LaserShot extends CommonShot {
     @Override
     public CommonWreck getWreck() {
         return null;
+    }
+
+    @Override
+    public void soundOfShot() {
+        AudioClip audioClip = new AudioClip(CommonMenu.class.getResource("/game/resources/sounds/laser_shot.wav").toExternalForm());
+        audioClip.volumeProperty().bind(GlobalVariables.volumeSound);
+        audioClip.play();
     }
 }
