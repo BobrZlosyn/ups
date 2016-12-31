@@ -64,21 +64,17 @@ PLAYERS *remove_player(struct players *first, int playerID){
 	
 	PLAYERS *pom = first;
 	PLAYERS *returnPom = first;
-	
-	while (pom != NULL) {
+	while (pom != NULL) {		
 		if (pom->player->playerID == playerID){
 			if(pom->next != NULL) {
 				pom->next->previous = pom->previous;
 			}
-			
 			if(pom->previous != NULL) {
 				pom->previous->next = pom->next;			
 			}
-			 
 			if(pom == first){
 				returnPom = first->next;
 			}
-			
 			free(pom->player);
 			free(pom);
 			break;
@@ -90,10 +86,6 @@ PLAYERS *remove_player(struct players *first, int playerID){
 }
 
 
-PLAYERS *remove_specific_player(struct players *player){
-	
-}
-
 void clear_players(struct players *first) {
 	if (first == NULL) {
 		return;
@@ -102,11 +94,18 @@ void clear_players(struct players *first) {
 	while (first != NULL) {
 		PLAYERS *pom = first;
 		free(pom->player);
-		free(pom->room);
-		
+		clear_room(pom->room);
 		first = first->next;
 		free(pom);
 	}
+}
+
+void clear_room(struct room *room){
+	if(room != NULL){
+		free(room->player1);
+		free(room->player2); 
+	}
+	free(room);
 }
 
 /*
@@ -205,6 +204,7 @@ PLAYERS *find_player_status(struct players * first, int playerID){
 
 void print_players(struct players * first){
 	if (first == NULL) {
+		printf("Zadni hraci nenalezeni. \n");
 		return;
 	}
 	

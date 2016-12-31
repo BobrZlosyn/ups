@@ -31,4 +31,5 @@ void clear_players(struct players * first);
 
 void print_players(struct players * first);
 
+void clear_room(struct room *room);
 #endif

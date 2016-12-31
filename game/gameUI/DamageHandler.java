@@ -1,4 +1,4 @@
-package game.exportImportDataHandlers;
+package game.gameUI;
 
 import client.TcpMessage;
 import game.construction.CommonConstruction;
@@ -7,6 +7,7 @@ import game.construction.Placement;
 import game.shields.CommonShield;
 import game.ships.CommonShip;
 import game.shots.CommonShot;
+import game.startUpMenu.CommonMenu;
 import game.static_classes.GlobalVariables;
 import game.weapons.CommonWeapon;
 import javafx.animation.Animation;
@@ -14,6 +15,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.AudioClip;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -186,11 +188,16 @@ public class DamageHandler {
     private void shooting(){
         shots.forEach(simpleBallShot1 -> {
             if(simpleBallShot1.pocitatTrasu()){
+
                 if(simpleBallShot1.isIntoShields()){
                     simpleBallShot1.getTarget().getPlacement().getShip().damageToShield(simpleBallShot1.getDamage());
                     simpleBallShot1.getWreck();
                 }else {
-                    if(simpleBallShot1.getTarget().getActualLife()>0){
+                    if(simpleBallShot1.getTarget().getActualLife() > 0){
+                        AudioClip audioClip = new AudioClip(CommonMenu.class.getResource("/game/resources/sounds/hit.wav").toExternalForm());
+                        audioClip.volumeProperty().bind(GlobalVariables.volumeSound);
+                        audioClip.play();
+
                         simpleBallShot1.getTarget().takeDamage(simpleBallShot1.getDamage());
                     }
                 }

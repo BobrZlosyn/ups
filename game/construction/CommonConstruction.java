@@ -1,5 +1,6 @@
 package game.construction;
 
+import game.startUpMenu.CommonMenu;
 import game.static_classes.ConstructionTypes;
 import game.static_classes.GlobalVariables;
 import javafx.animation.Animation;
@@ -9,6 +10,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 import javafx.util.Duration;
@@ -135,6 +137,9 @@ public abstract class CommonConstruction implements IMarkableObject{
 
         if (getActualLife() <= 0){
             destroy();
+            AudioClip audioClip = new AudioClip(CommonMenu.class.getResource("/game/resources/sounds/explosion.wav").toExternalForm());
+            audioClip.volumeProperty().bind(GlobalVariables.volumeSound);
+            audioClip.play();
 
             if(ConstructionTypes.isEquipment(getConstructionType())){
                 getPlacement().getShip().takeDamage(50);

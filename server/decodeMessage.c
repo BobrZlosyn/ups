@@ -35,7 +35,7 @@ int decode_message(char *rcvMsg, struct message *msg, int id_max_size) {
 	
 	memcpy(msg->data, &rcvMsg[index], end);
 	msg->data[end - index] = '\0';
-	
+	msg->bytes = end + 1;
 	return 0;
 	
 }

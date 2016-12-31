@@ -69,6 +69,7 @@ public class AdmiralshipModel extends CommonModel {
 
         ship.setLayoutX(x - getWidth()/2);
         ship.setLayoutY(y - getHeight()/2);
+
     }
 
     @Override
@@ -98,6 +99,7 @@ public class AdmiralshipModel extends CommonModel {
 
     }
 
+    boolean changed =false;
     @Override
     public boolean containsPosition(double x, double y) {
         return ship.contains(x, y);

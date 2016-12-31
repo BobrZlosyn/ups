@@ -16,6 +16,8 @@ import javafx.scene.effect.Blend;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.InnerShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -55,17 +57,20 @@ public class CreateMenu extends CommonMenu{
     public CreateMenu(){
         menuPane = createGridpane();
 
-        volumeSettings = createButton(SOUND_ON, StyleClasses.MENU_BUTTONS);
+        volumeSettings = createButton("", null);
+        volumeSettings.setStyle("-fx-background-color: transparent;");
+        volumeSettings.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/game/resources/images/volume-active.png"))));
+        volumeSettings.setMaxWidth(50);
         volumeSettings.setOnAction(event -> {
             if (GlobalVariables.volumeSound.get() > 0) {
                 GlobalVariables.volumeSound.set(0);
-                volumeSettings.setText(SOUND_OFF);
-
+                volumeSettings.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/game/resources/images/volume-off.png"))));
             }else {
                 GlobalVariables.volumeSound.set(1);
-                volumeSettings.setText(SOUND_ON);
+                volumeSettings.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/game/resources/images/volume-active.png"))));
             }
         } );
+
         init();
     }
 
@@ -245,6 +250,8 @@ public class CreateMenu extends CommonMenu{
         menuPane.add(volumeSettings, 0, 7);
         menuPane.add(gameTitle,0,0,GridPane.REMAINING, 1);
 
+        GridPane.setHalignment(volumeSettings, HPos.LEFT);
+
     }
 
     private void marginInMenuPane(){
@@ -253,6 +260,7 @@ public class CreateMenu extends CommonMenu{
         menuPane.setMargin(about, new Insets(5, 0, 5, 0));
         menuPane.setMargin(exit, new Insets(5, 0, 5, 0));
         menuPane.setMargin(indicator, new Insets(0, 100, 15, 0));
+        menuPane.setMargin(volumeSettings, new Insets(0, 0, 0, 10));
     }
 
     public GridPane getMenuPane() {
@@ -279,20 +287,26 @@ public class CreateMenu extends CommonMenu{
     }
 
     private void setSuccesfulConnection(){
-        connection.setText(CONNECT);
-        connection.setTextFill(Color.GREEN);
-        indicator.setFill(Color.GREEN);
+        Platform.runLater(() -> {
+            connection.setText(CONNECT);
+            connection.setTextFill(Color.GREEN);
+            indicator.setFill(Color.GREEN);
+        });
     }
 
     private void setFailedConnection(){
-        connection.setText(DISCONNECT);
-        connection.setTextFill(Color.RED);
-        indicator.setFill(Color.RED);
+        Platform.runLater(() -> {
+            connection.setText(DISCONNECT);
+            connection.setTextFill(Color.RED);
+            indicator.setFill(Color.RED);
+        });
     }
 
     public void setConnectionBinding(SimpleBooleanProperty connectionStatus) {
         if(connectionStatus.get()){
             setSuccesfulConnection();
+        }else {
+            setFailedConnection();
         }
 
         connectionStatus.addListener(connectionListener);

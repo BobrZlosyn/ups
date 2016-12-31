@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=3
 CompilerSettings=1000000100100000001000000
-UnitCount=12
+UnitCount=14
 
 [VersionInfo]
 Major=1
@@ -162,6 +162,26 @@ BuildCmd=
 
 [Unit12]
 FileName=statistics.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit13]
+FileName=serverFunctions.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit14]
+FileName=serverFunctions.c
 CompileCpp=0
 Folder=
 Compile=1

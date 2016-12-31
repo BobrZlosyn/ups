@@ -133,16 +133,14 @@ public class SettingsMenu extends CommonMenu{
     private void setupWindow(){
 
         double [] percentHeight = new double[]{
+                9,
+                15,
+                11,
+                15,
+                11,
+                11,
                 20,
-                8,
-                5,
-                8,
-                5,
-                5,
-                7,
-                14,
-                8,
-                20
+                9,
         };
         double [] percentWidth = new double[]{
                 45,
@@ -151,21 +149,18 @@ public class SettingsMenu extends CommonMenu{
                 15,
         };
 
-        menuPane.getColumnConstraints().addAll(generateColumns(4, percentWidth));
-        menuPane.getRowConstraints().addAll(generateRows(10, percentHeight));
+        menuPane.getColumnConstraints().addAll(generateColumns(percentWidth.length, percentWidth));
+        menuPane.getRowConstraints().addAll(generateRows(percentHeight.length, percentHeight));
+        menuPane.setStyle("-fx-background-color: rgba(0, 0, 0, 0.95);");
 
-        paneOver = new Pane();
-        paneOver.setStyle("-fx-background-color: rgba(0, 0, 0, 0.95);");
-
-        menuPane.add(paneOver,      0, 1, GridPane.REMAINING, 8);
-        menuPane.add(paneTitle,     0, 2, 1, 5);
-        menuPane.add(ipAdressLabel, 1, 2, 2, 1);
-        menuPane.add(ipAdressTF,    1, 3, 2, 1);
-        menuPane.add(portLabel,     1, 4, 2, 1);
-        menuPane.add(portTF,        1, 5, 2, 1);
-        menuPane.add(errror,        1, 6, 2, 1);
-        menuPane.add(backToMenu,    1, 7, 1, 1);
-        menuPane.add(confirm,       2, 7, 1, 1);
+        menuPane.add(paneTitle,     0, 1, 1, 5);
+        menuPane.add(ipAdressLabel, 1, 1, 2, 1);
+        menuPane.add(ipAdressTF,    1, 2, 2, 1);
+        menuPane.add(portLabel,     1, 3, 2, 1);
+        menuPane.add(portTF,        1, 4, 2, 1);
+        menuPane.add(errror,        1, 5, 2, 1);
+        menuPane.add(backToMenu,    1, 6, 1, 1);
+        menuPane.add(confirm,       2, 6, 1, 1);
 
         GridPane.setValignment(ipAdressTF, VPos.TOP);
         GridPane.setValignment(portTF, VPos.TOP);
@@ -174,8 +169,8 @@ public class SettingsMenu extends CommonMenu{
 
         GridPane.setHalignment(confirm, HPos.RIGHT);
 
-        setMargin(confirm,      10, 0, 10, 10);
-        setMargin(backToMenu,   10, 10, 10, 0);
+        setMargin(confirm,      5, 0, 5, 10);
+        setMargin(backToMenu,   5, 10, 5, 0);
         setMargin(ipAdressLabel,0, 60, 0 , 0);
         setMargin(ipAdressTF,   0, 60, 0 , 0);
         setMargin(portLabel,    0, 60, 0 , 0);
@@ -186,7 +181,8 @@ public class SettingsMenu extends CommonMenu{
     public void showWindow(GridPane window) {
         if(GlobalVariables.isNotEmpty(window) && !window.getChildren().contains(menuPane)) {
 
-            window.add(menuPane, 0, 0, GridPane.REMAINING, GridPane.REMAINING );
+            window.add(menuPane, 0, 1, GridPane.REMAINING, 6 );
+
         }
     }
 }

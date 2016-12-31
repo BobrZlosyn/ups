@@ -13,6 +13,7 @@ import game.weapons.CommonWeapon;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -304,8 +305,10 @@ public class BottomPanel extends CommonMenu{
         targeting.setOnAction(event -> {
             if(!setTarget){
                 startTargeting();
+                targeting.getParent().getParent().setCursor(StyleClasses.ENEMY_CURSOR);
             }else {
                 acknoledgeTarget();
+                targeting.getParent().getParent().setCursor(StyleClasses.NORMAL_CURSOR);
             }
         });
 

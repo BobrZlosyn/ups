@@ -2,7 +2,7 @@ package game;
 
 import client.TcpApplication;
 import client.TcpMessage;
-import game.exportImportDataHandlers.DamageHandler;
+import game.gameUI.DamageHandler;
 import game.exportImportDataHandlers.ExportImportShip;
 import game.gameUI.OpponentLostMenu;
 import game.startUpMenu.*;
@@ -20,7 +20,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -111,9 +110,12 @@ public class Controller implements Initializable{
 
         tcpConnection.isConnectedProperty().addListener((observable, oldValue, newValue) ->{
             if (!newValue && !GlobalVariables.enemyshipDefinition.isEmpty()){
-                window.getChildren().clear();
-                GlobalVariables.errorMsg = ErrorAlert.NOT_CONNECTED_TO_SERVER;
-                createMainPage();
+                Platform.runLater(() -> {
+                    window.getChildren().clear();
+                    GlobalVariables.errorMsg = ErrorAlert.NOT_CONNECTED_TO_SERVER;
+                    createMainPage();
+                });
+
             }
         });
 

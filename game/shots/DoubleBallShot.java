@@ -13,6 +13,8 @@ import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+import java.time.LocalTime;
+
 /**
  * Created by BobrZlosyn on 02.10.2016.
  */
@@ -67,7 +69,7 @@ public class DoubleBallShot extends CommonShot{
             setIntoShields(false);
         }
 
-        return target.containsPosition(x1,y1);
+        return shotInPosition(x1, target.getCenterX(),y1, target.getCenterY());
     }
 
     @Override

@@ -162,7 +162,7 @@ public class TcpApplication {
                     if(isConnected()){
                         message.decodeMessage(client.getMessage());
                         if(message.getMessage().isEmpty()){
-                            break;
+                           // break;
                         }
                         System.out.println("read "+message.getMessage());
                         doAction();
@@ -198,20 +198,22 @@ public class TcpApplication {
         connectTask = new Task<Boolean>() {
             @Override public Boolean call() {
                 while(true) {
-                     if (GlobalVariables.APLICATION_EXIT) {
+                    client.updateIsConnected();
+
+                    try {
+                        Thread.sleep(1500);
+                    } catch (InterruptedException e) {
+
+                        e.printStackTrace();
+                        break;
+                    }
+
+                    if (GlobalVariables.APLICATION_EXIT) {
                         closeConnection();
                         break;
                     }
                     if(sendConnectionMessage()){
                         message.removeID();
-                        break;
-                    }
-
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-
-                        e.printStackTrace();
                         break;
                     }
                 }
@@ -263,8 +265,10 @@ public class TcpApplication {
         if(!GlobalVariables.isEmpty(client)){
             client.close();
         }
-
+        client.updateIsConnected();
         message.removeID();
+        connectThread();
+
     }
 
     public TcpMessage getMessage() {

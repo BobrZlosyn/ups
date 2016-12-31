@@ -8,18 +8,17 @@
 ROOM *create_room(struct players *player1){
 	
 	if (player1 == NULL){
-		printf("jsem hrac nikdo");
 		return NULL;
 	}
 	
 	if (player1->room != NULL) {
-		printf("nejsem prazdny");
 		return player1->room;
 	}
 	
 	ROOM *room = (ROOM *)malloc(sizeof(ROOM));
 	room->isWaiting = 1;
 	room->player1 = player1;
+	room->player2 = NULL;
 	
 	player1->room = room;
 	player1->isFree = 0;
@@ -83,10 +82,3 @@ void print_room(struct room *room){
 	printf("Room with ID %d \n", room->roomID);
 }
 
-void clear_room(struct room *room){
-	if(room != NULL){
-		return;
-	}
-	
-	free(room);
-}

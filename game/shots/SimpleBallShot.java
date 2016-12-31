@@ -59,7 +59,7 @@ public class SimpleBallShot extends CommonShot{
             setIntoShields(false);
         }
 
-        return target.containsPosition(x1,y1);
+        return  shotInPosition(x1, target.getCenterX(),y1, target.getCenterY());
     }
 
     @Override

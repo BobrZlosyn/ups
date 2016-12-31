@@ -95,6 +95,14 @@ public abstract class CommonShot {
         shotFiredStatusInterval++;
     }
 
+    protected boolean shotInPosition (double x1, double x2, double y1, double y2){
+        int xRozdil = Math.abs((int)x1 - (int)x2);
+        int yRozdil = Math.abs((int)y1 - (int)y2);
+
+
+        return (yRozdil < 10 && xRozdil < 10);
+    }
+
     public abstract void addShot(Pane gameArea);
 
     public abstract void removeShot(Pane gameArea);

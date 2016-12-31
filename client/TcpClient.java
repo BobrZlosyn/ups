@@ -133,6 +133,8 @@ public class TcpClient{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        isConnected.set(false);
         return line;
     }
 

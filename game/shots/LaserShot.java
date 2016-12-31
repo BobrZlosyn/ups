@@ -12,13 +12,15 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Line;
 
+import java.time.LocalTime;
+
 /**
  * Created by Kanto on 15.11.2016.
  */
 public class LaserShot extends CommonShot {
     private Line shot;
     private int countHit;
-
+    private LocalTime time;
     public LaserShot(CommonConstruction target, CommonConstruction attacker, int damage, boolean intoShields) {
         super(target, attacker, damage, intoShields);
         setIntoShields(false);
@@ -32,6 +34,8 @@ public class LaserShot extends CommonShot {
 
     public void setXY(){
         //posunuti pred kanon
+
+        time = LocalTime.now().plusSeconds(2).plusNanos(800000000);
         for(int i = 0; i < 15; i++){
             double [] coordinates = rovnicePrimka(x1,y1,target.getCenterX(),target.getCenterY());
             x1 = coordinates[0];
@@ -56,6 +60,11 @@ public class LaserShot extends CommonShot {
 
     @Override
     public boolean pocitatTrasu() {
+
+        if(!LocalTime.now().isAfter(time)){
+            return false;
+        }
+
         for (int i = 0; i < 3; i++){
             returnToPreparePosition(25);
             if(countHit != 0){
@@ -70,7 +79,7 @@ public class LaserShot extends CommonShot {
         shot.setEndX(x1);
         shot.setEndY(y1);
 
-        if(countHit <= 25 && target.containsPosition(x1,y1) ){
+        if(countHit <= 25 && (target.containsPosition(x1,y1) || shotInPosition(x1, target.getCenterX(), y1, target.getCenterY()))){
             countHit ++;
             hittingTarget();
             return false;
@@ -81,6 +90,8 @@ public class LaserShot extends CommonShot {
 
         return false;
     }
+
+
 
     private void hittingTarget(){
         if(countHit % 5 == 0) {

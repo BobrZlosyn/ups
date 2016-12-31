@@ -1,5 +1,6 @@
 package game.startUpMenu;
 
+import game.static_classes.GlobalVariables;
 import game.static_classes.StyleClasses;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -64,15 +65,14 @@ public class AboutGameMenu extends CommonMenu {
     private void setupWindow(){
 
         double [] percentHeight = new double[]{
+                9,
+                15,
+                11,
+                15,
+                11,
+                11,
                 20,
-                8,
-                5,
-                10,
-                5,
-                10,
-                14,
-                8,
-                20
+                9,
         };
         double [] percentWidth = new double[]{
                 45,
@@ -81,19 +81,23 @@ public class AboutGameMenu extends CommonMenu {
                 15,
         };
 
-        menuPane.getColumnConstraints().addAll(generateColumns(4, percentWidth));
-        menuPane.getRowConstraints().addAll(generateRows(9, percentHeight));
+        menuPane.getColumnConstraints().addAll(generateColumns(percentWidth.length, percentWidth));
+        menuPane.getRowConstraints().addAll(generateRows(percentHeight.length, percentHeight));
 
-        paneOver = new Pane();
-        paneOver.setStyle("-fx-background-color: rgba(0, 0, 0, 0.95);");
+        menuPane.setStyle("-fx-background-color: rgba(0, 0, 0, 0.95);");
 
-        menuPane.add(paneOver,      0, 1, GridPane.REMAINING, 7);
-        menuPane.add(paneTitle,     0, 2, 1, 5);
-        menuPane.add(text,          1, 2, 2, 4);
+        menuPane.add(paneTitle,     0, 1, 1, 5);
+        menuPane.add(text,          1, 1, 2, 5);
         menuPane.add(backToMenu,    1, 6, 1, 1);
 
         GridPane.setValignment(paneTitle, VPos.TOP);
         setMargin(backToMenu,   10, 10, 10, 0);
     }
 
+    @Override
+    public void showWindow(GridPane window) {
+        if(GlobalVariables.isNotEmpty(window) && !window.getChildren().contains(menuPane)) {
+            window.add(menuPane, 0, 1, GridPane.REMAINING, 6 );
+        }
+    }
 }

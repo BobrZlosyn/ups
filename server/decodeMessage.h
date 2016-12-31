@@ -8,6 +8,7 @@ struct message{
 	char data [100];
 	char action;
 	int isEmpty;
+	int bytes;
 
 }MESSAGE;
 
