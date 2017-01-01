@@ -36,6 +36,7 @@ public class CommonMenu {
 
     public void showWindow(GridPane window){
         if(GlobalVariables.isNotEmpty(window) && !window.getChildren().contains(menuPane)) {
+            window.setCursor(StyleClasses.NORMAL_CURSOR);
             window.add(menuPane, 0, 0, GridPane.REMAINING, GridPane.REMAINING);
         }
     }

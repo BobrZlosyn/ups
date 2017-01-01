@@ -257,7 +257,12 @@ void functions(char *order, PLAYERS *first, ENV *environment){
 	
 }
 
+
+
 char *trim_whitespace(char *str) {
+	
+	
+	
   char *end;
 
   while(isspace((unsigned char)*str)) str++;

@@ -447,7 +447,7 @@ int main() {
 		WSADATA wsaData;                              /* Stuff for WSA functions*/
 	#endif
 		int                  welcome_s;       /* Welcome socket descriptor*/
-	
+		struct sockaddr_in   server_addr;     /* Server Internet address*/
 		int                  connect_s;       /* Connection socket descriptor*/
 		int                  addr_len;        /* Internet address length*/
 		pthread_t 			 thread;
@@ -464,7 +464,7 @@ int main() {
 	pthread_create(&thread, NULL, &server_env, &data);
 	signal(SIGINT, clearApp);	
 	create_folder();
-	struct sockaddr_in   server_addr;     /* Server Internet address*/
+	
 	
 	/* >>> Step #2 <<<
 	Fill-in server (my) address information and bind the welcome socket*/
@@ -474,12 +474,14 @@ int main() {
 	/* >>> Step #1 <<<
 	Create a welcome socket
  	- AF_INET is Address Family Internet and SOCK_STREAM is streams*/
-	  
 	while (1) {
 		server_addr.sin_port = htons(environment->SERVER_PORT); 
 		/*tisknuti pridanych uzivatelu*/
 		welcome_s = initializeWelcomeSocket(server_addr);	
-		listen(welcome_s, 5);
+		if(listen(welcome_s, 5) < 0){
+			print_error(environment, "listen error");
+			continue;
+		}
 		
 		/* Accept a connection.  The accept() will block and then return with*/
 		/* connect_s assigned and client_addr filled-in.*/

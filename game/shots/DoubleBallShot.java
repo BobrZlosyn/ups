@@ -27,18 +27,10 @@ public class DoubleBallShot extends CommonShot{
 
     public DoubleBallShot(CommonConstruction target, CommonConstruction attacker, int damage, boolean isShields){
         super(target, attacker, damage, isShields);
-        RadialGradient gradient1 = new RadialGradient(0,
-                .1,
-                x1,
-                y1,
-                10,
-                false,
-                CycleMethod.NO_CYCLE,
-                new Stop(0, Color.GOLD),
-                new Stop(1, Color.GREEN));
 
-        shot1 = new Circle(x1, y1, 10, gradient1);
-        shot2 = new Circle(x1, y1, 10, gradient1);
+
+        shot1 = new Circle(x1, y1, 3, Color.GOLD);
+        shot2 = new Circle(x1, y1, 3, Color.GOLD);
         setXY();
     }
 

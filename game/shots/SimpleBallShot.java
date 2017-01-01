@@ -23,18 +23,9 @@ public class SimpleBallShot extends CommonShot{
     public SimpleBallShot(CommonConstruction target, CommonConstruction attacker, int damage, boolean intoShields){
         super(target, attacker, damage, intoShields);
 
-        RadialGradient gradient1 = new RadialGradient(0,
-                .1,
-                1.5,
-                1.5,
-                3,
-                false,
-                CycleMethod.NO_CYCLE,
-                new Stop(0, Color.GOLD),
-                new Stop(1, Color.TRANSPARENT));
 
 
-        shot = new Circle(x1, y1, 10, gradient1);
+        shot = new Circle(x1, y1, 3, Color.GOLD);
         setXY();
     }
 

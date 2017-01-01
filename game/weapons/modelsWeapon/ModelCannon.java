@@ -66,6 +66,7 @@ public class ModelCannon extends CommonModel{
         room.setFill(Color.ORANGE);
         head.setFill(Color.YELLOW);
         cannon.setFill(Color.RED);
+       // head.setStyle("-fx-fill: radial-gradient(focus-angle 45deg, focus-distance 100%, center 25% 25%, radius 50%, reflect, green, red, purple);");
     }
 
     @Override
