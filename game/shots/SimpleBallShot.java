@@ -8,6 +8,9 @@ import game.weapons.CommonWeapon;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Circle;
 
 /**
@@ -19,7 +22,19 @@ public class SimpleBallShot extends CommonShot{
 
     public SimpleBallShot(CommonConstruction target, CommonConstruction attacker, int damage, boolean intoShields){
         super(target, attacker, damage, intoShields);
-        shot = new Circle(x1, y1, 4, Color.GOLD);
+
+        RadialGradient gradient1 = new RadialGradient(0,
+                .1,
+                1.5,
+                1.5,
+                3,
+                false,
+                CycleMethod.NO_CYCLE,
+                new Stop(0, Color.GOLD),
+                new Stop(1, Color.TRANSPARENT));
+
+
+        shot = new Circle(x1, y1, 10, gradient1);
         setXY();
     }
 

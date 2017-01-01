@@ -40,10 +40,6 @@ public class CannonWeapon extends CommonWeapon{
 
     private void createCannon() {
         modelCannon = new ModelCannon();
-        modelCannon.getParts().forEach(shape -> {
-            markShape(shape);
-        });
-
     }
 
     @Override
@@ -52,6 +48,7 @@ public class CannonWeapon extends CommonWeapon{
         double y = position.getY();
         double width = position.getSize();
         setIsEnemy(isEnemy);
+        markShape();
         if(!position.isEmpty()){
             return;
         }

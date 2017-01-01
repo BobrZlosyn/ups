@@ -1,5 +1,6 @@
 package game.startUpMenu;
 
+import game.exportImportDataHandlers.WriteSettings;
 import game.static_classes.GlobalVariables;
 import game.static_classes.StyleClasses;
 import javafx.application.Platform;
@@ -57,25 +58,13 @@ public class CreateMenu extends CommonMenu{
     public CreateMenu(){
         menuPane = createGridpane();
 
-        volumeSettings = createButton("", null);
-        volumeSettings.setStyle("-fx-background-color: transparent;");
-        volumeSettings.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/game/resources/images/volume-active.png"))));
-        volumeSettings.setMaxWidth(50);
-        volumeSettings.setOnAction(event -> {
-            if (GlobalVariables.volumeSound.get() > 0) {
-                GlobalVariables.volumeSound.set(0);
-                volumeSettings.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/game/resources/images/volume-off.png"))));
-            }else {
-                GlobalVariables.volumeSound.set(1);
-                volumeSettings.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/game/resources/images/volume-active.png"))));
-            }
-        } );
+
 
         init();
     }
 
     private void init(){
-
+        createSoundButton();
         createStartButton();
         createStartAbout();
         createGameTitle();
@@ -89,6 +78,39 @@ public class CreateMenu extends CommonMenu{
 
     }
 
+    private void createSoundButton(){
+        volumeSettings = createButton("", null);
+        volumeSettings.setStyle("-fx-background-color: transparent;");
+
+        setImageOnSoundButton();
+        volumeSettings.setMaxWidth(32);
+        volumeSettings.setOnAction(event -> {
+            GlobalVariables.volumeSound.set((GlobalVariables.volumeSound.getValue() + 1) % 2);
+            setImageOnSoundButtonHover();
+            WriteSettings.writeSettings();
+        } );
+
+        volumeSettings.setOnMouseEntered(event -> {
+
+        });
+        volumeSettings.setOnMouseEntered(event -> setImageOnSoundButtonHover());
+        volumeSettings.setOnMouseExited(event -> setImageOnSoundButton());
+    }
+    private void setImageOnSoundButtonHover() {
+        if(GlobalVariables.volumeSound.get() > 0) {
+            volumeSettings.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/game/resources/images/volume-active-hover.png"))));
+        }else{
+            volumeSettings.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/game/resources/images/volume-off-hover.png"))));
+        }
+    }
+
+    private void setImageOnSoundButton() {
+        if(GlobalVariables.volumeSound.get() > 0) {
+            volumeSettings.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/game/resources/images/volume-active.png"))));
+        }else{
+            volumeSettings.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/game/resources/images/volume-off.png"))));
+        }
+    }
 
     private void createGameTitle(){
 

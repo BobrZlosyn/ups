@@ -3,6 +3,15 @@
 #include <string.h>
 #include "decodeMessage.h"
 
+MESSAGE *create_message(){
+	MESSAGE *message = (MESSAGE *)malloc(sizeof(MESSAGE));
+	message->action = '/';
+	message->bytes = 0;
+	message->isEmpty = 0;
+	message->playerID = 0;
+	sprintf(message->data," ");
+	return message;
+}
 
 int decode_message(char *rcvMsg, struct message *msg, int id_max_size) {
 	int  index, end;
@@ -14,10 +23,9 @@ int decode_message(char *rcvMsg, struct message *msg, int id_max_size) {
 	}else{
 		msg->isEmpty = 0;
 	}
-	
 	msg->action = rcvMsg[1];
-	index = 3;
 	
+	index = 3;
 	while (1) {
 		if (rcvMsg[index] == ';') {
 			break;
@@ -28,9 +36,7 @@ int decode_message(char *rcvMsg, struct message *msg, int id_max_size) {
 	}
 	id[index - 3] = '\0';
 	index++;
-	
 	msg->playerID = atoi(id);
-	
 	end = strchr(rcvMsg,'>') - rcvMsg;
 	
 	memcpy(msg->data, &rcvMsg[index], end);

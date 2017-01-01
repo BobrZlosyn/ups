@@ -37,10 +37,7 @@ public class AdmiralShip extends CommonShip{
 
     private void createShip(){
         model = new AdmiralshipModel();
-
-        model.getShip().setOnMouseClicked(event -> {
-            markingHandle(isMarked(), this);
-        });
+        markShape();
     }
 
     @Override

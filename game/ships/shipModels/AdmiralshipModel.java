@@ -22,7 +22,6 @@ public class AdmiralshipModel extends CommonModel {
         width = 270;
         height = 350;
         createShip();
-        addCursorHandClass();
         strokeOnMouseOver();
         setDefaultSkin();
     }

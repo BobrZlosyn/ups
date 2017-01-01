@@ -2,6 +2,7 @@ package game;
 
 import client.TcpApplication;
 import client.TcpMessage;
+import game.exportImportDataHandlers.LoadSettings;
 import game.gameUI.DamageHandler;
 import game.exportImportDataHandlers.ExportImportShip;
 import game.gameUI.OpponentLostMenu;
@@ -61,6 +62,7 @@ public class Controller implements Initializable{
 
         opponentLostMenu = new OpponentLostMenu(OpponentLostMenu.WAIT_FOR_OPONNENT_RECONNECTION);
         grb = new GeneratRandomBackground();
+        LoadSettings.loadSettings(0);
         createMainPage();
         windowResize();
         tcpConnection.connectThread();
@@ -84,9 +86,9 @@ public class Controller implements Initializable{
         GlobalVariables.equipmentStatus.addListener((observable, oldValue, newValue) -> {
             if (!newValue.isEmpty()) {
 
-                if (!GlobalVariables.isEmpty(damageHandler)) {
+                if (!GlobalVariables.isEmpty(exportImportShip)) {
                     Platform.runLater(() ->{
-                        damageHandler.importEquipmentStatus(newValue);
+                        exportImportShip.importEquipmentStatus(newValue);
                         GlobalVariables.equipmentStatus.set("");
                     });
                 }
@@ -263,7 +265,7 @@ public class Controller implements Initializable{
             if(GlobalVariables.isPlayingNow.get()){
                 CommonMenu.clickSound();
                 sendDataButton.setDisable(true);
-                String status = damageHandler.exportEquipmentStatus(GlobalVariables.choosenShip.getPlacementPositions());
+                String status = exportImportShip.exportEquipmentStatus(GlobalVariables.choosenShip.getPlacementPositions());
                 tcpConnection.sendMessageToServer(TcpMessage.EQUIPMENT_STATUS, status, TcpMessage.WAITING);
                 String actions = damageHandler.exportShooting(GlobalVariables.choosenShip.getPlacementPositions());
                 tcpConnection.sendMessageToServer(TcpMessage.ATTACK, actions, TcpMessage.ATTACK);

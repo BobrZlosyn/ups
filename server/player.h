@@ -8,7 +8,8 @@ struct player{
 	int socket;
 	char playerIP [15];
 	char playerName [20];
-	char shipInfo [100];
+	char shipInfo [200];
+	char modulInfo [200];
 
 }PLAYER;
 

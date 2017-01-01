@@ -34,9 +34,6 @@ public class StrongerShield extends CommonShield {
 
     private void createShield() {
         model = new StrongerShieldModel();
-        model.getParts().forEach(shape -> {
-            markShape(shape);
-        });
     }
 
     @Override
@@ -46,6 +43,7 @@ public class StrongerShield extends CommonShield {
 
 
         setIsEnemy(isEnemy);
+        markShape();
         if(!place.isEmpty()){
             return;
         }

@@ -137,6 +137,10 @@ public class BottomPanel extends CommonMenu{
                         notEnoughEnergy(GlobalVariables.getMarkedObject(), activateShield, SHIELD_ON);
                     }
 
+                    GlobalVariables.isPlayingNow.addListener((observable1, oldValue1, newValue1) -> {
+                        activateShield.setDisable(!newValue1);
+                    });
+
                     avaibleShieldProgress.progressProperty().bind(equipment.shieldProgressProperty());
                 } else { // pokud neni stit
                     activateShield.setVisible(!newValue.booleanValue());

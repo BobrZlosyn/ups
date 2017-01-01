@@ -39,18 +39,15 @@ public abstract class CommonModel {
 
     public abstract boolean containsPosition(double x, double y);
 
-    /**
-     * priradi novy styl na cursor
-     */
-    protected void addCursorHandClass() {
-        getParts().forEach(shape -> shape.setCursor(StyleClasses.HAND_CURSOR));
-    }
+
 
     /**
      * zvyrazni model barevne pokud neni vybrano uzivatelem
      */
     protected void strokeOnMouseOver() {
         getParts().forEach(shape -> {
+            shape.setCursor(StyleClasses.HAND_CURSOR);
+
             shape.setOnMouseEntered(event -> {
                 if (!hasAlredyStroke(shape)) {
                     getParts().forEach(shape1 -> shape1.setStroke(Color.YELLOW));

@@ -11,6 +11,7 @@ PLAYER *create_player(int playerID, char *playerIP, char *playerName, int socket
 	
 	newPlayer->playerID = playerID;
 	newPlayer->socket = socket;
+	sprintf(newPlayer->modulInfo, "zadne informace");
 	strcpy(newPlayer->playerIP, playerIP);
 	strcpy(newPlayer->playerName, playerName);
 	
@@ -21,10 +22,11 @@ PLAYER *create_player(int playerID, char *playerIP, char *playerName, int socket
 
 void print_player(struct player *player) {
 	printf("---- Player with id: %d ---- \n", player->playerID);
-	printf("---- Name: \t %s \n", player->playerName);
-	printf("---- Socket: \t %d \n", player->socket);
-	printf("---- Ship info: \t %s \n", player->shipInfo);
-	printf("---- IP adress: \t %s \n", player->playerIP);
+	printf("---- Name:           %s \n", player->playerName);
+	printf("---- Socket:         %d \n", player->socket);
+	printf("---- Ship info:      %s \n", player->shipInfo);
+	printf("---- Modul info:     %s \n", player->modulInfo);
+	printf("---- IP adress:      %s \n", player->playerIP);
 	printf("\n");
 }
 

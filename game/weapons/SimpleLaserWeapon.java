@@ -33,10 +33,6 @@ public class SimpleLaserWeapon extends CommonWeapon{
 
     private void createCannon() {
         model = new ModelSimpleLaserWeapon();
-        model.getParts().forEach(shape -> {
-            markShape(shape);
-        });
-
     }
 
     @Override
@@ -46,6 +42,7 @@ public class SimpleLaserWeapon extends CommonWeapon{
         double y = place.getY() + width/2;
 
         setIsEnemy(isEnemy);
+        markShape();
         if(!place.isEmpty()){
             return;
         }

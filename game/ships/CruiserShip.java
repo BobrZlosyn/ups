@@ -42,9 +42,7 @@ public class CruiserShip extends CommonShip{
 
     private void createShip(){
         model = new CruisershipModel();
-        model.getShip().setOnMouseClicked(event -> {
-            markingHandle(isMarked(), this);
-        });
+        markShape();
     }
 
     @Override

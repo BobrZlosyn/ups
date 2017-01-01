@@ -37,9 +37,6 @@ public class DoubleCannonWeapon extends CommonWeapon{
 
     private void createCannon() {
         modelDoubleCannon = new ModelDoubleCannon();
-        modelDoubleCannon.getParts().forEach(shape -> {
-            markShape(shape);
-        });
 
     }
 
@@ -49,6 +46,7 @@ public class DoubleCannonWeapon extends CommonWeapon{
         double y = position.getY();
         double width = position.getSize();
         setIsEnemy(isEnemy);
+        markShape();
         if(!position.isEmpty()){
             return;
         }

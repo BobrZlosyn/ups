@@ -300,6 +300,7 @@ int modul_status(PLAYERS *player, char *sendMsg, MESSAGE *msg){
 		return 1;
 	}
 	
+	sprintf(player->player->modulInfo, "%s", msg->data);
 	if(room->player1 != NULL && room->player1->player->playerID == msg->playerID){
 		if(room->player2 != NULL){
 			sprintf(sendMsg, "<M;%s>", msg->data);
@@ -384,7 +385,7 @@ void *user_thread(void *t_param){
 	environment->TOTAL_PLAYER_COUNT++;
 	
 	while(1){
-		MESSAGE *message = (MESSAGE *)malloc(sizeof(MESSAGE));
+		MESSAGE *message = create_message();
 		retcode = recv(socket, in_buf, sizeof(in_buf), 0);
 		if (retcode < 0) {
 			print_error(environment, "recv() failed");

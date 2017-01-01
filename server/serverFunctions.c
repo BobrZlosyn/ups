@@ -179,6 +179,7 @@ void print_avaible_orders() {
 	printf("    chport 	- zmena portu\n");
 	printf("    show all 	- ukaze aktualni stav serveru\n");
 	printf("    reset 	- vynuluje statistiky\n");
+	printf("    clear 	- vynuluje statistiky\n");
 }
 
 void functions(char *order, PLAYERS *first, ENV *environment){
@@ -232,6 +233,9 @@ void functions(char *order, PLAYERS *first, ENV *environment){
 		
 	} else if ((result = strcmp(trimString, "help")) == 0){
 		print_avaible_orders();
+		
+	} else if ((result = strcmp(trimString, "clear")) == 0){
+		system("@cls||clear");
 		
 	} else if ((result = strcmp(trimString, "chport")) == 0){
 		printf(" Zadejte cislo portu: ");

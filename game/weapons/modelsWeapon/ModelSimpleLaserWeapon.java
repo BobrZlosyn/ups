@@ -23,7 +23,6 @@ public class ModelSimpleLaserWeapon extends CommonModel {
     public ModelSimpleLaserWeapon () {
         createCannon();
         setDefaultSkin();
-        addCursorHandClass();
         strokeOnMouseOver();
     }
 

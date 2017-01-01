@@ -40,10 +40,7 @@ public class BattleShip extends CommonShip{
 
     private void createShip(){
         model = new BattleshipModel();
-
-        model.getShip().setOnMouseClicked(event -> {
-            markingHandle(isMarked(), this);
-        });
+        markShape();
     }
 
     @Override
@@ -63,7 +60,6 @@ public class BattleShip extends CommonShip{
 
     @Override
     public void displayShip(Pane gameArea){
-
         double width = ((GridPane)gameArea.getParent()).getWidth() / 2;
         if(isEnemy()){
             positionOfShip(width + width/2, 280, gameArea);

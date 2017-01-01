@@ -1,5 +1,7 @@
 package game.startUpMenu;
 
+import game.exportImportDataHandlers.LoadSettings;
+import game.exportImportDataHandlers.WriteSettings;
 import game.static_classes.GlobalVariables;
 import game.static_classes.StyleClasses;
 import javafx.application.Platform;
@@ -57,7 +59,7 @@ public class SettingsMenu extends CommonMenu{
         confirm.setOnAction(event -> {
             CommonMenu.clickSound();
             boolean error = false;
-            if(checkIPAdress()){
+            if(LoadSettings.checkIPAdress(ipAdressTF.getText())){
                 Platform.runLater(() -> GlobalVariables.serverIPAdress.set(ipAdressTF.getText().trim()));
                 ipAdressTF.setStyle("-fx-border-color: rgba(255 , 0, 0, 0); -fx-text-fill: black;");
             }else {
@@ -65,7 +67,7 @@ public class SettingsMenu extends CommonMenu{
                 error = true;
             }
 
-            if(checkPort()){
+            if(LoadSettings.checkPort(portTF.getText())){
                 Platform.runLater(() -> GlobalVariables.serverPort.set(portTF.getText().trim()));
                 portTF.setStyle("-fx-border-color: rgba(255 , 0, 0, 0); -fx-text-fill: black;");
             } else {
@@ -79,8 +81,8 @@ public class SettingsMenu extends CommonMenu{
             }else {
                 this.errror.setText(ERROR_FALSE);
                 this.errror.setTextFill(Color.GREEN);
+                WriteSettings.writeSettings();
             }
-
         });
     }
 
@@ -92,43 +94,6 @@ public class SettingsMenu extends CommonMenu{
         });
     }
 
-    private boolean checkIPAdress(){
-
-        String ipText = ipAdressTF.getText().trim();
-        String [] numbers = ipText.split("\\.");
-        if ( numbers.length != 4) {
-            return false;
-        }
-
-        try {
-            for (int i = 0; i < numbers.length; i++){
-                int number = Integer.parseInt(numbers[i]);
-                if (number > 255 || number < 0) {
-                    return false;
-                }
-            }
-
-        }catch (Exception e){
-            return false;
-        }
-
-        return true;
-    }
-
-    private boolean checkPort(){
-        try {
-            String port = portTF.getText().trim();
-            int number = Integer.parseInt(port);
-            if (number > 56666 || number < 0) {
-                return false;
-            }
-
-        }catch (Exception e){
-            return false;
-        }
-
-        return true;
-    }
 
     private void setupWindow(){
 

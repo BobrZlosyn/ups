@@ -33,9 +33,6 @@ public class SimpleShield extends CommonShield {
 
     private void createShield() {
         commonShieldModel = new SimpleShieldModel();
-        commonShieldModel.getParts().forEach(shape -> {
-            markShape(shape);
-        });
     }
 
 
@@ -46,6 +43,7 @@ public class SimpleShield extends CommonShield {
 
 
         setIsEnemy(isEnemy);
+        markShape();
         if(!place.isEmpty()){
             return;
         }

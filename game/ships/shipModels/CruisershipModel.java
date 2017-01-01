@@ -17,7 +17,6 @@ public class CruisershipModel extends CommonModel {
     public CruisershipModel(){
 
         ship = new Rectangle(200, 400);
-        addCursorHandClass();
         strokeOnMouseOver();
     }
 

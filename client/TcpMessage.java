@@ -1,5 +1,6 @@
 package client;
 
+import game.exportImportDataHandlers.WriteSettings;
 import game.static_classes.GlobalVariables;
 
 public class TcpMessage {
@@ -8,7 +9,6 @@ public class TcpMessage {
     private int     bytes;
     private final char START_MESSAGE = '<';
     private final char END_MESSAGE = '>';
-    private String id;
     public static final String SEPARATOR = ";";
     private String expectedType;
 
@@ -34,7 +34,6 @@ public class TcpMessage {
     public TcpMessage( ) {
         message = "";
         bytes = 0;
-        id = "0";
         expectedType = "";
     }
 
@@ -59,15 +58,16 @@ public class TcpMessage {
     }
 
     public String getId() {
-        return id;
+        return GlobalVariables.playerID;
     }
 
     public boolean hasId(){
-        return !id.equals("0");
+        return !GlobalVariables.playerID.equals("0");
     }
 
     public void setId(String id) {
-        this.id = id;
+        GlobalVariables.playerID = id;
+        WriteSettings.writeSettings();
     }
 
     public void setMessage(String msgType, String msg) {
@@ -76,7 +76,7 @@ public class TcpMessage {
 
         msgBuild.append(msgType);
         msgBuild.append(SEPARATOR);
-        msgBuild.append(id);
+        msgBuild.append(GlobalVariables.playerID);
         msgBuild.append(SEPARATOR);
         msgBuild.append(msg);
 
@@ -120,7 +120,8 @@ public class TcpMessage {
     }
 
     public void removeID(){
-        id = "0";
+        GlobalVariables.playerID = "0";
+        WriteSettings.writeSettings();
     }
 
     public String getType(){

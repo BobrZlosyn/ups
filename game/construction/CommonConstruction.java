@@ -3,6 +3,7 @@ package game.construction;
 import game.startUpMenu.CommonMenu;
 import game.static_classes.ConstructionTypes;
 import game.static_classes.GlobalVariables;
+import game.static_classes.StyleClasses;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -228,9 +229,16 @@ public abstract class CommonConstruction implements IMarkableObject{
 
     public abstract String getConstructionType();
 
-    protected void markShape(Shape shape){
-        shape.setOnMouseClicked(event -> {
-            markingHandle(isMarked(), this);
+    protected void markShape(){
+
+        getModel().getParts().forEach(shape -> {
+            shape.setOnMouseClicked(event -> {
+                markingHandle(isMarked(), this);
+            });
+
+            if(isEnemy()){
+                shape.setCursor(StyleClasses.ENEMY_CURSOR);
+            }
         });
     }
 

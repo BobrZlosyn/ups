@@ -19,7 +19,6 @@ public class ModelCannon extends CommonModel{
 
     public ModelCannon(){
         createCannon();
-        addCursorHandClass();
         strokeOnMouseOver();
     }
 

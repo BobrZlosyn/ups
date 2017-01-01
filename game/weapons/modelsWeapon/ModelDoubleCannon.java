@@ -25,8 +25,6 @@ public class ModelDoubleCannon extends CommonModel{
 
     public ModelDoubleCannon(){
         createCannon();
-
-        addCursorHandClass();
         strokeOnMouseOver();
     }
 
