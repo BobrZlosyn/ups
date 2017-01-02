@@ -23,6 +23,7 @@ public class GlobalVariables {
     public static SimpleBooleanProperty gameIsFinished = new SimpleBooleanProperty(false);
     public static SimpleBooleanProperty enemyLost = new SimpleBooleanProperty(false);
     public static SimpleBooleanProperty isPlayingNow = new SimpleBooleanProperty(false);
+    public static SimpleBooleanProperty reconnection = new SimpleBooleanProperty(false);
     public static CommonShip choosenShip;
     public static Color damageHit = Color.RED;
     public static double damageHitDuration = 0.02;
@@ -37,10 +38,10 @@ public class GlobalVariables {
     public static String sendMessageType = "";
     public static SimpleStringProperty serverIPAdress = new SimpleStringProperty("127.0.0.1");
     public static SimpleStringProperty serverPort = new SimpleStringProperty("1234");
-    public static String playerID = "0";
-    public static boolean APLICATION_EXIT = false;
     public static SimpleDoubleProperty volumeSound = new SimpleDoubleProperty(1);
 
+    public static String playerID = "0";
+    public static boolean APLICATION_EXIT = false;
 
     public static void setMarkedObject(CommonConstruction markedObject) {
         if(!isEmpty(markedObject) && !isEmpty(GlobalVariables.markedObject)){

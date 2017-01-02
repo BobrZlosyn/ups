@@ -21,6 +21,11 @@ public class TcpClient{
         isConnected = new SimpleBooleanProperty(false);
     }
 
+
+    public Socket getS() {
+        return s;
+    }
+
     public void setPort(int port) {
         this.port = port;
     }
@@ -53,6 +58,7 @@ public class TcpClient{
             // create streams for reading and writing
             reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
             writer = new PrintWriter(new OutputStreamWriter(s.getOutputStream()));
+
             // tell the user that we've connected
             System.out.println("Connected to " + s.getInetAddress() +
                     ":" + s.getPort());

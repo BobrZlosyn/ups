@@ -1,10 +1,13 @@
 package client;
 
 import game.static_classes.GlobalVariables;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
+import javafx.util.Duration;
 
 public class TcpApplication {
 
@@ -12,12 +15,13 @@ public class TcpApplication {
     private TcpMessage message;
     private Task readTask, connectTask, actionTask;
 
+    private Timeline checkSending;
     public TcpApplication(){
         String server = GlobalVariables.serverIPAdress.getValue();
         int port = Integer.parseInt(GlobalVariables.serverPort.getValue());
         message = new TcpMessage();
         client = new TcpClient( server , port );
-
+        checkConnectionLive();
 
         GlobalVariables.serverIPAdress.addListener((observable, oldValue, newValue) -> {
             setUpNewConnection(newValue, Integer.parseInt(GlobalVariables.serverPort.getValue()));
@@ -63,14 +67,17 @@ public class TcpApplication {
 
         if(!message.hasId()
                 && !typeOfMessage.equals(TcpMessage.CONNECTION)
-                && !typeOfMessage.equals(TcpMessage.QUIT)){
+                && !typeOfMessage.equals(TcpMessage.QUIT)
+                && !typeOfMessage.equals(TcpMessage.CHECK_CONNECTION)){
             return false;
         }
 
         message.setMessage(typeOfMessage, dataToSend);
         client.putMessage(message);
-        GlobalVariables.expectedMsg = expectedResponse;
 
+        if (!expectedResponse.equals(TcpMessage.NONE)) {
+            GlobalVariables.expectedMsg = expectedResponse;
+        }
         return true;
     }
 
@@ -99,6 +106,10 @@ public class TcpApplication {
             case TcpMessage.END_WAITING:{
                 GlobalVariables.enemyshipDefinition = data ;
                 break;
+            }
+
+            case TcpMessage.WAITING_FOR_RECONNECTION: {
+
             }
 
             case TcpMessage.IDENTITY:{
@@ -195,13 +206,14 @@ public class TcpApplication {
             return;
         }
 
+        checkConnectionStop();
         connectTask = new Task<Boolean>() {
             @Override public Boolean call() {
                 while(true) {
                     client.updateIsConnected();
 
                     try {
-                        Thread.sleep(1500);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
 
                         e.printStackTrace();
@@ -224,6 +236,7 @@ public class TcpApplication {
         connectTask.setOnSucceeded(event -> {
             client.updateIsConnected();
             readThread();
+            checkConnectionStart();
             connectTask = null;
         });
 
@@ -269,6 +282,35 @@ public class TcpApplication {
         message.removeID();
         connectThread();
 
+    }
+
+    public TcpClient getClient(){
+        return client;
+    }
+
+    private void checkConnectionLive() {
+        checkSending = new Timeline(new KeyFrame(Duration.seconds(10), event -> checkConnectionFunction()));
+        checkSending.setCycleCount(Animation.INDEFINITE);
+    }
+
+    public void checkConnectionStart(){
+        if(GlobalVariables.isNotEmpty(checkSending)){
+            checkSending.playFromStart();
+        }
+
+    }
+
+    private void checkConnectionFunction() {
+        sendMessageToServer(TcpMessage.CHECK_CONNECTION, "is server there?", TcpMessage.NONE);
+        if(GlobalVariables.APLICATION_EXIT){
+            checkConnectionStop();
+        }
+    }
+
+    public void checkConnectionStop() {
+        if(GlobalVariables.isNotEmpty(checkSending)){
+            checkSending.stop();
+        }
     }
 
     public TcpMessage getMessage() {

@@ -26,6 +26,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -121,7 +122,16 @@ public class Controller implements Initializable{
             }
         });
 
+        GlobalVariables.reconnection.addListener((observable, oldValue, newValue) -> {
+            opponentLostMenu.showWindow(window);
 
+        });
+
+        opponentLostMenu.getQuit().setOnAction(event -> {
+            opponentLostMenu.clean();
+            endOfGame.setUserIsWinner(false, true);
+            endOfGame.showWindow(window);
+        });
     }
 
     public void clearApplication(){
@@ -379,12 +389,7 @@ public class Controller implements Initializable{
         createMenu.showWindow(window);
         createMenu.setConnectionBinding(tcpConnection.isConnectedProperty());
 
-       /* opponentLostMenu.showWindow(window);
-        opponentLostMenu.getQuit().setOnAction(event -> {
-            opponentLostMenu.clean();
-            endOfGame.setUserIsWinner(false, true);
-            endOfGame.showWindow(window);
-        });*/
+
         setupPickShipMenu(createMenu);
         errorAlert.showErrorPane(window);
     }
