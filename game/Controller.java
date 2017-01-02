@@ -121,10 +121,10 @@ public class Controller implements Initializable{
 
             }
         });
-
         GlobalVariables.reconnection.addListener((observable, oldValue, newValue) -> {
-            opponentLostMenu.showWindow(window);
-
+            if (newValue){
+                opponentLostMenu.showWindow(window);
+            }
         });
 
         opponentLostMenu.getQuit().setOnAction(event -> {
