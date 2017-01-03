@@ -123,7 +123,6 @@ public class Controller implements Initializable{
 
             }else if(newValue && !GlobalVariables.enemyshipDefinition.isEmpty()){
                 Platform.runLater(() -> {
-                    tcpConnection.endConnection();
                     opponentLostMenu.clean();
                     tcpConnection.sendMessageToServer(TcpMessage.RESULT, "pripojeni zpet do hry", TcpMessage.NONE);
                     controls.resumeAnimations();
@@ -147,6 +146,7 @@ public class Controller implements Initializable{
         });
 
         opponentLostMenu.getTimeExpiredProperty().addListener((observable, oldValue, newValue) -> {
+            tcpConnection.endConnection();
             GlobalVariables.setDefaultValues();
             GlobalVariables.errorMsg = ErrorAlert.NOT_CONNECTED_TO_SERVER;
             GlobalVariables.reconnection.set(false);
