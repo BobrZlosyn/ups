@@ -115,6 +115,7 @@ public class Controller implements Initializable{
             if (!newValue && !GlobalVariables.enemyshipDefinition.isEmpty()){
                 Platform.runLater(() -> {
                     opponentLostMenu.showWindow(window);
+                    controls.pauseAnimations();
                     /*window.getChildren().clear();
                     GlobalVariables.errorMsg = ErrorAlert.NOT_CONNECTED_TO_SERVER;
                     createMainPage();*/
@@ -125,6 +126,7 @@ public class Controller implements Initializable{
                     tcpConnection.endConnection();
                     opponentLostMenu.clean();
                     tcpConnection.sendMessageToServer(TcpMessage.RESULT, "pripojeni zpet do hry", TcpMessage.ACKNOLEDGE);
+                    controls.resumeAnimations();
                 });
             }
         });
@@ -261,6 +263,11 @@ public class Controller implements Initializable{
         GlobalVariables.choosenShip.createShield();
 
         CommonShip enemyShip = exportImportShip.importShip(GlobalVariables.enemyshipDefinition, gameAreaPane);
+        if(GlobalVariables.isEmpty(enemyShip)){
+            GlobalVariables.enemyshipDefinition = "";
+            createMainPage();
+            errorAlert.showErrorPaneWithText(window, "Omlouváme se, nastala chyba při získávání dat ze serveru");
+        }
         enemyShip.createShield();
 
         endWindowShowUp(GlobalVariables.choosenShip, enemyShip);

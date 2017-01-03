@@ -27,6 +27,7 @@ void clear_environment(ENV *environment){
 	environment->ROOM_COUNT = 0;
 	environment->TOTAL_PLAYER_COUNT = 0;
 	environment->TOTAL_ROOM_COUNT = 0;
+	environment->TIMEOUT = 15;
 }
 
 void print_variables(ENV *environment) {
@@ -62,6 +63,9 @@ void print_variables(ENV *environment) {
 		printf("%s \n", statistics);
 		print_statistic(environment, statistics);
 	}
+	sprintf(statistics, " Nastaveny timeout: %d ", environment->TIMEOUT);
+	printf("%s \n", statistics);
+	print_statistic(environment, statistics);
 	
 	sprintf(statistics, " Pocet hracu na serveru: %d ", environment->PLAYER_COUNT);
 	printf("%s \n", statistics);
@@ -180,6 +184,7 @@ void print_avaible_orders() {
 	printf("    show all 	- ukaze aktualni stav serveru\n");
 	printf("    reset 	- vynuluje statistiky\n");
 	printf("    clear 	- vynuluje statistiky\n");
+	printf("    set timeout 	- vynuluje statistiky\n");
 }
 
 void functions(char *order, PLAYERS *first, ENV *environment){
@@ -237,6 +242,12 @@ void functions(char *order, PLAYERS *first, ENV *environment){
 	} else if ((result = strcmp(trimString, "clear")) == 0){
 		system("@cls||clear");
 		
+	} else if ((result = strcmp(trimString, "set timeout")) == 0){
+		printf(" Zadejte timeout: ");
+		int timeout = atoi(getline());
+		environment->TIMEOUT = timeout;
+		
+		
 	} else if ((result = strcmp(trimString, "chport")) == 0){
 		printf(" Zadejte cislo portu: ");
 		int port = atoi(getline());
@@ -260,9 +271,6 @@ void functions(char *order, PLAYERS *first, ENV *environment){
 
 
 char *trim_whitespace(char *str) {
-	
-	
-	
   char *end;
 
   while(isspace((unsigned char)*str)) str++;
@@ -277,3 +285,9 @@ char *trim_whitespace(char *str) {
 
   return str;
 }
+
+
+
+
+
+

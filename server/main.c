@@ -48,6 +48,8 @@ struct data_for_thread {
 	struct in_addr       client_ip_addr;  
 };
 
+PLAYERS *handle_lost_contact(PLAYERS *first, int socket);
+
 /*
 	zavirani navazujiciho socketu
 */
@@ -321,11 +323,44 @@ int modul_status(PLAYERS *player, char *sendMsg, MESSAGE *msg){
 	
 	return 0;
 }
+int reconnection(PLAYERS *player, char *sendMsg, MESSAGE *msg, int socket, char *ip_client){
+	if(player == NULL){
+		first = add_player(first, ip_client, socket);
+		strcpy(first->player->shipInfo, msg->data);	
+		sprintf(sendMsg, "<I;%d>", first->player->playerID);
+		return 0;
+	}
+	
+	player->player->socket = socket;
+	int id = player->player->playerID;
+	sprintf(sendMsg, "<I;%d>", id);
+	
+	ROOM *room = player->room;
+	if (room == NULL){
+		return 0;
+	}
+	
+	if(room->player1 != NULL && room->player1->player->playerID == id){
+		if(room->player2 != NULL){
+			sendMessage("<B;je zpet>", room->player1->player->socket);
+		}
+		return 0;			
+	}
+	
+	if(room->player2 != NULL && room->player2->player->playerID == id){
+		if(room->player1 != NULL){
+			sendMessage("<B;je zpet>", room->player1->player->socket);
+		}
+	}
+	
+	return 0;
+}
+
 
 int doActionByMessage(struct message *msg, char *ip_client, char *sendMsg, int socket) {
 	sprintf(sendMsg, " ");
 	PLAYERS *player = find_player(first, msg->playerID);
-	if(player == NULL && msg->playerID != 0){
+	if(player == NULL && msg->playerID != 0 && msg->action != 'R'){
 		print_error(environment, "hrac nebyl rozpoznan!");
 		return 0;
 	}
@@ -346,7 +381,11 @@ int doActionByMessage(struct message *msg, char *ip_client, char *sendMsg, int s
 		
 		case 'A': attack_action(first, msg, sendMsg); break;
 		
+		case 'X': sprintf(sendMsg, "<X;I am here!>"); break;
+		
 		case 'L': lost_game(player, sendMsg); break;
+		
+		case 'R': reconnection(player,sendMsg, msg, socket, ip_client); break;
 		
 		default :{			
 			sprintf(sendMsg, "<E;action not found>");
@@ -383,15 +422,47 @@ void *user_thread(void *t_param){
 	int socket = param->connect_s;
 	environment->PLAYER_COUNT++;
 	environment->TOTAL_PLAYER_COUNT++;
+	#ifdef WIN
+		DWORD timeout;
+	#endif
+	#ifdef BSD
+		struct timeval timeout;
+		timeout.tv_usec = 0;
+		int SOCKET_ERROR = -1
+	#endif
+	int oldTimeout = -1;
 	
+	sprintf(logs, "pripojila se nova aplikace na socket %d", socket);
+	print_log(environment, logs);
 	while(1){
+		
+		if (oldTimeout != environment->TIMEOUT) {
+			oldTimeout = environment->TIMEOUT;
+			#ifdef WIN
+				timeout = oldTimeout * 1000;
+				setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout));
+			#endif
+			#ifdef BSD
+				timeout.tv_sec = oldTimeout;
+				setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
+			#endif
+			
+		}
+		
+		
 		MESSAGE *message = create_message();
+	
 		retcode = recv(socket, in_buf, sizeof(in_buf), 0);
-		if (retcode < 0) {
+		if (retcode == SOCKET_ERROR){
 			print_error(environment, "recv() failed");
+			sem_wait(&listInFirst);
+			first = handle_lost_contact(first, socket);
+			sem_post(&listInFirst);
+			
 			break;
 		}
-	
+		
+
 		retcode = decode_message(in_buf, message, 4);
 		if (retcode > 0) {
 			print_error(environment, "zpravu nelze zpracovat");
@@ -465,7 +536,6 @@ int main() {
 	signal(SIGINT, clearApp);	
 	create_folder();
 	
-	
 	/* >>> Step #2 <<<
 	Fill-in server (my) address information and bind the welcome socket*/
 	server_addr.sin_family = AF_INET;                 /* Address family to use*/	
@@ -526,5 +596,41 @@ void *server_env(void *arg){
 }
 
 
+
+PLAYERS *handle_lost_contact(PLAYERS *first, int socket){
+	
+	PLAYERS *player = find_player_by_socket(first, socket);
+	if (player == NULL) {
+		return first;
+	}
+	
+	/*odstranovani hrace*/
+	ROOM *room = player->room;
+	if(room == NULL) {
+		return remove_player(first, player->player->playerID);
+	}
+	
+	printf("ahoj 1");
+	if(room->player1 == NULL ) {
+		return remove_player(first, player->player->playerID);		
+	}else {
+		if (room->player1->player->playerID != player->player->playerID){
+			sendMessage("<Y; waiting for enemy reconnection>", room->player1->player->socket);
+		}
+	} 
+	
+	printf("ahoj 2");
+	if(room->player2 == NULL) {
+		return remove_player(first, player->player->playerID);
+	} else {
+		if (room->player2->player->playerID != player->player->playerID){
+			sendMessage("<Y; waiting for enemy reconnection>", room->player2->player->socket);
+		}	
+	}
+	
+	printf("ahoj 3");
+	player->isAvaible = 0;
+	return first;	
+}
 
 

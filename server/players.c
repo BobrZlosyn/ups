@@ -37,7 +37,7 @@ PLAYERS *add_player(struct players *first, char *ip_adress, int socket){
 	id = generateRandomID(first);
 	PLAYER *player = create_player(id, ip_adress, "none", socket); 
 	
-	newPlayer->isFree = 1;
+	newPlayer->isAvaible = 1;
 	newPlayer->player = player;
 	newPlayer->room = NULL;
 	newPlayer->next = first;
@@ -84,6 +84,25 @@ PLAYERS *remove_player(struct players *first, int playerID){
 	}
 	return returnPom;	
 }
+
+PLAYERS *find_player_by_socket(PLAYERS *first, int socket){
+	if (first == NULL) {
+		return NULL;
+	}
+	
+	PLAYERS *pom = first;
+	while (pom != NULL) {		
+	
+		if (pom->player->socket == socket) {
+			return pom;
+		}
+		pom = pom->next;
+	}
+	
+	return NULL;
+	
+}
+
 
 
 void clear_players(struct players *first) {

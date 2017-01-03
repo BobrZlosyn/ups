@@ -372,9 +372,22 @@ public class Controls {
         if(GlobalVariables.isEmpty(roundTimeAnimation)){
             return;
         }
-
         roundTimeAnimation.stop();
         roundTimeAnimation = null;
+    }
+
+    public void pauseAnimations(){
+        if(GlobalVariables.isEmpty(roundTimeAnimation)){
+            return;
+        }
+        roundTimeAnimation.pause();
+    }
+
+    public void resumeAnimations(){
+        if(GlobalVariables.isEmpty(roundTimeAnimation)){
+            return;
+        }
+        roundTimeAnimation.play();
     }
 
     public void resetAnimation(){
@@ -389,7 +402,6 @@ public class Controls {
             time.setTextFill(Color.WHITE);
         });
     }
-
 
     private void resize(Pane gameArea){
         enemyshipIntegrityProgress.setLayoutX(gameArea.getWidth() - 15 - 150);

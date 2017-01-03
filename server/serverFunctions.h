@@ -18,6 +18,7 @@ struct environment{
 	int BYTES_SEND_COUNT;
 	int SHOW_ERRORS;
 	int SERVER_PORT;
+	int TIMEOUT;
 }ENV;
 
 ENV *create_env();
