@@ -125,7 +125,7 @@ public class Controller implements Initializable{
                 Platform.runLater(() -> {
                     tcpConnection.endConnection();
                     opponentLostMenu.clean();
-                    tcpConnection.sendMessageToServer(TcpMessage.RESULT, "pripojeni zpet do hry", TcpMessage.ACKNOLEDGE);
+                    tcpConnection.sendMessageToServer(TcpMessage.RESULT, "pripojeni zpet do hry", TcpMessage.NONE);
                     controls.resumeAnimations();
                 });
             }
@@ -134,6 +134,7 @@ public class Controller implements Initializable{
         GlobalVariables.reconnection.addListener((observable, oldValue, newValue) -> {
             if (newValue){
                 opponentLostMenu.showWindow(window);
+                controls.pauseAnimations();
             }
         });
 
@@ -144,7 +145,9 @@ public class Controller implements Initializable{
         });
 
         opponentLostMenu.getTimeExpiredProperty().addListener((observable, oldValue, newValue) -> {
+            GlobalVariables.setDefaultValues();
             GlobalVariables.errorMsg = ErrorAlert.NOT_CONNECTED_TO_SERVER;
+            GlobalVariables.reconnection.set(false);
             createMainPage();
 
         });
