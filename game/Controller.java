@@ -133,8 +133,10 @@ public class Controller implements Initializable{
 
         GlobalVariables.reconnection.addListener((observable, oldValue, newValue) -> {
             if (newValue){
-                opponentLostMenu.showWindow(window);
-                controls.pauseAnimations();
+                Platform.runLater(() -> {
+                    opponentLostMenu.showWindow(window);
+                    controls.pauseAnimations();
+                });
             }
         });
 
