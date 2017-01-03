@@ -6,6 +6,7 @@ import game.static_classes.StyleClasses;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
@@ -22,16 +23,14 @@ import javafx.util.Duration;
  * Created by Kanto on 02.12.2016.
  */
 
-
-
-
 public class OpponentLostMenu extends CommonMenu{
 
     private ProgressIndicator indicator;
     public final static String WAIT_FOR_OPONNENT_RECONNECTION = "Bylo ztraceno spojení se serverem. Čeká se na připojení.";
     public final static String WAIT_FOR_RECONNECTION = "Hráč se nenadále odpojil. Čeká se na znovu připojení hráče";
 
-    private final int MAX_WAIT_TIME = 30;
+    private SimpleBooleanProperty timeExpired;
+    private final int MAX_WAIT_TIME = 60;
     private SimpleIntegerProperty actualTime;
     private Button quit;
     private Label title, time;
@@ -44,7 +43,7 @@ public class OpponentLostMenu extends CommonMenu{
         time = createLabel(String.valueOf(MAX_WAIT_TIME));
         time.textProperty().bind(actualTime.asString());
         quit = createButton(QUIT, StyleClasses.EXIT_BUTTON);
-
+        timeExpired = new SimpleBooleanProperty(false);
         indicator = new ProgressIndicator(-1);
         createEndWaitingAnimation();
         createWindow();
@@ -81,6 +80,7 @@ public class OpponentLostMenu extends CommonMenu{
     }
 
     private void runAnimation() {
+        timeExpired.set(false);
         actualTime.set(MAX_WAIT_TIME);
         endWaitingAnimation.playFromStart();
     }
@@ -90,6 +90,7 @@ public class OpponentLostMenu extends CommonMenu{
         actualTime.set(newValue);
         if (actualTime.isEqualTo(0).getValue() || GlobalVariables.APLICATION_EXIT) {
             endWaitingAnimation.stop();
+            timeExpired.set(true);
         }
     }
 
@@ -107,5 +108,9 @@ public class OpponentLostMenu extends CommonMenu{
 
     public Button getQuit() {
         return quit;
+    }
+
+    public SimpleBooleanProperty getTimeExpiredProperty() {
+        return timeExpired;
     }
 }

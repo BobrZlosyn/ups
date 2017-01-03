@@ -19,6 +19,7 @@ public class TcpClient{
         this.host = host;
         this.port = port;
         isConnected = new SimpleBooleanProperty(false);
+
     }
 
 
@@ -39,7 +40,7 @@ public class TcpClient{
         // create a socket to communicate to the specified host and port
         try {
             s = new Socket( host, port);
-
+            s.setSoTimeout(10000);
         }
         catch (IOException e) {
             System.out.println("Connection to " + host + ":" + port + " refused");

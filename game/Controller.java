@@ -114,13 +114,21 @@ public class Controller implements Initializable{
         tcpConnection.isConnectedProperty().addListener((observable, oldValue, newValue) ->{
             if (!newValue && !GlobalVariables.enemyshipDefinition.isEmpty()){
                 Platform.runLater(() -> {
-                    window.getChildren().clear();
+                    opponentLostMenu.showWindow(window);
+                    /*window.getChildren().clear();
                     GlobalVariables.errorMsg = ErrorAlert.NOT_CONNECTED_TO_SERVER;
-                    createMainPage();
+                    createMainPage();*/
                 });
 
+            }else if(newValue && !GlobalVariables.enemyshipDefinition.isEmpty()){
+                Platform.runLater(() -> {
+                    tcpConnection.endConnection();
+                    opponentLostMenu.clean();
+                    tcpConnection.sendMessageToServer(TcpMessage.RESULT, "pripojeni zpet do hry", TcpMessage.ACKNOLEDGE);
+                });
             }
         });
+
         GlobalVariables.reconnection.addListener((observable, oldValue, newValue) -> {
             if (newValue){
                 opponentLostMenu.showWindow(window);
@@ -131,6 +139,12 @@ public class Controller implements Initializable{
             opponentLostMenu.clean();
             endOfGame.setUserIsWinner(false, true);
             endOfGame.showWindow(window);
+        });
+
+        opponentLostMenu.getTimeExpiredProperty().addListener((observable, oldValue, newValue) -> {
+            GlobalVariables.errorMsg = ErrorAlert.NOT_CONNECTED_TO_SERVER;
+            createMainPage();
+
         });
     }
 
@@ -436,6 +450,9 @@ public class Controller implements Initializable{
 
                             if (!tcpConnection.getMessage().hasId()) {
                                 tcpConnection.sendMessageToServer(TcpMessage.CONNECTION, GlobalVariables.shipDefinition, TcpMessage.IDENTITY);
+                                Thread.sleep(1000);
+                            }else {
+                                tcpConnection.sendMessageToServer(TcpMessage.RESULT, GlobalVariables.shipDefinition, TcpMessage.IDENTITY);
                                 Thread.sleep(1000);
                             }
 

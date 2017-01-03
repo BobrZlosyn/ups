@@ -8,13 +8,14 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.util.Duration;
+import sun.awt.windows.ThemeReader;
 
 public class TcpApplication {
 
     private TcpClient client;
     private TcpMessage message;
     private Task readTask, connectTask, actionTask;
-
+    private boolean potvrzeni;
     private Timeline checkSending;
     public TcpApplication(){
         String server = GlobalVariables.serverIPAdress.getValue();
@@ -56,6 +57,7 @@ public class TcpApplication {
 
     private boolean sendConnectionMessage(){
         return client.open();
+
     }
 
 
@@ -109,7 +111,6 @@ public class TcpApplication {
             }
 
             case TcpMessage.WAITING_FOR_RECONNECTION: {
-                System.out.println("ahojkz");
                 GlobalVariables.reconnection.set(true);
             }break;
 
@@ -211,22 +212,23 @@ public class TcpApplication {
         connectTask = new Task<Boolean>() {
             @Override public Boolean call() {
                 while(true) {
-                    client.updateIsConnected();
 
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
 
-                        e.printStackTrace();
-                        break;
-                    }
 
                     if (GlobalVariables.APLICATION_EXIT) {
                         closeConnection();
                         break;
                     }
                     if(sendConnectionMessage()){
-                        message.removeID();
+                        break;
+                    }
+                    client.updateIsConnected();
+
+                    try {
+                        if(!isConnected()){
+                            Thread.sleep(1000);
+                        }
+                    } catch (InterruptedException e) {
                         break;
                     }
                 }
@@ -292,11 +294,13 @@ public class TcpApplication {
     private void checkConnectionLive() {
         checkSending = new Timeline(new KeyFrame(Duration.seconds(10), event -> checkConnectionFunction()));
         checkSending.setCycleCount(Animation.INDEFINITE);
+        potvrzeni = true;
     }
 
     public void checkConnectionStart(){
         if(GlobalVariables.isNotEmpty(checkSending)){
             checkSending.playFromStart();
+            potvrzeni = true;
         }
 
     }
@@ -306,6 +310,7 @@ public class TcpApplication {
         if(GlobalVariables.APLICATION_EXIT){
             checkConnectionStop();
         }
+
     }
 
     public void checkConnectionStop() {
