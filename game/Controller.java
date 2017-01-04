@@ -145,14 +145,7 @@ public class Controller implements Initializable{
             endOfGame.showWindow(window);
         });
 
-        opponentLostMenu.getTimeExpiredProperty().addListener((observable, oldValue, newValue) -> {
-            tcpConnection.endConnection();
-            GlobalVariables.setDefaultValues();
-            GlobalVariables.errorMsg = ErrorAlert.NOT_CONNECTED_TO_SERVER;
-            GlobalVariables.reconnection.set(false);
-            createMainPage();
 
-        });
     }
 
     public void clearApplication(){
@@ -367,6 +360,23 @@ public class Controller implements Initializable{
                     GlobalVariables.enemyLost.set(false);
                 });
             }
+        });
+
+
+
+        opponentLostMenu.getTimeExpiredProperty().addListener((observable, oldValue, newValue) -> {
+
+            if(tcpConnection.isConnected()){
+                enemyShip.takeDamage((int)enemyShip.getActualLife());
+                opponentLostMenu.clean();
+            }else {
+                tcpConnection.endConnection();
+                GlobalVariables.setDefaultValues();
+                GlobalVariables.errorMsg = ErrorAlert.NOT_CONNECTED_TO_SERVER;
+                GlobalVariables.reconnection.set(false);
+                createMainPage();
+            }
+
         });
     }
 
