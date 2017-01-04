@@ -371,6 +371,7 @@ public class Controller implements Initializable{
             }
 
             if (tcpConnection.isConnected() ) {
+                tcpConnection.endConnection();
                 enemyShip.takeDamage((int) enemyShip.getActualLife() + enemyShip.getArmorActualValue());
                 opponentLostMenu.clean();
             } else {
