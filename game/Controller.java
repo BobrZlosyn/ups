@@ -373,7 +373,6 @@ public class Controller implements Initializable{
                 enemyShip.takeDamage((int) enemyShip.getActualLife() + enemyShip.getArmorActualValue());
                 opponentLostMenu.clean();
             } else {
-                tcpConnection.endConnection();
                 GlobalVariables.setDefaultValues();
                 GlobalVariables.errorMsg = ErrorAlert.NOT_CONNECTED_TO_SERVER;
                 GlobalVariables.reconnection.set(false);
