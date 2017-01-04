@@ -363,13 +363,16 @@ public class Controller implements Initializable{
         });
 
 
-
         opponentLostMenu.getTimeExpiredProperty().addListener((observable, oldValue, newValue) -> {
 
-            if(tcpConnection.isConnected()){
-                enemyShip.takeDamage((int)enemyShip.getActualLife() + enemyShip.getArmorActualValue());
+            if (!newValue) {
+                return;
+            }
+
+            if (tcpConnection.isConnected() ) {
+                enemyShip.takeDamage((int) enemyShip.getActualLife() + enemyShip.getArmorActualValue());
                 opponentLostMenu.clean();
-            }else {
+            } else {
                 tcpConnection.endConnection();
                 GlobalVariables.setDefaultValues();
                 GlobalVariables.errorMsg = ErrorAlert.NOT_CONNECTED_TO_SERVER;
