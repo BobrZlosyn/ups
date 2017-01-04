@@ -111,7 +111,6 @@ public class TcpApplication {
             }
 
             case TcpMessage.WAITING_FOR_RECONNECTION: {
-                System.out.println("ahojky 2");
                 GlobalVariables.reconnection.set(true);
             }break;
 
