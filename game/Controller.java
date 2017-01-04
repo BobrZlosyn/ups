@@ -135,6 +135,7 @@ public class Controller implements Initializable{
                 Platform.runLater(() -> {
                     opponentLostMenu.showWindow(window);
                     controls.pauseAnimations();
+                    GlobalVariables.reconnection.set(false);
                 });
             }
         });
