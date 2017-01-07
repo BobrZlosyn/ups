@@ -554,28 +554,29 @@ public class Controller implements Initializable{
     }
 
     private String createMessageForReconnection(){
+        String separator = ";;;";
         StringBuilder reconnection = new StringBuilder();
         reconnection.append(controls.getTime());
-        reconnection.append(TcpMessage.SEPARATOR);
+        reconnection.append(separator);
 
         reconnection.append(tcpConnection.getMessage().getId());
-        reconnection.append(TcpMessage.SEPARATOR);
+        reconnection.append(separator);
 
         if(GlobalVariables.isPlayingNow.get()) {
             reconnection.append(1);
         }else {
             reconnection.append(0);
         }
-        reconnection.append(TcpMessage.SEPARATOR);
+        reconnection.append(separator);
         reconnection.append(exportImportShip.exportShip(GlobalVariables.choosenShip, false));
-        reconnection.append(TcpMessage.SEPARATOR);
+        reconnection.append(separator);
         reconnection.append(exportImportShip.exportShip(enemyShip , false));
 
         return reconnection.toString();
     }
 
     private void handleReconnectionMessage(String reconnectionMessage) {
-        String [] information = reconnectionMessage.split(TcpMessage.SEPARATOR);
+        String [] information = reconnectionMessage.split(";;;");
 
         //parsing time of game information
         try {
@@ -603,9 +604,6 @@ public class Controller implements Initializable{
 
         exportImportShip.importReconnectionStatus(GlobalVariables.choosenShip, information[3]);
         exportImportShip.importReconnectionStatus(enemyShip, information[4]);
-        System.out.println(information[3]);
-
-
 
         opponentLostMenu.clean();
         controls.resumeAnimations();
