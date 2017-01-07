@@ -30,7 +30,7 @@ public class OpponentLostMenu extends CommonMenu{
     public final static String WAIT_FOR_RECONNECTION = "Hráč se nenadále odpojil. Čeká se na znovu připojení hráče";
 
     private SimpleBooleanProperty timeExpired;
-    private final int MAX_WAIT_TIME = 15;
+    private final int MAX_WAIT_TIME = 60;
     private SimpleIntegerProperty actualTime;
     private Button quit;
     private Label title, time;
