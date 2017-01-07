@@ -12,6 +12,7 @@ ROOM *create_room(struct players *player1){
 	}
 	
 	if (player1->room != NULL) {
+		printf("not empty");
 		return player1->room;
 	}
 	
@@ -21,7 +22,7 @@ ROOM *create_room(struct players *player1){
 	room->player2 = NULL;
 	
 	player1->room = room;
-	player1->isFree = 0;
+	player1->isAvaible = 1;
 	
 	return room;
 }
@@ -54,7 +55,7 @@ ROOM *find_free_room(struct players *first, int playerID) {
 void add_second_player(struct players *player2, struct room *room){
 	room->player2 = player2;
 	room->isWaiting = 0;
-	player2->isFree = 0;
+	player2->isAvaible = 1;
 	player2->room = room;
 }
 

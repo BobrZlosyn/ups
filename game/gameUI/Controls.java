@@ -337,7 +337,7 @@ public class Controls {
     }
 
     public void setTime(int time) {
-        this.time.setText(String.valueOf(time));
+        timeValue.set(time);
     }
 
     public String getTime() {
