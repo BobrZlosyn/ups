@@ -129,7 +129,9 @@ public class Controller implements Initializable{
                 });
             }else {
                 Platform.runLater(() -> {
-                    handleReconnectionMessage(tcpConnection.getMessage().getData());
+                    if(tcpConnection.getMessage().getType().equals(TcpMessage.RECONNECTION_BACK)){
+                        handleReconnectionMessage(tcpConnection.getMessage().getData());
+                    }
                 });
             }
         });
