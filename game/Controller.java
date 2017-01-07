@@ -569,7 +569,7 @@ public class Controller implements Initializable{
         }
         reconnection.append(separator);
         reconnection.append(exportImportShip.exportShip(GlobalVariables.choosenShip, false));
-        reconnection.append(separator);
+        reconnection.append(";;");
         reconnection.append(exportImportShip.exportShip(enemyShip , false));
 
         return reconnection.toString();

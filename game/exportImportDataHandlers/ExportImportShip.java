@@ -57,7 +57,6 @@ public class ExportImportShip {
 
                 shipInformation.append(construction.getConstructionType() + ",");
                 shipInformation.append(construction.getActualLife() + ";");
-
             }
         }
 
@@ -204,7 +203,17 @@ public class ExportImportShip {
         Placement [][] placements = shipToSet.getPlacementPositions();
         for(int i = 1; i < information.length; i++){
             shipInfo = information[i].split(",");
-            IShipEquipment equipment = placements[Integer.parseInt(shipInfo[0])][Integer.parseInt(shipInfo[1])].getShipEquipment();
+
+            int row, column;
+            if(shipToSet.isEnemy()){
+                row = Integer.parseInt(shipInfo[0]);
+                column = Integer.parseInt(shipInfo[1]);
+            }else {
+                row = placements.length + Integer.parseInt(shipInfo[0]) + 1;
+                column = Integer.parseInt(shipInfo[1]);
+            }
+
+            IShipEquipment equipment = placements[row][column].getShipEquipment();
             if(GlobalVariables.isEmpty(equipment)){
                 equipment = ConstructionTypes.createEquipment(shipInfo[2]);
                 shipToSet.addEquipmentToShip(Integer.parseInt(shipInfo[0]), Integer.parseInt(shipInfo[1]), (AShipEquipment) equipment);
