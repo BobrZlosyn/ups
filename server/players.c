@@ -77,6 +77,7 @@ PLAYERS *remove_player(struct players *first, int playerID){
 			}
 			free(pom->player);
 			free(pom);
+			
 			break;
 		}
 		

@@ -212,8 +212,14 @@ public class ExportImportShip {
                 row = placements.length - Integer.parseInt(shipInfo[0]) - 1;
                 column = Integer.parseInt(shipInfo[1]);
             }
+            System.out.println("row "+ row + " column " + column);
 
-            IShipEquipment equipment = placements[row][column].getShipEquipment();
+            Placement placement = placements[row][column];
+            IShipEquipment equipment = null;
+            if(GlobalVariables.isNotEmpty(placement)) {
+                equipment = placement.getShipEquipment();
+            }
+
             if(GlobalVariables.isEmpty(equipment)){
                 equipment = ConstructionTypes.createEquipment(shipInfo[2]);
                 shipToSet.addEquipmentToShip(row, column, (AShipEquipment) equipment);

@@ -38,7 +38,7 @@
 
 sem_t listInFirst;
 sem_t listInRoom;
-PLAYERS *first = NULL;
+PLAYERS *first;
 ROOMS *firstRoom = NULL;
 ENV *environment = NULL;
 
@@ -212,12 +212,12 @@ int quit_action(PLAYERS *player, char *sendMsg){
 			}
 		}
 		if (player1 != NULL) {
-			remove_player(first, player1->player->playerID);
+			first = remove_player(first, player1->player->playerID);
 			player1->room = NULL;
 			
 		}
 		if (room->player2 != NULL) {
-			remove_player(first, room->player2->player->playerID);
+			first = remove_player(first, room->player2->player->playerID);
 			room->player2->room = NULL;
 		}
 	}
@@ -543,7 +543,8 @@ int main() {
 	Fill-in server (my) address information and bind the welcome socket*/
 	server_addr.sin_family = AF_INET;                 /* Address family to use*/	
 	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);  /* Listen on any IP address*/
-
+	first = NULL;
+	
 	/* >>> Step #1 <<<
 	Create a welcome socket
  	- AF_INET is Address Family Internet and SOCK_STREAM is streams*/
@@ -629,10 +630,9 @@ PLAYERS *handle_lost_contact(PLAYERS *first, int socket){
 				sendMessage("<Y; waiting for enemy reconnection>", room->player2->player->socket);
 			}else {
 				/*mazu oba hrace protoze nikdo neni pripojeny*/
-				remove_player(first, player->player->playerID);
-				remove_player(first, room->player2->player->playerID);
+				first = remove_player(first, player->player->playerID);
+				first = remove_player(first, room->player2->player->playerID);
 			}
-			
 		}	
 	}
 	
