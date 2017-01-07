@@ -73,6 +73,7 @@ public abstract class CommonShield extends AShipEquipment {
         CommonWreck wrecks = getWreck();
         gameArea.getChildren().add(wrecks.getFlashCircle());
         wrecks.explosion(x, y, 45, 5, getModel());
+        setDestroyed(true);
     }
 
     @Override

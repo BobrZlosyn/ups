@@ -47,7 +47,6 @@ public class ExportImportShip {
                 }
 
                 int column = placements.length - i - 1;
-                shipInformation.append(column + "," + j + "," );
                 AShipEquipment construction;
                 if(exportCreatedShip){
                     construction = (AShipEquipment) ((CommonDraggableObject)placement.getShipEquipment()).getObject();
@@ -55,6 +54,11 @@ public class ExportImportShip {
                     construction = (AShipEquipment) placement.getShipEquipment();
                 }
 
+                if(construction.isDestroyed()){
+                    continue;
+                }
+
+                shipInformation.append(column + "," + j + "," );
                 shipInformation.append(construction.getConstructionType() + ",");
                 shipInformation.append(construction.getActualLife() + ";");
             }
@@ -199,10 +203,18 @@ public class ExportImportShip {
             shipToSet.setArmorActualValue(parseNumberValue(shipInfo[4], shipToSet.getArmorActualValue()));
         }
 
+        if(information.length != 2) {
+                return;
+        }
+
         information = information[1].split(";");
         Placement [][] placements = shipToSet.getPlacementPositions();
         for(int i = 1; i < information.length; i++){
             shipInfo = information[i].split(",");
+
+            if(shipInfo.length != 4){
+                continue;
+            }
 
             int row, column;
             if(isReversed){
@@ -218,7 +230,7 @@ public class ExportImportShip {
                 equipment = placement.getShipEquipment();
             }
 
-            if(GlobalVariables.isEmpty(equipment)){
+            if(((CommonConstruction)equipment).isDestroyed()){
                 equipment = ConstructionTypes.createEquipment(shipInfo[2]);
                 shipToSet.addEquipmentToShip(row, column, (AShipEquipment) equipment);
             }else {

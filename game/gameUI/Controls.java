@@ -111,7 +111,7 @@ public class Controls {
 
         shipPowerProgress.progressProperty().addListener((observable, oldValue, newValue) -> {
             StringBuilder text = new StringBuilder();
-            text.append(userShip.getActualEnergyLevel());
+            text.append((int)(userShip.getActualEnergyLevel() * newValue.doubleValue()));
             text.append("/");
             text.append(userShip.getEnergyMaxValue());
             power.setText(text.toString());
@@ -137,7 +137,7 @@ public class Controls {
         shield.setText(userShip.getShieldActualLife() + "/" + userShip.getShieldMaxLife());
         shipShieldProgress.progressProperty().addListener((observable, oldValue, newValue) -> {
             StringBuilder text = new StringBuilder();
-            text.append(userShip.getShieldActualLife());
+            text.append((int)(userShip.getShieldMaxLife() * newValue.doubleValue()));
             text.append("/");
             text.append(userShip.getShieldMaxLife());
             shield.setText(text.toString());
@@ -212,7 +212,7 @@ public class Controls {
         enemyShield.setText(enemyShip.getShieldActualLife() + "/" + enemyShip.getShieldMaxLife());
         enemyshipShieldProgress.progressProperty().addListener((observable, oldValue, newValue) -> {
             StringBuilder text = new StringBuilder();
-            text.append(enemyShip.getShieldActualLife());
+            text.append((int)(newValue.doubleValue() * enemyShip.getShieldMaxLife()));
             text.append("/");
             text.append(enemyShip.getShieldMaxLife());
             enemyShield.setText(text.toString());

@@ -288,12 +288,14 @@ public abstract class CommonShip extends CommonConstruction {
                 }
 
                 IShipEquipment shipEquipment = place.getShipEquipment();
+
                 if(GlobalVariables.isEmpty(shipEquipment)){
                     continue;
                 }
 
                 if(isFirstCreation){
                     IShipEquipment construction = ((CommonDraggableObject) shipEquipment).getObject();
+                    ((CommonConstruction)construction).setDestroyed(false);
                     construction.displayEquipment(placements[i][j], ship.isEnemy());
                     placements[i][j].setIsEmpty(false);
                     placements[i][j].setShipEquipment(construction);
@@ -411,6 +413,7 @@ public abstract class CommonShip extends CommonConstruction {
         gameArea.getChildren().add(wreck.getFlashCircle());
         wreck.explosion(getPlacement().getX(), getPlacement().getY(), 1050, 25, getModel());
         removeEquipment(gameArea);
+        setDestroyed(true);
     }
 
     @Override
@@ -451,6 +454,7 @@ public abstract class CommonShip extends CommonConstruction {
         equipment.setActualShieldBonus(equipment.getActualShieldBonus());
         equipment.unmarkObject();
         equipment.cancelTarget();
+        equipment.setDestroyed(false);
 
         if (equipment.isWeapon()) {
             equipment.rotateToDefaultPosition();

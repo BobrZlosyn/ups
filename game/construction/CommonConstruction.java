@@ -29,6 +29,7 @@ public abstract class CommonConstruction implements IMarkableObject{
     private SimpleDoubleProperty actualLifeBinding;
     private Placement placement;
     private int energyCost;
+    private boolean isDestroyed;
     private Timeline hit;
     private ArrayList <Label> damage;
     private ArrayList <Integer> hitCount;
@@ -44,6 +45,15 @@ public abstract class CommonConstruction implements IMarkableObject{
         createTimelineHit();
         damage = new ArrayList();
         hitCount = new ArrayList();
+        setDestroyed(false);
+    }
+
+    public void setDestroyed(boolean destroyed) {
+        isDestroyed = destroyed;
+    }
+
+    public boolean isDestroyed() {
+        return isDestroyed;
     }
 
     public void setIsMarked(boolean isMarked) {

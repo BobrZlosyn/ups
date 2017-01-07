@@ -567,6 +567,7 @@ public class Controller implements Initializable{
         if(GlobalVariables.isPlayingNow.get()) {
             reconnection.append(1);
         }else {
+            tcpConnection.sendMessageToServer(TcpMessage.ATTACK, TcpMessage.NONE, TcpMessage.NONE);
             reconnection.append(0);
         }
         reconnection.append(separator);

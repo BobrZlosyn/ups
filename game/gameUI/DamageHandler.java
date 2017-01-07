@@ -82,7 +82,12 @@ public class DamageHandler {
             return -2;
         }
 
-        attackInformation = msgFields[3].split(";");
+        if(msgFields.length == 4) {
+            attackInformation = msgFields[3].split(";");
+        }else {
+            attackInformation = null;
+        }
+
 
         return 0;
 
@@ -95,7 +100,7 @@ public class DamageHandler {
      * @return
      */
     private int calculateDamage(CommonShip targetShip, CommonShip attackShip){
-        if(GlobalVariables.isEmpty(targetShip)){
+        if(GlobalVariables.isEmpty(targetShip) && GlobalVariables.isEmpty(attackInformation)){
             return 0;
         }
 
