@@ -8,6 +8,7 @@ import game.shots.CommonShot;
 import game.shots.LaserShot;
 import game.static_classes.ConstructionTypes;
 import game.static_classes.GameBalance;
+import game.static_classes.GlobalVariables;
 import game.weapons.modelsWeapon.ModelSimpleLaserWeapon;
 import game.weapons.wrecksWeapons.CannonWreck;
 import javafx.scene.layout.Pane;

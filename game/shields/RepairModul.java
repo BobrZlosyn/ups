@@ -3,6 +3,8 @@ package game.shields;
 import game.construction.CommonModel;
 import game.construction.CommonWreck;
 import game.construction.Placement;
+import game.static_classes.GlobalVariables;
+import javafx.scene.layout.Pane;
 
 /**
  * Created by Kanto on 14.11.2016.
@@ -23,7 +25,6 @@ public class RepairModul extends CommonShield{
     public void displayEquipment(Placement place, boolean isEnemy) {
 
     }
-
 
     @Override
     public CommonModel getModel() {

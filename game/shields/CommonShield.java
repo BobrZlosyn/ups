@@ -74,4 +74,12 @@ public abstract class CommonShield extends AShipEquipment {
         gameArea.getChildren().add(wrecks.getFlashCircle());
         wrecks.explosion(x, y, 45, 5, getModel());
     }
+
+    @Override
+    public void remove() {
+        Pane gameArea = getModel().getParent();
+        if(GlobalVariables.isNotEmpty(gameArea)){
+            getModel().getParts().forEach(shape -> gameArea.getChildren().remove(shape));
+        }
+    }
 }

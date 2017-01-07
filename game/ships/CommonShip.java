@@ -8,6 +8,7 @@ import game.weapons.CommonWeapon;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
@@ -299,19 +300,7 @@ public abstract class CommonShip extends CommonConstruction {
                     ((CommonConstruction)construction).setPlacement(placements[i][j]);
 
                 }else {
-                    shipEquipment.displayEquipment(placements[i][j], ship.isEnemy());
-                    placements[i][j].setIsEmpty(false);
-                    placements[i][j].setShipEquipment(shipEquipment);
-                    ((CommonConstruction) shipEquipment).setPlacement(placements[i][j]);
-                    ((CommonConstruction) shipEquipment).setActualLife(((CommonConstruction) shipEquipment).getTotalLife().get());
-                    ((AShipEquipment) shipEquipment).setActualShieldBonus(((AShipEquipment) shipEquipment).getActualShieldBonus());
-                    ((CommonConstruction) shipEquipment).unmarkObject();
-                    ((CommonConstruction) shipEquipment).cancelTarget();
-
-                    if (shipEquipment.isWeapon()) {
-                        shipEquipment.rotateToDefaultPosition();
-                        ((CommonWeapon) shipEquipment).setTarget(null);
-                    }
+                    addEquipmentToShip(i, j, (AShipEquipment) shipEquipment);
                 }
             }
         }
@@ -421,8 +410,22 @@ public abstract class CommonShip extends CommonConstruction {
         CommonWreck wreck = getWreck();
         gameArea.getChildren().add(wreck.getFlashCircle());
         wreck.explosion(getPlacement().getX(), getPlacement().getY(), 1050, 25, getModel());
+        removeEquipment(gameArea);
+    }
 
+    @Override
+    public void remove() {
+        Pane gameArea = getModel().getParent();
+        if(GlobalVariables.isEmpty(gameArea)){
+            return;
+        }
 
+        damageToShield(getShieldActualLife());
+        getModel().getParts().forEach(shape -> gameArea.getChildren().remove(shape));
+        removeEquipment(gameArea);
+    }
+
+    private void removeEquipment(Pane gameArea){
         Placement [][] placements = getPlacementPositions();
         for (int i = 0; i < placements.length; i++){
             for (int j = 0; j < placements[i].length; j++){
@@ -436,6 +439,22 @@ public abstract class CommonShip extends CommonConstruction {
 
                 gameArea.getChildren().removeAll(placements[i][j].getField());
             }
+        }
+    }
+
+    public void addEquipmentToShip(int i, int j, AShipEquipment equipment){
+        equipment.displayEquipment(placements[i][j], isEnemy());
+        placements[i][j].setIsEmpty(false);
+        placements[i][j].setShipEquipment(equipment);
+        equipment.setPlacement(placements[i][j]);
+        equipment.setActualLife(equipment.getTotalLife().get());
+        equipment.setActualShieldBonus(equipment.getActualShieldBonus());
+        equipment.unmarkObject();
+        equipment.cancelTarget();
+
+        if (equipment.isWeapon()) {
+            equipment.rotateToDefaultPosition();
+            ((CommonWeapon) equipment).setTarget(null);
         }
     }
 

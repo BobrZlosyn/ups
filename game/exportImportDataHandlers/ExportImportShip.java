@@ -28,7 +28,7 @@ public class ExportImportShip {
         isFirstExport = firstExport;
     }
 
-    public String exportShip(CommonShip ship){
+    public String exportShip(CommonShip ship, boolean exportCreatedShip){
 
         StringBuilder shipInformation = new StringBuilder();
         shipInformation.append(ship.getConstructionType() + ",");
@@ -48,9 +48,15 @@ public class ExportImportShip {
 
                 int column = placements.length - i - 1;
                 shipInformation.append(column + "," + j + "," );
-                IShipEquipment construction = ((CommonDraggableObject)placement.getShipEquipment()).getObject();
-                shipInformation.append(((AShipEquipment)construction).getConstructionType() + ",");
-                shipInformation.append(((AShipEquipment) construction).getActualLife() + ";");
+                AShipEquipment construction;
+                if(exportCreatedShip){
+                    construction = (AShipEquipment) ((CommonDraggableObject)placement.getShipEquipment()).getObject();
+                }else {
+                    construction = (AShipEquipment) placement.getShipEquipment();
+                }
+
+                shipInformation.append(construction.getConstructionType() + ",");
+                shipInformation.append(construction.getActualLife() + ";");
 
             }
         }
@@ -106,7 +112,8 @@ public class ExportImportShip {
             equipment.displayEquipment(placements[row][column], enemyShip.isEnemy());
             placements[row][column].setShipEquipment(equipment);
             ((CommonConstruction)equipment).setPlacement(placements[row][column]);
-            ((CommonConstruction)equipment).setActualLife(parseNumberValue(equipmentData[3], (int)((CommonConstruction)equipment).getActualLife()));
+            ((CommonConstruction)equipment).setActualLife(parseNumberValue(equipmentData[3],
+                    (int)((CommonConstruction)equipment).getActualLife()));
         }
 
         return enemyShip;
@@ -178,9 +185,34 @@ public class ExportImportShip {
         }
     }
 
-
     public void importReconnectionStatus( CommonShip shipToSet, String settings){
+        Pane gameArea = shipToSet.getPane();
+        if(GlobalVariables.isEmpty(gameArea)) {
+            return;
+        }
 
+        String [] information = settings.split(";;");
+        String [] shipInfo = information[0].split(",");
+        if(shipInfo.length == 5){
+            shipToSet.setActualLife(parseNumberValue(shipInfo[1], (int) shipToSet.getActualLife()));
+            shipToSet.setEnergyActualValue(parseNumberValue(shipInfo[2], shipToSet.getEnergyMaxValue()));
+            shipToSet.setShieldActualLife(parseNumberValue(shipInfo[3], shipToSet.getShieldActualLife()));
+            shipToSet.setArmorActualValue(parseNumberValue(shipInfo[4], shipToSet.getArmorActualValue()));
+        }
 
+        information = information[1].split(";");
+        Placement [][] placements = shipToSet.getPlacementPositions();
+        for(int i = 1; i < information.length; i++){
+            shipInfo = information[i].split(",");
+            IShipEquipment equipment = placements[Integer.parseInt(shipInfo[0])][Integer.parseInt(shipInfo[1])].getShipEquipment();
+            if(GlobalVariables.isEmpty(equipment)){
+                equipment = ConstructionTypes.createEquipment(shipInfo[2]);
+                shipToSet.addEquipmentToShip(Integer.parseInt(shipInfo[0]), Integer.parseInt(shipInfo[1]), (AShipEquipment) equipment);
+            }else {
+                CommonConstruction construction = (CommonConstruction) equipment;
+                construction.setActualLife(Integer.parseInt(shipInfo[3]));
+                construction.setActualLifeBinding(construction.getActualLife() / construction.getTotalLife().get());
+            }
+        }
     }
 }

@@ -219,7 +219,7 @@ public class Controller implements Initializable{
 
         //vytvari nepratelskou lod
         if(exportImportShip.isFirstExport()){
-            GlobalVariables.shipDefinition = exportImportShip.exportShip(GlobalVariables.choosenShip);
+            GlobalVariables.shipDefinition = exportImportShip.exportShip(GlobalVariables.choosenShip, true);
         }
 
         waitingForOponnent.showWaitingForOponnent(window);
@@ -567,7 +567,10 @@ public class Controller implements Initializable{
             reconnection.append(0);
         }
         reconnection.append(TcpMessage.SEPARATOR);
-        reconnection.append(exportImportShip.exportShip(GlobalVariables.choosenShip));
+        reconnection.append(exportImportShip.exportShip(GlobalVariables.choosenShip, false));
+        reconnection.append(TcpMessage.SEPARATOR);
+        reconnection.append(exportImportShip.exportShip(enemyShip , false));
+
         return reconnection.toString();
     }
 
@@ -598,38 +601,13 @@ public class Controller implements Initializable{
         }
         sendDataButton.setDisable(!GlobalVariables.isPlayingNow.get());
 
+        exportImportShip.importReconnectionStatus(GlobalVariables.choosenShip, information[3]);
+        exportImportShip.importReconnectionStatus(enemyShip, information[4]);
         System.out.println(information[3]);
 
 
 
         opponentLostMenu.clean();
         controls.resumeAnimations();
-                /*if (tcpConnection.getMessage().getType().equals(TcpMessage.TIME_RECONNECTION)) {
-                    Platform.runLater(() -> {
-                        try {
-                            String [] information = tcpConnection.getMessage().getData().split(";");
-                            if(information.length == 4){
-                                return;
-                            }
-
-                            controls.setTime(Integer.parseInt(information[0]));
-                            if (tcpConnection.getMessage().getId().equals(information[1])) {
-                                GlobalVariables.isPlayingNow.set(true);
-                                sendDataButton.setDisable(true);
-                            }else {
-                                GlobalVariables.isPlayingNow.set(false);
-                                sendDataButton.setDisable(false);
-                            }
-
-                            exportImportShip.importReconnectionStatus(GlobalVariables.choosenShip, information[2]);
-                            exportImportShip.importReconnectionStatus(enemyShip, information[3]);
-
-                            opponentLostMenu.clean();
-                            controls.resumeAnimations();
-                        }catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    });
-                }*/
     }
 }

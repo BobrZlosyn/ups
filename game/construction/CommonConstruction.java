@@ -158,6 +158,8 @@ public abstract class CommonConstruction implements IMarkableObject{
 
     public abstract void destroy();
 
+    public abstract void remove();
+
     protected void createTimelineHit(){
 
         hit = new Timeline(new KeyFrame(Duration.seconds(GlobalVariables.damageHitDuration), event -> {

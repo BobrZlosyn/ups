@@ -119,4 +119,12 @@ public abstract class CommonWeapon extends AShipEquipment {
 
     public abstract void returnToBeforeFiredPosition();
 
+    @Override
+    public void remove() {
+        Pane gameArea = getModel().getParent();
+        if(GlobalVariables.isNotEmpty(gameArea)){
+            getModel().getParts().forEach(shape -> gameArea.getChildren().remove(shape));
+        }
+    }
+
 }
