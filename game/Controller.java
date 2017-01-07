@@ -135,6 +135,7 @@ public class Controller implements Initializable{
         });
 
         opponentLostMenu.getQuit().setOnAction(event -> {
+            GlobalVariables.sendMessageType = TcpMessage.LOST;
             opponentLostMenu.clean();
             endOfGame.setUserIsWinner(false, true);
             endOfGame.showWindow(window);
@@ -574,7 +575,12 @@ public class Controller implements Initializable{
         String [] information = reconnectionMessage.split(TcpMessage.SEPARATOR);
 
         //parsing time of game information
-        controls.setTime(Integer.parseInt(information[0]));
+        try {
+            controls.setTime(Integer.parseInt(information[0]));
+        }catch (Exception e){
+            controls.setTime(5);
+        }
+
 
         //parsing who is playing information
         if (tcpConnection.getMessage().getId().equals(information[1])) {
