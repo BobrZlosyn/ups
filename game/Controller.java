@@ -122,7 +122,7 @@ public class Controller implements Initializable{
             }else if(newValue && !GlobalVariables.enemyshipDefinition.isEmpty()){
                 Platform.runLater(() -> {
                     opponentLostMenu.clean();
-                    tcpConnection.sendMessageToServer(TcpMessage.RESULT, controls.getTime(), TcpMessage.NONE);
+                    tcpConnection.sendMessageToServer(TcpMessage.RESULT, createMessageForReconnection(), TcpMessage.NONE);
                     controls.resumeAnimations();
                 });
             }
@@ -135,11 +135,7 @@ public class Controller implements Initializable{
                     controls.pauseAnimations();
                 });
             }else {
-                Platform.runLater(() -> {
-                    controls.setTime(Integer.parseInt(tcpConnection.getMessage().getData()));
-                    opponentLostMenu.clean();
-                    controls.resumeAnimations();
-                });
+                handleReconnectionMessage(tcpConnection.getMessage().getData());
                 /*if (tcpConnection.getMessage().getType().equals(TcpMessage.TIME_RECONNECTION)) {
                     Platform.runLater(() -> {
                         try {
@@ -588,4 +584,81 @@ public class Controller implements Initializable{
         });
     }
 
+    private String createMessageForReconnection(){
+        StringBuilder reconnection = new StringBuilder();
+        reconnection.append(controls.getTime());
+        reconnection.append(TcpMessage.SEPARATOR);
+
+        reconnection.append(tcpConnection.getMessage().getId());
+        reconnection.append(TcpMessage.SEPARATOR);
+
+        if(GlobalVariables.isPlayingNow.get()) {
+            reconnection.append(1);
+        }else {
+            reconnection.append(0);
+        }
+        reconnection.append(TcpMessage.SEPARATOR);
+        reconnection.append(exportImportShip.exportShip(GlobalVariables.choosenShip));
+        return reconnection.toString();
+    }
+
+    private void handleReconnectionMessage(String reconnectionMessage) {
+        String [] information = reconnectionMessage.split(TcpMessage.SEPARATOR);
+
+
+        Platform.runLater(() -> {
+            //parsing time of game information
+            controls.setTime(Integer.parseInt(information[0]));
+
+            //parsing who is playing information
+            if (tcpConnection.getMessage().getId().equals(information[1])) {
+                if(information[2].equals("1")){
+                    GlobalVariables.isPlayingNow.set(true);
+                }else {
+                    GlobalVariables.isPlayingNow.set(false);
+                }
+            }else {
+                if(information[2].equals("0")){
+                    GlobalVariables.isPlayingNow.set(true);
+                }else {
+                    GlobalVariables.isPlayingNow.set(false);
+                }
+            }
+            sendDataButton.setDisable(!GlobalVariables.isPlayingNow.get());
+
+            System.out.println(information[3]);
+
+
+
+            opponentLostMenu.clean();
+            controls.resumeAnimations();
+        });
+                /*if (tcpConnection.getMessage().getType().equals(TcpMessage.TIME_RECONNECTION)) {
+                    Platform.runLater(() -> {
+                        try {
+                            String [] information = tcpConnection.getMessage().getData().split(";");
+                            if(information.length == 4){
+                                return;
+                            }
+
+                            controls.setTime(Integer.parseInt(information[0]));
+                            if (tcpConnection.getMessage().getId().equals(information[1])) {
+                                GlobalVariables.isPlayingNow.set(true);
+                                sendDataButton.setDisable(true);
+                            }else {
+                                GlobalVariables.isPlayingNow.set(false);
+                                sendDataButton.setDisable(false);
+                            }
+
+                            exportImportShip.importReconnectionStatus(GlobalVariables.choosenShip, information[2]);
+                            exportImportShip.importReconnectionStatus(enemyShip, information[3]);
+
+                            opponentLostMenu.clean();
+                            controls.resumeAnimations();
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }*/
+    }
 }
