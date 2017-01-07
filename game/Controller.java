@@ -595,16 +595,16 @@ public class Controller implements Initializable{
             }else {
                 GlobalVariables.isPlayingNow.set(false);
             }
-            exportImportShip.importReconnectionStatus(GlobalVariables.choosenShip, information[3]);
-            exportImportShip.importReconnectionStatus(enemyShip, information[4]);
+            exportImportShip.importReconnectionStatus(GlobalVariables.choosenShip, information[3], true);
+            exportImportShip.importReconnectionStatus(enemyShip, information[4], true);
         }else {
             if(information[2].equals("0")){
                 GlobalVariables.isPlayingNow.set(true);
             }else {
                 GlobalVariables.isPlayingNow.set(false);
             }
-            exportImportShip.importReconnectionStatus(GlobalVariables.choosenShip, information[4]);
-            exportImportShip.importReconnectionStatus(enemyShip, information[3]);
+            exportImportShip.importReconnectionStatus(GlobalVariables.choosenShip, information[4], false);
+            exportImportShip.importReconnectionStatus(enemyShip, information[3], false);
         }
         sendDataButton.setDisable(!GlobalVariables.isPlayingNow.get());
 

@@ -184,7 +184,7 @@ public class ExportImportShip {
         }
     }
 
-    public void importReconnectionStatus( CommonShip shipToSet, String settings){
+    public void importReconnectionStatus( CommonShip shipToSet, String settings, boolean isReversed){
         Pane gameArea = shipToSet.getPane();
         if(GlobalVariables.isEmpty(gameArea)) {
             return;
@@ -205,14 +205,12 @@ public class ExportImportShip {
             shipInfo = information[i].split(",");
 
             int row, column;
-            if(shipToSet.isEnemy()){
+            if(isReversed){
                 row = placements.length - Integer.parseInt(shipInfo[0]) - 1;
-                column = Integer.parseInt(shipInfo[1]);
             }else {
-                row = placements.length - Integer.parseInt(shipInfo[0]) - 1;
-                column = Integer.parseInt(shipInfo[1]);
+                row = Integer.parseInt(shipInfo[0]);
             }
-            System.out.println("row "+ row + " column " + column);
+            column = Integer.parseInt(shipInfo[1]);
 
             Placement placement = placements[row][column];
             IShipEquipment equipment = null;
