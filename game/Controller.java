@@ -122,7 +122,7 @@ public class Controller implements Initializable{
             }else if(newValue && !GlobalVariables.enemyshipDefinition.isEmpty()){
                 Platform.runLater(() -> {
                     opponentLostMenu.clean();
-                    tcpConnection.sendMessageToServer(TcpMessage.RESULT, "pripojeni zpet do hry", TcpMessage.NONE);
+                    tcpConnection.sendMessageToServer(TcpMessage.RESULT, controls.getTime(), TcpMessage.NONE);
                     controls.resumeAnimations();
                 });
             }
@@ -136,6 +136,7 @@ public class Controller implements Initializable{
                 });
             }else {
                 Platform.runLater(() -> {
+                    controls.setTime(Integer.parseInt(tcpConnection.getMessage().getData()));
                     opponentLostMenu.clean();
                     controls.resumeAnimations();
                 });

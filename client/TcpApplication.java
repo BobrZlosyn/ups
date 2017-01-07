@@ -92,7 +92,6 @@ public class TcpApplication {
 
         String type = message.getType();
         String data = message.getData();
-        message.clearMessage();
         switch (type){
 
             case TcpMessage.ATTACK:{

@@ -340,6 +340,10 @@ public class Controls {
         this.time.setText(String.valueOf(time));
     }
 
+    public String getTime() {
+        return time.getText();
+    }
+
     public void setShipPower(double shipPower) {
         this.shipPower = shipPower;
     }
