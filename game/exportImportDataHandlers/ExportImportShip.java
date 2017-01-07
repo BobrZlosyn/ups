@@ -209,7 +209,7 @@ public class ExportImportShip {
                 row = Integer.parseInt(shipInfo[0]);
                 column = Integer.parseInt(shipInfo[1]);
             }else {
-                row = placements.length + Integer.parseInt(shipInfo[0]) + 1;
+                row = Integer.parseInt(shipInfo[0]);
                 column = Integer.parseInt(shipInfo[1]);
             }
 
