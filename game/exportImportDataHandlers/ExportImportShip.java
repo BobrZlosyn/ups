@@ -177,4 +177,10 @@ public class ExportImportShip {
 
         }
     }
+
+
+    public void importReconnectionStatus( CommonShip shipToSet, String settings){
+
+
+    }
 }

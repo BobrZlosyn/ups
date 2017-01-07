@@ -336,6 +336,10 @@ public class Controls {
         });
     }
 
+    public void setTime(int time) {
+        this.time.setText(String.valueOf(time));
+    }
+
     public void setShipPower(double shipPower) {
         this.shipPower = shipPower;
     }

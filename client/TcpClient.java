@@ -40,7 +40,7 @@ public class TcpClient{
         // create a socket to communicate to the specified host and port
         try {
             s = new Socket( host, port);
-            s.setSoTimeout(10000);
+            s.setSoTimeout(13000);
         }
         catch (IOException e) {
             System.out.println("Connection to " + host + ":" + port + " refused");

@@ -19,6 +19,7 @@ public class TcpMessage {
     public static final String GAME_START = "G";
     public static final String END_WAITING = "S";
     public static final String IDENTITY = "I";
+    public static final String TIME_RECONNECTION = "T";
     public static final String QUIT = "Q";
     public static final String ATTACK = "A";
     public static final String WAITING = "W";

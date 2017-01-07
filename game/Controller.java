@@ -51,6 +51,7 @@ public class Controller implements Initializable{
     private CreateMenu createMenu;
     private OpponentLostMenu opponentLostMenu;
     private EndOfGameMenu endOfGame;
+    private CommonShip enemyShip;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -116,9 +117,6 @@ public class Controller implements Initializable{
                 Platform.runLater(() -> {
                     opponentLostMenu.showWindow(window);
                     controls.pauseAnimations();
-                    /*window.getChildren().clear();
-                    GlobalVariables.errorMsg = ErrorAlert.NOT_CONNECTED_TO_SERVER;
-                    createMainPage();*/
                 });
 
             }else if(newValue && !GlobalVariables.enemyshipDefinition.isEmpty()){
@@ -135,8 +133,35 @@ public class Controller implements Initializable{
                 Platform.runLater(() -> {
                     opponentLostMenu.showWindow(window);
                     controls.pauseAnimations();
-                    GlobalVariables.reconnection.set(false);
                 });
+            }else {
+                if (tcpConnection.getMessage().getType().equals(TcpMessage.TIME_RECONNECTION)) {
+                    Platform.runLater(() -> {
+                        try {
+                            String [] information = tcpConnection.getMessage().getData().split(";");
+                            if(information.length == 4){
+                                return;
+                            }
+
+                            controls.setTime(Integer.parseInt(information[0]));
+                            if (tcpConnection.getMessage().getId().equals(information[1])) {
+                                GlobalVariables.isPlayingNow.set(true);
+                                sendDataButton.setDisable(true);
+                            }else {
+                                GlobalVariables.isPlayingNow.set(false);
+                                sendDataButton.setDisable(false);
+                            }
+
+                            exportImportShip.importReconnectionStatus(GlobalVariables.choosenShip, information[2]);
+                            exportImportShip.importReconnectionStatus(enemyShip, information[3]);
+
+                            opponentLostMenu.clean();
+                            controls.resumeAnimations();
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }
             }
         });
 
@@ -212,7 +237,6 @@ public class Controller implements Initializable{
         });
 
         gunsToShipMenu.getNextButton().setOnAction(event -> {
-            CommonMenu.clickSound();
             exportImportShip.setFirstExport(true);
             prepareGame();
         });
@@ -261,7 +285,7 @@ public class Controller implements Initializable{
         GlobalVariables.choosenShip.fillShipWithEquipment(GlobalVariables.choosenShip, placements, exportImportShip.isFirstExport());
         GlobalVariables.choosenShip.createShield();
 
-        CommonShip enemyShip = exportImportShip.importShip(GlobalVariables.enemyshipDefinition, gameAreaPane);
+        enemyShip = exportImportShip.importShip(GlobalVariables.enemyshipDefinition, gameAreaPane);
         if(GlobalVariables.isEmpty(enemyShip)){
             GlobalVariables.enemyshipDefinition = "";
             createMainPage();
@@ -370,17 +394,17 @@ public class Controller implements Initializable{
                 return;
             }
 
+            GlobalVariables.reconnection.set(false);
             if (tcpConnection.isConnected() ) {
                 tcpConnection.endConnection();
                 enemyShip.takeDamage((int) enemyShip.getActualLife() + enemyShip.getArmorActualValue());
                 opponentLostMenu.clean();
             } else {
                 GlobalVariables.setDefaultValues();
+                tcpConnection.getMessage().removeID();
                 GlobalVariables.errorMsg = ErrorAlert.NOT_CONNECTED_TO_SERVER;
-                GlobalVariables.reconnection.set(false);
                 createMainPage();
             }
-
         });
     }
 

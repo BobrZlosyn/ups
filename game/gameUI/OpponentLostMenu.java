@@ -104,6 +104,7 @@ public class OpponentLostMenu extends CommonMenu{
     public void clean() {
         super.clean();
         endWaitingAnimation.stop();
+        timeExpired.set(false);
     }
 
     public Button getQuit() {
