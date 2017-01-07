@@ -100,7 +100,7 @@ public class DamageHandler {
      * @return
      */
     private int calculateDamage(CommonShip targetShip, CommonShip attackShip){
-        if(GlobalVariables.isEmpty(targetShip) && GlobalVariables.isEmpty(attackInformation)){
+        if(GlobalVariables.isEmpty(targetShip) || GlobalVariables.isEmpty(attackInformation)){
             return 0;
         }
 
