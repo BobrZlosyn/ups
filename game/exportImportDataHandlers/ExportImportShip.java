@@ -216,10 +216,10 @@ public class ExportImportShip {
             IShipEquipment equipment = placements[row][column].getShipEquipment();
             if(GlobalVariables.isEmpty(equipment)){
                 equipment = ConstructionTypes.createEquipment(shipInfo[2]);
-                shipToSet.addEquipmentToShip(Integer.parseInt(shipInfo[0]), Integer.parseInt(shipInfo[1]), (AShipEquipment) equipment);
+                shipToSet.addEquipmentToShip(row, column, (AShipEquipment) equipment);
             }else {
                 CommonConstruction construction = (CommonConstruction) equipment;
-                construction.setActualLife(Integer.parseInt(shipInfo[3]));
+                construction.setActualLife(Double.parseDouble(shipInfo[3]));
                 construction.setActualLifeBinding(construction.getActualLife() / construction.getTotalLife().get());
             }
         }
