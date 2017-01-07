@@ -114,17 +114,10 @@ public class Controller implements Initializable{
 
         tcpConnection.isConnectedProperty().addListener((observable, oldValue, newValue) ->{
             if (!newValue && !GlobalVariables.enemyshipDefinition.isEmpty()){
-                Platform.runLater(() -> {
-                    opponentLostMenu.showWindow(window);
-                    controls.pauseAnimations();
-                });
+                GlobalVariables.reconnection.set(true);
 
             }else if(newValue && !GlobalVariables.enemyshipDefinition.isEmpty()){
-                Platform.runLater(() -> {
-                    opponentLostMenu.clean();
-                    tcpConnection.sendMessageToServer(TcpMessage.RESULT, createMessageForReconnection(), TcpMessage.NONE);
-                    controls.resumeAnimations();
-                });
+                tcpConnection.sendMessageToServer(TcpMessage.RESULT, createMessageForReconnection(), TcpMessage.NONE);
             }
         });
 
@@ -135,34 +128,9 @@ public class Controller implements Initializable{
                     controls.pauseAnimations();
                 });
             }else {
-                handleReconnectionMessage(tcpConnection.getMessage().getData());
-                /*if (tcpConnection.getMessage().getType().equals(TcpMessage.TIME_RECONNECTION)) {
-                    Platform.runLater(() -> {
-                        try {
-                            String [] information = tcpConnection.getMessage().getData().split(";");
-                            if(information.length == 4){
-                                return;
-                            }
-
-                            controls.setTime(Integer.parseInt(information[0]));
-                            if (tcpConnection.getMessage().getId().equals(information[1])) {
-                                GlobalVariables.isPlayingNow.set(true);
-                                sendDataButton.setDisable(true);
-                            }else {
-                                GlobalVariables.isPlayingNow.set(false);
-                                sendDataButton.setDisable(false);
-                            }
-
-                            exportImportShip.importReconnectionStatus(GlobalVariables.choosenShip, information[2]);
-                            exportImportShip.importReconnectionStatus(enemyShip, information[3]);
-
-                            opponentLostMenu.clean();
-                            controls.resumeAnimations();
-                        }catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    });
-                }*/
+                Platform.runLater(() -> {
+                    handleReconnectionMessage(tcpConnection.getMessage().getData());
+                });
             }
         });
 
@@ -605,34 +573,31 @@ public class Controller implements Initializable{
     private void handleReconnectionMessage(String reconnectionMessage) {
         String [] information = reconnectionMessage.split(TcpMessage.SEPARATOR);
 
+        //parsing time of game information
+        controls.setTime(Integer.parseInt(information[0]));
 
-        Platform.runLater(() -> {
-            //parsing time of game information
-            controls.setTime(Integer.parseInt(information[0]));
-
-            //parsing who is playing information
-            if (tcpConnection.getMessage().getId().equals(information[1])) {
-                if(information[2].equals("1")){
-                    GlobalVariables.isPlayingNow.set(true);
-                }else {
-                    GlobalVariables.isPlayingNow.set(false);
-                }
+        //parsing who is playing information
+        if (tcpConnection.getMessage().getId().equals(information[1])) {
+            if(information[2].equals("1")){
+                GlobalVariables.isPlayingNow.set(true);
             }else {
-                if(information[2].equals("0")){
-                    GlobalVariables.isPlayingNow.set(true);
-                }else {
-                    GlobalVariables.isPlayingNow.set(false);
-                }
+                GlobalVariables.isPlayingNow.set(false);
             }
-            sendDataButton.setDisable(!GlobalVariables.isPlayingNow.get());
+        }else {
+            if(information[2].equals("0")){
+                GlobalVariables.isPlayingNow.set(true);
+            }else {
+                GlobalVariables.isPlayingNow.set(false);
+            }
+        }
+        sendDataButton.setDisable(!GlobalVariables.isPlayingNow.get());
 
-            System.out.println(information[3]);
+        System.out.println(information[3]);
 
 
 
-            opponentLostMenu.clean();
-            controls.resumeAnimations();
-        });
+        opponentLostMenu.clean();
+        controls.resumeAnimations();
                 /*if (tcpConnection.getMessage().getType().equals(TcpMessage.TIME_RECONNECTION)) {
                     Platform.runLater(() -> {
                         try {
