@@ -135,7 +135,11 @@ public class Controller implements Initializable{
                     controls.pauseAnimations();
                 });
             }else {
-                if (tcpConnection.getMessage().getType().equals(TcpMessage.TIME_RECONNECTION)) {
+                Platform.runLater(() -> {
+                    opponentLostMenu.clean();
+                    controls.resumeAnimations();
+                });
+                /*if (tcpConnection.getMessage().getType().equals(TcpMessage.TIME_RECONNECTION)) {
                     Platform.runLater(() -> {
                         try {
                             String [] information = tcpConnection.getMessage().getData().split(";");
@@ -161,7 +165,7 @@ public class Controller implements Initializable{
                             e.printStackTrace();
                         }
                     });
-                }
+                }*/
             }
         });
 

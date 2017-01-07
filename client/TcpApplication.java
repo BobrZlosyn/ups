@@ -93,7 +93,6 @@ public class TcpApplication {
         String type = message.getType();
         String data = message.getData();
         message.clearMessage();
-        System.out.println(type);
         switch (type){
 
             case TcpMessage.ATTACK:{
@@ -112,6 +111,10 @@ public class TcpApplication {
 
             case TcpMessage.WAITING_FOR_RECONNECTION: {
                 GlobalVariables.reconnection.set(true);
+            }break;
+
+            case TcpMessage.RECONNECTION_BACK: {
+                GlobalVariables.reconnection.set(false);
             }break;
 
             case TcpMessage.IDENTITY:{

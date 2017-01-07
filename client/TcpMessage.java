@@ -33,7 +33,7 @@ public class TcpMessage {
     public static final String DESTROY_CONNECTION = "D";
     public static final String NONE = "";
     public static final String WAITING_FOR_RECONNECTION = "Y";
-
+    public static final String RECONNECTION_BACK = "B";
 
     public TcpMessage( ) {
         message = "";
