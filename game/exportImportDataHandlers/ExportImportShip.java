@@ -67,9 +67,17 @@ public class ExportImportShip {
         return shipInformation.toString();
     }
 
-    private int parseNumberValue(String value, int defaultValue){
+    private int parseIntegerValue(String value, int defaultValue){
         try {
             return Integer.parseInt(value);
+        }catch (Exception e){
+            return defaultValue;
+        }
+    }
+
+    private double parseDoubleValue(String value, double defaultValue){
+        try {
+            return Double.parseDouble(value);
         }catch (Exception e){
             return defaultValue;
         }
@@ -90,10 +98,10 @@ public class ExportImportShip {
         enemyShip.displayShip(gameArea);
 
         if(shipValues.length == 5){
-            enemyShip.setActualLife(parseNumberValue(shipValues[1], (int) enemyShip.getActualLife()));
-            enemyShip.setEnergyActualValue(parseNumberValue(shipValues[2], enemyShip.getEnergyMaxValue()));
-            enemyShip.setShieldActualLife(parseNumberValue(shipValues[3], enemyShip.getShieldActualLife()));
-            enemyShip.setArmorActualValue(parseNumberValue(shipValues[4], enemyShip.getArmorActualValue()));
+            enemyShip.setActualLife(parseIntegerValue(shipValues[1], (int) enemyShip.getActualLife()));
+            enemyShip.setEnergyActualValue(parseIntegerValue(shipValues[2], enemyShip.getEnergyMaxValue()));
+            enemyShip.setShieldActualLife(parseIntegerValue(shipValues[3], enemyShip.getShieldActualLife()));
+            enemyShip.setArmorActualValue(parseIntegerValue(shipValues[4], enemyShip.getArmorActualValue()));
         }
 
 
@@ -115,7 +123,7 @@ public class ExportImportShip {
             equipment.displayEquipment(placements[row][column], enemyShip.isEnemy());
             placements[row][column].setShipEquipment(equipment);
             ((CommonConstruction)equipment).setPlacement(placements[row][column]);
-            ((CommonConstruction)equipment).setActualLife(parseNumberValue(equipmentData[3],
+            ((CommonConstruction)equipment).setActualLife(parseIntegerValue(equipmentData[3],
                     (int)((CommonConstruction)equipment).getActualLife()));
         }
 
@@ -197,10 +205,10 @@ public class ExportImportShip {
         String [] information = settings.split(";;");
         String [] shipInfo = information[0].split(",");
         if(shipInfo.length == 5){
-            shipToSet.setActualLife(parseNumberValue(shipInfo[1], (int) shipToSet.getActualLife()));
-            shipToSet.setEnergyActualValue(parseNumberValue(shipInfo[2], shipToSet.getEnergyMaxValue()));
-            shipToSet.setShieldActualLife(parseNumberValue(shipInfo[3], shipToSet.getShieldActualLife()));
-            shipToSet.setArmorActualValue(parseNumberValue(shipInfo[4], shipToSet.getArmorActualValue()));
+            shipToSet.setActualLife(parseDoubleValue(shipInfo[1], (int) shipToSet.getActualLife()));
+            shipToSet.setEnergyActualValue(parseIntegerValue(shipInfo[2], shipToSet.getEnergyMaxValue()));
+            shipToSet.setShieldActualLife(parseIntegerValue(shipInfo[3], shipToSet.getShieldActualLife()));
+            shipToSet.setArmorActualValue(parseIntegerValue(shipInfo[4], shipToSet.getArmorActualValue()));
         }
 
         if(information.length != 2) {
@@ -233,11 +241,12 @@ public class ExportImportShip {
             if(((CommonConstruction)equipment).isDestroyed()){
                 equipment = ConstructionTypes.createEquipment(shipInfo[2]);
                 shipToSet.addEquipmentToShip(row, column, (AShipEquipment) equipment);
-            }else {
-                CommonConstruction construction = (CommonConstruction) equipment;
-                construction.setActualLife(Double.parseDouble(shipInfo[3]));
-                construction.setActualLifeBinding(construction.getActualLife() / construction.getTotalLife().get());
             }
+
+            CommonConstruction construction = (CommonConstruction) equipment;
+            construction.setActualLife(parseDoubleValue(shipInfo[3], ((CommonConstruction) equipment).getActualLife()));
+            construction.setActualLifeBinding(construction.getActualLife() / construction.getTotalLife().get());
+
         }
     }
 }
