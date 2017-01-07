@@ -206,7 +206,7 @@ public class ExportImportShip {
 
             int row, column;
             if(shipToSet.isEnemy()){
-                row = Integer.parseInt(shipInfo[0]);
+                row = placements.length - Integer.parseInt(shipInfo[0]) - 1;
                 column = Integer.parseInt(shipInfo[1]);
             }else {
                 row = placements.length - Integer.parseInt(shipInfo[0]) - 1;
