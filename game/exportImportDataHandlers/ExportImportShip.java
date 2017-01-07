@@ -217,7 +217,7 @@ public class ExportImportShip {
 
         information = information[1].split(";");
         Placement [][] placements = shipToSet.getPlacementPositions();
-        for(int i = 1; i < information.length; i++){
+        for(int i = 0; i < information.length; i++){
             shipInfo = information[i].split(",");
 
             if(shipInfo.length != 4){
