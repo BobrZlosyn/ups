@@ -364,7 +364,7 @@ public class Controller implements Initializable{
 
         opponentLostMenu.getTimeExpiredProperty().addListener((observable, oldValue, newValue) -> {
 
-            if (!newValue) {
+            if (!newValue || GlobalVariables.APLICATION_EXIT) {
                 return;
             }
 
