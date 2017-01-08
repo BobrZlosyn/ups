@@ -240,6 +240,7 @@ public class ExportImportShip {
 
             if(((CommonConstruction)equipment).isDestroyed()){
                 equipment = ConstructionTypes.createEquipment(shipInfo[2]);
+                shipToSet.getPlacementPositions()[row][column].setIsEmpty(true);
                 shipToSet.addEquipmentToShip(row, column, (AShipEquipment) equipment);
             }
 
