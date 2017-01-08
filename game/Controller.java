@@ -113,8 +113,10 @@ public class Controller implements Initializable{
         });
 
         tcpConnection.isConnectedProperty().addListener((observable, oldValue, newValue) ->{
-            if (!newValue && !GlobalVariables.enemyshipDefinition.isEmpty() && !GlobalVariables.gameIsFinished.get()){
-                GlobalVariables.reconnection.set(true);
+            if (!newValue && !GlobalVariables.enemyshipDefinition.isEmpty()){
+                if (!opponentLostMenu.getTimeExpiredProperty().get()) {
+                    GlobalVariables.reconnection.set(true);
+                }
 
             }else if(newValue && !GlobalVariables.enemyshipDefinition.isEmpty()){
                 tcpConnection.sendMessageToServer(TcpMessage.RESULT, createMessageForReconnection(), TcpMessage.NONE);
