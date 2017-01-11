@@ -27,6 +27,7 @@ import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -62,7 +63,8 @@ public class Controller implements Initializable{
         endOfGame = new EndOfGameMenu(false);
         setupEndOfGameMenu();
 
-        opponentLostMenu = new OpponentLostMenu(OpponentLostMenu.WAIT_FOR_OPONNENT_RECONNECTION);
+        //cekani na znovu pripojeni nepotrebne zatim
+        //opponentLostMenu = new OpponentLostMenu(OpponentLostMenu.WAIT_FOR_OPONNENT_RECONNECTION);
         grb = new GeneratRandomBackground();
         LoadSettings.loadSettings(0);
         createMainPage();
@@ -113,6 +115,7 @@ public class Controller implements Initializable{
         });
 
         tcpConnection.isConnectedProperty().addListener((observable, oldValue, newValue) ->{
+            /* pro znovu pripojeni - zatim nepotrebne
             if (!newValue && !GlobalVariables.enemyshipDefinition.isEmpty()){
                 if (!opponentLostMenu.getTimeExpiredProperty().get()) {
                     GlobalVariables.reconnection.set(true);
@@ -120,9 +123,23 @@ public class Controller implements Initializable{
 
             }else if(newValue && !GlobalVariables.enemyshipDefinition.isEmpty()){
                 tcpConnection.sendMessageToServer(TcpMessage.RESULT, createMessageForReconnection(), TcpMessage.NONE);
+            }*/
+
+            if(GlobalVariables.enemyshipDefinition.isEmpty()){
+                return;
+            }
+
+            if(!newValue){
+                Platform.runLater(() -> {
+                    GlobalVariables.errorMsg = ErrorAlert.NOT_CONNECTED_TO_SERVER;
+                    tcpConnection.endConnection();
+                    createMainPage();
+                });
+
             }
         });
 
+        /* poslouchani zda se ma spustit reconnect akce - nepotrebne zatim
         GlobalVariables.reconnection.addListener((observable, oldValue, newValue) -> {
             if (newValue){
                 Platform.runLater(() -> {
@@ -144,6 +161,7 @@ public class Controller implements Initializable{
             endOfGame.setUserIsWinner(false, true);
             endOfGame.showWindow(window);
         });
+        */
 
 
     }
@@ -262,8 +280,8 @@ public class Controller implements Initializable{
         enemyShip = exportImportShip.importShip(GlobalVariables.enemyshipDefinition, gameAreaPane);
         if(GlobalVariables.isEmpty(enemyShip)){
             GlobalVariables.enemyshipDefinition = "";
+            GlobalVariables.errorMsg = ErrorAlert.NOT_VALID_SHIP_DEFINITION;
             createMainPage();
-            errorAlert.showErrorPaneWithText(window, "Omlouváme se, nastala chyba při získávání dat ze serveru");
         }
         enemyShip.createShield();
 
@@ -361,25 +379,8 @@ public class Controller implements Initializable{
             }
         });
 
+        //waitingForReconnectAction(); - akce pro zhodnoceni zbyvajiciho casu - nepotrebne zatim
 
-        opponentLostMenu.getTimeExpiredProperty().addListener((observable, oldValue, newValue) -> {
-
-            if (!newValue || GlobalVariables.APLICATION_EXIT) {
-                return;
-            }
-
-            GlobalVariables.reconnection.set(false);
-            if (tcpConnection.isConnected() ) {
-                tcpConnection.endConnection();
-                enemyShip.takeDamage((int) enemyShip.getActualLife() + enemyShip.getArmorActualValue());
-                opponentLostMenu.clean();
-            } else {
-                GlobalVariables.setDefaultValues();
-                tcpConnection.getMessage().removeID();
-                GlobalVariables.errorMsg = ErrorAlert.NOT_CONNECTED_TO_SERVER;
-                createMainPage();
-            }
-        });
     }
 
     /**
@@ -430,6 +431,7 @@ public class Controller implements Initializable{
 
         setupPickShipMenu(createMenu);
         errorAlert.showErrorPane(window);
+        GlobalVariables.setDefaultValues();
     }
 
     /**
@@ -450,14 +452,17 @@ public class Controller implements Initializable{
                     }
 
                     if(!tcpConnection.isConnected()){
+                        //zapnuti cekani hrace na pridani do hry
                         if(GlobalVariables.sendMessageType.equals(TcpMessage.CONNECTION)){
                             waitingForOponnent.setTitleText(WaitingForOponnent.CONNECTING_TO_SERVER);
                         }
 
+                        //neni potreba ukoncit kdyz neni pripojen
                         if(GlobalVariables.sendMessageType.equals(TcpMessage.QUIT)){
                             GlobalVariables.sendMessageType = "";
                         }
 
+                        //ukonceni aplikace
                         if (GlobalVariables.APLICATION_EXIT) return false;
                         Thread.sleep(1000);
                         continue;
@@ -471,14 +476,8 @@ public class Controller implements Initializable{
 
                     switch (GlobalVariables.sendMessageType){
                         case TcpMessage.CONNECTION: {
-
-                            if (!tcpConnection.getMessage().hasId()) {
-                                tcpConnection.sendMessageToServer(TcpMessage.CONNECTION, GlobalVariables.shipDefinition, TcpMessage.IDENTITY);
-                                Thread.sleep(1000);
-                            }else {
-                                tcpConnection.sendMessageToServer(TcpMessage.RESULT, GlobalVariables.shipDefinition, TcpMessage.IDENTITY);
-                                Thread.sleep(1000);
-                            }
+                            tcpConnection.sendMessageToServer(TcpMessage.CONNECTION, GlobalVariables.shipDefinition, TcpMessage.IDENTITY);
+                            Thread.sleep(1000);
 
                             waitingForOponnent.setTitleText(WaitingForOponnent.CREATING_GAME);
                             tcpConnection.sendMessageToServer(TcpMessage.GAME_START, "start the game please", TcpMessage.END_WAITING);
@@ -502,6 +501,7 @@ public class Controller implements Initializable{
                                 }
                                 Thread.sleep(100);
                             }
+
                             if (error){
                                 continue;
                             }
@@ -537,6 +537,56 @@ public class Controller implements Initializable{
     }
 
 
+    private boolean connectMessage() throws InterruptedException{
+        /*if (!tcpConnection.getMessage().hasId()) {
+            tcpConnection.sendMessageToServer(TcpMessage.CONNECTION, GlobalVariables.shipDefinition, TcpMessage.IDENTITY);
+            Thread.sleep(1000);
+        }else {
+            tcpConnection.sendMessageToServer(TcpMessage.RESULT, GlobalVariables.shipDefinition, TcpMessage.IDENTITY);
+            Thread.sleep(1000);
+        }*/
+
+        tcpConnection.sendMessageToServer(TcpMessage.CONNECTION, GlobalVariables.shipDefinition, TcpMessage.IDENTITY);
+        Thread.sleep(1000);
+
+        waitingForOponnent.setTitleText(WaitingForOponnent.CREATING_GAME);
+        tcpConnection.sendMessageToServer(TcpMessage.GAME_START, "start the game please", TcpMessage.END_WAITING);
+
+        boolean error = false;
+        waitingForOponnent.setTitleText(WaitingForOponnent.WAITING_FOR_OPONENT);
+        while (!TcpMessage.END_WAITING.equals(GlobalVariables.receivedMsg)){
+
+            if(GlobalVariables.APLICATION_EXIT){
+                return false;
+            }
+
+            if(!tcpConnection.isConnected()){
+                return true;
+            }
+
+            if(GlobalVariables.sendMessageType.equals(TcpMessage.QUIT)){
+                error = true;
+                break;
+            }
+            Thread.sleep(100);
+        }
+
+        if (error){
+            return false;
+        }
+
+        waitingForOponnent.setTitleText(WaitingForOponnent.STARTING_GAME);
+        GlobalVariables.receivedMsg = "";
+        Platform.runLater(() -> {
+            startGame();
+        });
+
+        return true;
+    }
+
+    /**
+     * pro budouci dynamicke rozliseni - zatim nepotrebne
+     */
     private void resizeGameArea(){
         gameAreaPane.widthProperty().addListener((observable, oldValue, newValue) -> {
             CommonShip usersShip = GlobalVariables.choosenShip;
@@ -557,6 +607,30 @@ public class Controller implements Initializable{
         });
     }
 
+
+    private void waitingForReconnectAction(){
+        opponentLostMenu.getTimeExpiredProperty().addListener((observable, oldValue, newValue) -> {
+
+            if (!newValue || GlobalVariables.APLICATION_EXIT) {
+                return;
+            }
+
+            GlobalVariables.reconnection.set(false);
+            if (tcpConnection.isConnected() ) {
+                tcpConnection.endConnection();
+                enemyShip.takeDamage((int) enemyShip.getActualLife() + enemyShip.getArmorActualValue());
+                opponentLostMenu.clean();
+            } else {
+                GlobalVariables.setDefaultValues();
+                tcpConnection.getMessage().removeID();
+                GlobalVariables.errorMsg = ErrorAlert.NOT_CONNECTED_TO_SERVER;
+                createMainPage();
+            }
+        });
+    }
+    /**
+     * vytvori reconnect zpravu - zatim nepotrebne
+     */
     private String createMessageForReconnection(){
         String separator = ";;;";
         StringBuilder reconnection = new StringBuilder();
@@ -580,6 +654,10 @@ public class Controller implements Initializable{
         return reconnection.toString();
     }
 
+    /**
+     * zpracuje reconnect informace - zatim nepotrebne
+     * @param reconnectionMessage
+     */
     private void handleReconnectionMessage(String reconnectionMessage) {
         String [] information = reconnectionMessage.split(";;;");
 

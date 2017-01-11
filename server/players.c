@@ -115,6 +115,7 @@ void clear_players(struct players *first) {
 		PLAYERS *pom = first;
 		free(pom->player);
 		clear_room(pom->room);
+		free(pom->room);
 		first = first->next;
 		free(pom);
 	}
@@ -125,7 +126,6 @@ void clear_room(struct room *room){
 		free(room->player1);
 		free(room->player2); 
 	}
-	free(room);
 }
 
 /*

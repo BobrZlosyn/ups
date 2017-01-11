@@ -196,6 +196,13 @@ public class ExportImportShip {
         }
     }
 
+
+    /**
+     * nastaveni lodi podle aktualniho stavu
+     * @param shipToSet
+     * @param settings
+     * @param isReversed
+     */
     public void importReconnectionStatus( CommonShip shipToSet, String settings, boolean isReversed){
         Pane gameArea = shipToSet.getPane();
         if(GlobalVariables.isEmpty(gameArea)) {
@@ -247,7 +254,6 @@ public class ExportImportShip {
             CommonConstruction construction = (CommonConstruction) equipment;
             construction.setActualLife(parseDoubleValue(shipInfo[3], ((CommonConstruction) equipment).getActualLife()));
             construction.setActualLifeBinding(construction.getActualLife() / construction.getTotalLife().get());
-
         }
     }
 }

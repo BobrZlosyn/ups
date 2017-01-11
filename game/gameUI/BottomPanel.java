@@ -264,8 +264,12 @@ public class BottomPanel extends CommonMenu{
                 lifeProgress.progressProperty().bind(construction.getActualLifeBinding());
                 lifeProgress.progressProperty().addListener((observable1, oldValue1, newValue1) -> {
 
-                    int actualLife = (int) (newValue1.doubleValue() * construction.getTotalLife().get());
-                    lifeLabel.setText(actualLife + "/" + (int) construction.getTotalLife().get());
+                    CommonConstruction cons = GlobalVariables.getMarkedObject();
+                    if(GlobalVariables.isNotEmpty(cons)){
+                        int actualLife = (int) (newValue1.doubleValue() * cons.getTotalLife().get());
+                        lifeLabel.setText(actualLife + "/" + (int) cons.getTotalLife().get());
+                    }
+
                 });
 
             }else {

@@ -22,7 +22,7 @@ public class TcpApplication {
         int port = Integer.parseInt(GlobalVariables.serverPort.getValue());
         message = new TcpMessage();
         client = new TcpClient( server , port );
-        checkConnectionLive();
+        //checkConnectionLive(); inicializace potvrzovani pripojeni
 
         GlobalVariables.serverIPAdress.addListener((observable, oldValue, newValue) -> {
             setUpNewConnection(newValue, Integer.parseInt(GlobalVariables.serverPort.getValue()));
@@ -108,18 +108,22 @@ public class TcpApplication {
                 break;
             }
 
+
+            /*
+            akce pro reconnect nepotrebuje se
             case TcpMessage.WAITING_FOR_RECONNECTION: {
                 if (!GlobalVariables.gameIsFinished.get()){
                     GlobalVariables.reconnection.set(true);
                 }
             }break;
 
+
             case TcpMessage.RECONNECTION_BACK: {
                 if (!GlobalVariables.gameIsFinished.get()){
                     GlobalVariables.reconnection.set(false);
                 }
             }break;
-
+            */
             case TcpMessage.IDENTITY:{
                 message.setId(data);
                 break;
@@ -145,14 +149,9 @@ public class TcpApplication {
             case TcpMessage.GAME_START: break;
 
             case TcpMessage.RESULT:{
-
-                if(data.equals(message.getId())){
-                    GlobalVariables.enemyLost.set(true);
-                }
-
+                GlobalVariables.enemyLost.set(data.equals(message.getId()));
                 break;
             }
-            case TcpMessage.ACKNOLEDGE: break;
 
             case TcpMessage.ERROR: break;
         }
@@ -214,7 +213,7 @@ public class TcpApplication {
             return;
         }
 
-        checkConnectionStop();
+        //checkConnectionStop(); stopnuti zpravy pro zjisteni pripojeni - nepotrebne
         connectTask = new Task<Boolean>() {
             @Override public Boolean call() {
                 while(true) {
@@ -245,7 +244,7 @@ public class TcpApplication {
         connectTask.setOnSucceeded(event -> {
             client.updateIsConnected();
             readThread();
-            checkConnectionStart();
+            //checkConnectionStart(); - overovani pripojeni - nepotrebne
             connectTask = null;
         });
 
@@ -297,6 +296,7 @@ public class TcpApplication {
         return client;
     }
 
+    /* posilani zpravy pro overeni ze jsme stale pripojeni - nepotrebne zatim
     private void checkConnectionLive() {
         checkSending = new Timeline(new KeyFrame(Duration.seconds(10), event -> checkConnectionFunction()));
         checkSending.setCycleCount(Animation.INDEFINITE);
@@ -324,7 +324,7 @@ public class TcpApplication {
             checkSending.stop();
         }
     }
-
+    */
     public TcpMessage getMessage() {
         return message;
     }

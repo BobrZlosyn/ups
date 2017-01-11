@@ -32,4 +32,5 @@ void print_log(ENV *environment, char *log);
 char *trim_whitespace(char *str);
 void clear_environment(ENV *environment);
 void print_statistic(ENV *environment, char *statistics);
+void validate_port(char *portStr, ENV *environment);
 #endif

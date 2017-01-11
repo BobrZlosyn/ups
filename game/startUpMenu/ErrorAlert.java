@@ -21,6 +21,7 @@ public class ErrorAlert extends CommonMenu {
     public static final String NOT_CONNECTED_TO_SERVER = "Omlouváme se, ale nastala chyba s připojením na server";
     public static final String NO_PLAYER_WAS_FOUND = "Omlouváme se, ale v současné chvíli se nedáří nalézt volného hráče. " +
                                                     "Zkuste to prosím později.";
+    public static final String NOT_VALID_SHIP_DEFINITION = "Omlouváme se, nastala chyba při získávání dat ze serveru";
     public static final String ERROR2 = "CHYBA 2";
 
     public ErrorAlert(){

@@ -184,7 +184,7 @@ void print_avaible_orders() {
 	printf("    show all 	- ukaze aktualni stav serveru\n");
 	printf("    reset 	- vynuluje statistiky\n");
 	printf("    clear 	- vynuluje statistiky\n");
-	printf("    set timeout 	- vynuluje statistiky\n");
+	printf("    set timeout - vynuluje statistiky\n");
 }
 
 void functions(char *order, PLAYERS *first, ENV *environment){
@@ -250,10 +250,7 @@ void functions(char *order, PLAYERS *first, ENV *environment){
 		
 	} else if ((result = strcmp(trimString, "chport")) == 0){
 		printf(" Zadejte cislo portu: ");
-		int port = atoi(getline());
-		if(port > 0 && port <= 65535){
-			environment->SERVER_PORT = port;
-		}
+		validate_port(getline(), environment);
 		
 	} else if ((result = strcmp(trimString, "reset")) == 0){
 		clear_environment(environment);		
@@ -268,6 +265,12 @@ void functions(char *order, PLAYERS *first, ENV *environment){
 	
 }
 
+void validate_port(char *portStr, ENV *environment){
+	int port = atoi(portStr);
+	if(port > 0 && port <= 65535){
+		environment->SERVER_PORT = port;
+	}
+}
 
 
 char *trim_whitespace(char *str) {
