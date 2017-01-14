@@ -63,7 +63,7 @@ int close_welcome_socket(int welcome_s){
 	    exit(-1);
 	  }
 	#endif
-	
+	printf("%d\n", welcome_s);
 	#ifdef BSD
 	  retcode = close(welcome_s);
 	  

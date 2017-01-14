@@ -40,7 +40,6 @@ public class TcpClient{
         // create a socket to communicate to the specified host and port
         try {
             s = new Socket( host, port);
-            //s.setSoTimeout(13000); pro zjisteni vypadku site
         }
         catch (IOException e) {
             System.out.println("Connection to " + host + ":" + port + " refused");
@@ -115,6 +114,7 @@ public class TcpClient{
         try {
     	    writer.println(msg.getMessage());
             writer.flush();
+            System.out.println(writer.checkError());
             System.out.println(msg.getMessage());
             msg.clearMessage();
         }
@@ -129,16 +129,16 @@ public class TcpClient{
         // read the response (a line) from the server
         try {
 
-            do{
+           /* do{
                 Thread.sleep(100);
-            } while(GlobalVariables.isNotEmpty(reader) && (line = reader.readLine()).isEmpty());
+                if()
+            } while(GlobalVariables.isNotEmpty(reader) && );*/
 
+            line = reader.readLine();
             return line;
         }
         catch (IOException e) {
             System.err.println("Read error");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
 
         isConnected.set(false);

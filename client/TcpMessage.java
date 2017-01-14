@@ -71,7 +71,7 @@ public class TcpMessage {
 
     public void setId(String id) {
         GlobalVariables.playerID = id;
-        WriteSettings.writeSettings();
+
     }
 
     public void setMessage(String msgType, String msg) {

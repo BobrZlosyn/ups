@@ -57,7 +57,6 @@ public class TcpApplication {
 
     private boolean sendConnectionMessage(){
         return client.open();
-
     }
 
 
@@ -179,8 +178,8 @@ public class TcpApplication {
 
                     if(isConnected()){
                         message.decodeMessage(client.getMessage());
-                        if(message.getMessage().isEmpty()){
-                           // break;
+                        if(message.isEmpty()){
+                            break;
                         }
                         System.out.println("read "+message.getMessage());
                         doAction();
@@ -227,11 +226,11 @@ public class TcpApplication {
                     if(sendConnectionMessage()){
                         break;
                     }
-                    client.updateIsConnected();
+
 
                     try {
                         if(!isConnected()){
-                            Thread.sleep(1000);
+                            Thread.sleep(1000 + (int)(Math.random() *1000));
                         }
                     } catch (InterruptedException e) {
                         break;

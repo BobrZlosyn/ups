@@ -444,7 +444,7 @@ public class Controller implements Initializable{
 
         sendingTask = new Task <Boolean>() {
             @Override
-            protected Boolean call() throws InterruptedException{
+            protected Boolean call() {
                 while (true){
 
                     if (GlobalVariables.APLICATION_EXIT && GlobalVariables.sendMessageType.isEmpty()) {
@@ -464,20 +464,47 @@ public class Controller implements Initializable{
 
                         //ukonceni aplikace
                         if (GlobalVariables.APLICATION_EXIT) return false;
-                        Thread.sleep(1000);
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         continue;
                     }
 
 
                     if(GlobalVariables.sendMessageType.isEmpty()){
-                        Thread.sleep(100);
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         continue;
                     }
 
                     switch (GlobalVariables.sendMessageType){
                         case TcpMessage.CONNECTION: {
-                            tcpConnection.sendMessageToServer(TcpMessage.CONNECTION, GlobalVariables.shipDefinition, TcpMessage.IDENTITY);
-                            Thread.sleep(1000);
+                            tcpConnection.getMessage().removeID();
+
+
+                            while (!tcpConnection.getMessage().hasId()){
+
+                                if (GlobalVariables.APLICATION_EXIT) {
+                                    return false;
+                                }
+
+                                waitingForOponnent.setTitleText(WaitingForOponnent.CONNECTING_TO_SERVER);
+                                tcpConnection.getMessage().removeID();
+                                tcpConnection.sendMessageToServer(TcpMessage.CONNECTION, GlobalVariables.shipDefinition, TcpMessage.IDENTITY);
+
+
+
+                                try {
+                                    Thread.sleep(2000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
 
                             waitingForOponnent.setTitleText(WaitingForOponnent.CREATING_GAME);
                             tcpConnection.sendMessageToServer(TcpMessage.GAME_START, "start the game please", TcpMessage.END_WAITING);
@@ -499,7 +526,11 @@ public class Controller implements Initializable{
                                     error = true;
                                     break;
                                 }
-                                Thread.sleep(100);
+                                try {
+                                    Thread.sleep(100);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
                             }
 
                             if (error){
@@ -536,53 +567,6 @@ public class Controller implements Initializable{
         new Thread(sendingTask).start();
     }
 
-
-    private boolean connectMessage() throws InterruptedException{
-        /*if (!tcpConnection.getMessage().hasId()) {
-            tcpConnection.sendMessageToServer(TcpMessage.CONNECTION, GlobalVariables.shipDefinition, TcpMessage.IDENTITY);
-            Thread.sleep(1000);
-        }else {
-            tcpConnection.sendMessageToServer(TcpMessage.RESULT, GlobalVariables.shipDefinition, TcpMessage.IDENTITY);
-            Thread.sleep(1000);
-        }*/
-
-        tcpConnection.sendMessageToServer(TcpMessage.CONNECTION, GlobalVariables.shipDefinition, TcpMessage.IDENTITY);
-        Thread.sleep(1000);
-
-        waitingForOponnent.setTitleText(WaitingForOponnent.CREATING_GAME);
-        tcpConnection.sendMessageToServer(TcpMessage.GAME_START, "start the game please", TcpMessage.END_WAITING);
-
-        boolean error = false;
-        waitingForOponnent.setTitleText(WaitingForOponnent.WAITING_FOR_OPONENT);
-        while (!TcpMessage.END_WAITING.equals(GlobalVariables.receivedMsg)){
-
-            if(GlobalVariables.APLICATION_EXIT){
-                return false;
-            }
-
-            if(!tcpConnection.isConnected()){
-                return true;
-            }
-
-            if(GlobalVariables.sendMessageType.equals(TcpMessage.QUIT)){
-                error = true;
-                break;
-            }
-            Thread.sleep(100);
-        }
-
-        if (error){
-            return false;
-        }
-
-        waitingForOponnent.setTitleText(WaitingForOponnent.STARTING_GAME);
-        GlobalVariables.receivedMsg = "";
-        Platform.runLater(() -> {
-            startGame();
-        });
-
-        return true;
-    }
 
     /**
      * pro budouci dynamicke rozliseni - zatim nepotrebne
