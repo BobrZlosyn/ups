@@ -493,11 +493,9 @@ public class Controller implements Initializable{
                                     return false;
                                 }
 
-                                waitingForOponnent.setTitleText(WaitingForOponnent.CONNECTING_TO_SERVER);
+                                waitingForOponnent.setTitleText(WaitingForOponnent.CREATING_GAME);
                                 tcpConnection.getMessage().removeID();
                                 tcpConnection.sendMessageToServer(TcpMessage.CONNECTION, GlobalVariables.shipDefinition, TcpMessage.IDENTITY);
-
-
 
                                 try {
                                     Thread.sleep(2000);
@@ -506,7 +504,7 @@ public class Controller implements Initializable{
                                 }
                             }
 
-                            waitingForOponnent.setTitleText(WaitingForOponnent.CREATING_GAME);
+
                             tcpConnection.sendMessageToServer(TcpMessage.GAME_START, "start the game please", TcpMessage.END_WAITING);
 
                             boolean error = false;
