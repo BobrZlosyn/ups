@@ -35,10 +35,11 @@ public class TcpApplication {
 
     private void setUpNewConnection(String server, int port){
         endConnection();
-        closeConnection();
+
         client.updateIsConnected();
         client.setPort(port);
         client.setHost(server);
+        closeConnection();
         connectThread();
     }
 
@@ -223,6 +224,8 @@ public class TcpApplication {
                         closeConnection();
                         break;
                     }
+                    client.updateIsConnected();
+
                     if(sendConnectionMessage()){
                         break;
                     }

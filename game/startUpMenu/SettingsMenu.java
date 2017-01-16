@@ -60,7 +60,7 @@ public class SettingsMenu extends CommonMenu{
             CommonMenu.clickSound();
             boolean error = false;
             if(LoadSettings.checkIPAdress(ipAdressTF.getText())){
-                Platform.runLater(() -> GlobalVariables.serverIPAdress.set(ipAdressTF.getText().trim()));
+                GlobalVariables.serverIPAdress.set(ipAdressTF.getText().trim());
                 ipAdressTF.setStyle("-fx-border-color: rgba(255 , 0, 0, 0); -fx-text-fill: black;");
             }else {
                 ipAdressTF.setStyle("-fx-border-color: rgba(255 , 0, 0, 1); -fx-text-fill: red;");
@@ -68,7 +68,7 @@ public class SettingsMenu extends CommonMenu{
             }
 
             if(LoadSettings.checkPort(portTF.getText())){
-                Platform.runLater(() -> GlobalVariables.serverPort.set(portTF.getText().trim()));
+                GlobalVariables.serverPort.set(portTF.getText().trim());
                 portTF.setStyle("-fx-border-color: rgba(255 , 0, 0, 0); -fx-text-fill: black;");
             } else {
                 portTF.setStyle("-fx-border-color: rgba(255 , 0, 0, 1); -fx-text-fill: red;");
